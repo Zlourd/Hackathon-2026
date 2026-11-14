@@ -88,3 +88,12 @@ main>aside.col{padding-top:40px}
 main>aside.col{margin:5px 5px 5px 10px}
 .fact,.cell,#stats div,.gave .chip,.empty,.flag,.tag,.badge{border-radius:3px}
 .persona .loc{font-family:Georgia,"Times New Roman",serif;letter-spacing:.02em}
+
+/* header card: Greek key */
+nav{position:relative;border-radius:0;background:linear-gradient(160deg,#1c110a,#120a05);border:1px solid #7a4a22;outline:1px solid #3a2410;outline-offset:4px;
+  margin:22px 33px 0;padding-top:30px;backdrop-filter:none}
+nav:before{content:"";position:absolute;left:0;right:0;top:0;height:14px;border-bottom:1px solid #7a4a22;
+  background:repeating-linear-gradient(90deg,transparent 0 4px,#c8793a 4px 6px,transparent 6px 10px) 0 4px/100% 2px no-repeat,
+  repeating-linear-gradient(90deg,#c8793a 0 2px,transparent 2px 14px) 0 4px/100% 6px no-repeat,
+  repeating-linear-gradient(90deg,transparent 0 6px,#c8793a 6px 8px,transparent 8px 14px) 0 8px/100% 2px no-repeat}
+nav{padding-bottom:12px;padding-top:28px}
