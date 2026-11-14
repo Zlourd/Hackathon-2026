@@ -73,3 +73,4 @@ nav{padding-top:14px;padding-bottom:14px}
 .fact small{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
 .fact b{font-weight:700}
 .fact small{font-weight:400}
+main>section.col{background:none;border:0;box-shadow:none;padding:8px 4px}
