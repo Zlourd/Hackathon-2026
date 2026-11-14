@@ -1,5 +1,12 @@
 import { ARCHETYPES, CHROME } from './data.js';
 
+const NAMES = {
+  sailor: ['Margit Halvorsen', 'Ingrid Solberg', 'Torvald Eide', 'Liv Bjørnstad', 'Henrik Moen'],
+  'gamer-dev': ['Dario Fontana', 'Tiago Ribeiro', 'Inês Carvalho', 'Rui Machado', 'Beatriz Lopes'],
+  gardener: ['Walter Ndlovu', 'Helen Ashworth', 'Colin Pritchard', 'Fatima Okafor', 'Graham Tate'],
+  traveler: ['Priya Venkataraman', 'Maya Tremblay', 'Jordan Okonkwo-Reid', 'Sofia Lindqvist', 'Daniel Park']
+};
+
 export function rng(seed) {
   let a = seed >>> 0;
   return () => {
@@ -19,7 +26,7 @@ export function buildPersona(seed = (Math.random() * 2 ** 32) >>> 0, avoidId = n
   const ua = `Mozilla/5.0 (${d.uaOS}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${CHROME} Safari/537.36`;
   const major = CHROME.split('.')[0];
   return {
-    seed, id: base.id, name: base.name, age: base.age, occupation: base.occupation, income: base.income,
+    seed, id: base.id, name: NAMES[base.id][Math.floor(r() * NAMES[base.id].length)], age: base.age + Math.round((r() - 0.5) * 12), occupation: base.occupation, income: base.income,
     city: base.city, tz: base.tz,
     // jitter the coordinates slightly so the "home" is city-level, not a single point
     lat: base.lat + (r() - 0.5) * 0.04, lon: base.lon + (r() - 0.5) * 0.04,

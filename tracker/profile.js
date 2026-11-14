@@ -64,5 +64,6 @@ function render(st) {
 const refresh = () => send({ type: 'state' }).then(render);
 chrome.storage.onChanged.addListener(refresh);
 $('toggle').onclick = () => send({ type: 'toggle' }).then(render);
+$('reroll').onclick = () => send({ type: 'reroll' }).then(render);
 $('reset').onclick = () => send({ type: 'reset' }).then(render);
 refresh();
