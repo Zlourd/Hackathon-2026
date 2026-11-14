@@ -18,8 +18,9 @@ function renderPersona(p) {
   const c = country(p.city);
   $('persona').innerHTML = `
     <div class="flag" title="${esc(c)}">${FLAGS[c] || '🌐'}</div>
-    <div><div class="loc">${esc(p.city)}</div><div class="who">${esc(p.name)} · decoy persona</div></div>
+    <div><div class="loc">${esc(p.city)}</div></div>
     <div class="facts">
+      <div class="fact"><small>Name</small><b>${esc(p.name)}</b></div>
       <div class="fact"><small>Age</small><b>${p.age}</b></div>
       <div class="fact"><small>Occupation</small><b>${esc(p.occupation)}</b></div>
       <div class="fact"><small>Income</small><b>${esc(p.income)}</b></div>
@@ -48,6 +49,7 @@ function render(st) {
   $('status').className = 'pill ' + (st.enabled ? 'on' : 'off');
   $('toggle').textContent = st.enabled ? 'Turn decoy off' : 'Turn decoy on';
   renderPersona(st.persona);
+  $('intTitle').textContent = st.persona ? `${st.persona.name.split(' ')[0]}'s interests` : 'Interests';
   renderSites(st.sites || {});
   const log = st.log;
   $('empty').hidden = log.length > 0; $('profile').hidden = !log.length;
