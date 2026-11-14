@@ -69,3 +69,6 @@ nav{padding-top:18px;padding-bottom:18px}
 
 .coin{width:84px;height:84px;margin:0}
 nav{padding-top:14px;padding-bottom:14px}
+.fact{text-align:center;display:flex;flex-direction:column;justify-content:center}
+.fact small{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.fact b{font-weight:700}
