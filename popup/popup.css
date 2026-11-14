@@ -34,3 +34,12 @@ button.primary{color:#1a0f06}
 .coin{width:76px;height:76px}
 
 .coin{width:64px;height:64px}
+
+/* ===== Greek-key cards ===== */
+.card{position:relative;border-radius:0;padding-top:28px;background:linear-gradient(160deg,#1c110a,#120a05);border:1px solid #7a4a22;outline:1px solid #3a2410;outline-offset:3px;margin:0 3px 16px}
+.card:before{content:"";position:absolute;left:0;right:0;top:0;height:14px;border-bottom:1px solid #7a4a22;
+  background:repeating-linear-gradient(90deg,transparent 0 4px,#c8793a 4px 6px,transparent 6px 10px) 0 4px/100% 2px no-repeat,
+  repeating-linear-gradient(90deg,#c8793a 0 2px,transparent 2px 14px) 0 4px/100% 6px no-repeat,
+  repeating-linear-gradient(90deg,transparent 0 6px,#c8793a 6px 8px,transparent 8px 14px) 0 8px/100% 2px no-repeat}
+.big{border-radius:0;border-color:#7a4a22}
+button{border-radius:3px}.tag{border-radius:3px}
