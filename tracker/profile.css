@@ -24,7 +24,7 @@ code{color:var(--mut);font-size:11px;font-weight:400}
 .bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#8f0c18,var(--acc),var(--ok));transition:width .6s;box-shadow:0 0 12px rgba(225,29,46,.7)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:18px}
 .cell{background:var(--card2);border:1px solid var(--bd);border-radius:16px;padding:12px 14px}.cell small{display:block;color:var(--mut);font-size:11px;margin-bottom:2px}
-.int{display:grid;grid-template-columns:200px 1fr 52px;gap:12px;align-items:center;margin:9px 0;animation:in .4s}
+.int{display:grid;grid-template-columns:150px 1fr 46px;gap:12px;align-items:center;margin:9px 0;animation:in .4s}
 .int .b{height:12px;background:#220c0f;border-radius:99px;overflow:hidden}.int .b i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8f0c18,var(--acc2));transition:width .6s}
 .int em{font-style:normal;color:var(--mut);font-size:12px;display:block}.int span.p{text-align:right;font-variant-numeric:tabular-nums}
 ul#timeline{list-style:none;padding:0;margin:0;max-height:240px;overflow:auto;font-size:12.5px}
@@ -32,3 +32,23 @@ ul#timeline{list-style:none;padding:0;margin:0;max-height:240px;overflow:auto;fo
 @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1}}
 #stats{display:flex;gap:10px;flex-wrap:wrap}#stats div{background:var(--card2);border:1px solid var(--bd);border-radius:14px;padding:10px 14px}#stats b{display:block;font-size:22px;color:var(--acc2)}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:8px}
+
+h1{margin:0 0 18px;font-size:46px;font-weight:800;letter-spacing:-.02em;line-height:1;background:linear-gradient(90deg,#fff,var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2.gap{margin-top:30px}
+main{grid-template-columns:1.6fr 1fr}
+.persona{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--card2);border:1px solid var(--bd);border-radius:22px;padding:18px 20px}
+.flag{width:84px;height:56px;border-radius:12px;overflow:hidden;border:1px solid var(--bd);box-shadow:0 4px 14px rgba(0,0,0,.6);display:grid;place-items:center;font-size:30px;background:#111}
+.flag svg{width:100%;height:100%;display:block}
+.persona .loc{font-size:20px;font-weight:700}.persona .who{color:var(--mut);font-size:13px;margin-top:2px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;grid-column:1/-1}
+.fact{background:#0b0405;border:1px solid var(--bd);border-radius:14px;padding:9px 12px}.fact small{display:block;color:var(--mut);font-size:11px}.fact b{font-size:15px}
+.tags{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}.tag{background:rgba(225,29,46,.14);border:1px solid var(--acc);color:#ffb3ba;border-radius:99px;padding:3px 11px;font-size:12px}
+.count{background:var(--acc);color:#fff;border-radius:99px;padding:1px 9px;margin-left:6px;letter-spacing:0;font-size:11px}
+.site{display:grid;grid-template-columns:minmax(150px,1fr) 2fr;gap:14px;align-items:start;background:var(--card2);border:1px solid var(--bd);border-radius:16px;padding:12px 14px;margin:9px 0;animation:in .4s}
+.site .h{font-weight:600;word-break:break-all}.site .m{color:var(--mut);font-size:11.5px;margin-top:3px}
+.badge{display:inline-block;border-radius:99px;padding:1px 8px;font-size:10.5px;margin:3px 4px 0 0;border:1px solid var(--bd);color:var(--mut)}
+.badge.decoy{border-color:var(--acc);color:#ffb3ba}.badge.embed{border-color:var(--ok);color:var(--ok)}
+.gave{display:flex;flex-wrap:wrap;gap:6px}.gave .chip{background:#0b0405;border:1px solid var(--bd);border-radius:10px;padding:3px 9px;font-size:12px}
+.gave .chip i{font-style:normal;color:var(--mut);margin-right:5px}.arrow{color:var(--acc2);font-size:11px;letter-spacing:.1em;text-transform:uppercase;width:100%}
+.noSites{border:1px dashed var(--bd);border-radius:18px;padding:34px;text-align:center;color:var(--mut)}
+@media(max-width:700px){.site{grid-template-columns:1fr}}

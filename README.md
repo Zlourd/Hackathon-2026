@@ -7,7 +7,7 @@ Incognito leaves no trace, and trackers can still piece you together. **Mirage w
 2. **Load unpacked** → select this folder
 
 ## 30-second demo
-1. Click the Mirage icon → **Open tracker's view**. The AdGraph profile is empty (0%).
+1. Click the Mirage icon → **Open tracker's view**: "Become nobody." with the decoy persona, and an empty list of sites.
 2. Hit **Turn decoy on**. The decoy starts browsing in the background (a fast burst of ~24 visits, then a natural, irregular cadence).
 3. Watch the profile fill with the decoy's interests, location, age band and occupation — while **Your real profile** stays blank.
 
