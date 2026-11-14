@@ -24,3 +24,6 @@ Incognito leaves no trace, and trackers can still piece you together. **Mirage w
 - Decoy traffic is real HTTP requests to public sites. Toggle off any time; cadence is low outside the initial burst.
 - Not a Tor replacement: IP address is unchanged (pair with a VPN), and some fingerprint vectors (fonts, audio, `Date#toString`) are not covered.
 - Layout: `src/` (background, persona engine, page injector), `popup/`, `tracker/`.
+
+## Optional local backend (Gemini personas)
+If the Cyclops Python backend is running at `http://127.0.0.1:8000`, **New fake profile** asks `POST /generate-persona` for a name, age and interests (no data is sent). Location, timezone, device and income still come from a built-in archetype so the spoofed identity stays consistent. If the backend is down or returns something unusable, the built-in personas are used. Override the URL by setting `apiBase` in extension storage. A `analyze` message (`POST /analyze-website`) is also available to the extension backend; no UI uses it yet.

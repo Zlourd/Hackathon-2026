@@ -1,4 +1,5 @@
-import { buildPersona } from './persona.js';
+import { buildPersona, personaOverridesFromApi } from './persona.js';
+import { cyclopsApi } from './api.js';
 import { SEARCH_ENGINES } from './data.js';
 import { injectedSpoof } from './inject.js';
 
@@ -137,13 +138,20 @@ async function handle(msg) {
     }
     case 'mask': await set({ mask: !!msg.value }); await syncRules(); return get();
     case 'reroll': {
-      const persona = buildPersona(undefined, st.persona?.id);
+      // Try the local Gemini backend first; fall back to the built-in archetypes silently.
+      let ai = null;
+      try { ai = personaOverridesFromApi(await cyclopsApi.generatePersona()); } catch (e) { console.debug('Mirage: backend persona unavailable', e.message); }
+      const persona = buildPersona(undefined, st.persona?.id, ai);
       await set({ persona, log: [], sites: {}, burstLeft: st.enabled ? BURST : 0 });
       await syncRules();
       if (st.enabled) tick();
       return get();
     }
     case 'reset': await set({ log: [], sites: {}, burstLeft: st.enabled ? BURST : 0 }); if (st.enabled) tick(); return get();
+    case 'analyze': {
+      try { return { ok: true, result: await cyclopsApi.analyzeWebsite(String(msg.url || '')) }; }
+      catch (e) { return { ok: false, error: e.message }; }
+    }
     case 'burst': await set({ burstLeft: BURST }); if (st.enabled) tick(); return get();
   }
 }
