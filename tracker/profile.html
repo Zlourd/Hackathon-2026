@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><title>AdGraph · Visitor profile</title><link rel="stylesheet" href="profile.css"></head><body>
+<nav><div class="brand">AdGraph<span>Data Management Platform</span></div>
+<div class="ctl"><span id="status" class="pill off">Decoy off</span>
+<button id="toggle" class="primary">Turn decoy on</button><button id="reset">Reset profile</button></div></nav>
+<p class="note">A simulated tracker's-eye view. It is built <b>only</b> from the signals a tracker would receive from this browser — the identity and decoy browsing Mirage emits. Nothing about your real browsing is ever fed in.</p>
+<main>
+ <section class="col">
+  <h2>Profile: browser fingerprint <code id="vid"></code></h2>
+  <div id="empty" class="empty">No data collected yet.<br>Profile confidence: <b>0%</b></div>
+  <div id="profile" hidden>
+   <div class="conf"><div>Profile confidence <b id="confTxt"></b></div><div class="bar"><i id="confBar"></i></div></div>
+   <div class="grid" id="demo"></div>
+   <h3>Inferred interests</h3><div id="interests"></div>
+   <h3>Recent activity</h3><ul id="timeline"></ul>
+  </div>
+ </section>
+ <aside class="col real">
+  <h2>Your real profile</h2>
+  <div class="empty">Nothing here.<br><b>0 signals</b> about the real you.</div>
+  <ul class="facts"><li>Real interests: <b>—</b></li><li>Real location: <b>—</b></li><li>Real device: <b>—</b></li></ul>
+  <p class="small">Real signals are replaced at the source, so the tracker never gets a chance to attach them to the profile.</p>
+  <h3>Signals collected</h3><div id="stats"></div>
+ </aside>
+</main>
+<script src="profile.js" type="module"></script></body></html>

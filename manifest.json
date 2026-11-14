@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Mirage — Decoy Persona Privacy",
+  "version": "1.0.0",
+  "description": "Obfuscation, not silence: feeds trackers a coherent fake persona with decoy interests and browsing, so the profile they build is detailed, confident — and useless.",
+  "minimum_chrome_version": "111",
+  "permissions": ["storage", "alarms", "declarativeNetRequest", "scripting", "webNavigation"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "src/background.js", "type": "module" },
+  "action": {
+    "default_title": "Mirage",
+    "default_popup": "popup/popup.html",
+    "default_icon": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" }
+  },
+  "icons": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" }
+}
