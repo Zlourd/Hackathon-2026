@@ -63,3 +63,6 @@ button.primary{color:#1a0f06}
 .count{color:#1a0f06}
 .logo,.sw:after{color:#1a0f06}
 .brand{background:linear-gradient(180deg,#f6dfb8,#c8793a);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.coin{width:104px;height:104px;margin:-18px 0}
+nav{padding-top:18px;padding-bottom:18px}
