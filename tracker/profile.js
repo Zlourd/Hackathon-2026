@@ -18,9 +18,9 @@ function renderPersona(p) {
   const c = country(p.city);
   $('persona').innerHTML = `
     <div class="flag" title="${esc(c)}">${FLAGS[c] || '🌐'}</div>
-    <div><div class="loc">${esc(p.city)}</div></div>
+    <div><div class="loc">${esc(p.name)}</div></div>
     <div class="facts">
-      <div class="fact"><small>Name</small><b>${esc(p.name)}</b></div>
+      <div class="fact"><small>Location</small><b>${esc(p.city)}</b></div>
       <div class="fact"><small>Age</small><b>${p.age}</b></div>
       <div class="fact"><small>Occupation</small><b>${esc(p.occupation)}</b></div>
       <div class="fact"><small>Income</small><b>${esc(p.income)}</b></div>
