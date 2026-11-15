@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Odyssey — "Nobody"</title>
+  <style>
+    :root {
+      --bg: #07080c;
+      --gold: #d4a857;
+      --gold-dim: #7c6030;
+      --text: #e8dec8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #141620 0%, #050609 100%);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    .theater-frame {
+      width: 100%;
+      max-width: 1120px;
+      background: #0b0c12;
+      border: 2px solid var(--gold-dim);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.85), 0 0 40px rgba(255, 100, 30, 0.08);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .greek-border {
+      height: 14px;
+      background-color: #12100e;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14' viewBox='0 0 28 14'%3E%3Cpath d='M0 12h24V2H8v6h10V5h-4' fill='none' stroke='%239b783b' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      opacity: 0.75;
+    }
+
+    .stage-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #06070a;
+      overflow: hidden;
+    }
+
+    #camera-rig {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+    }
+
+    svg#scene {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    canvas#particles {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse at center,
+        transparent 52%,
+        rgba(3, 4, 7, 0.55) 82%,
+        rgba(2, 3, 5, 0.9) 100%
+      );
+    }
+
+    .caption-bar {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(8, 9, 14, 0.72);
+      border: 1px solid rgba(212, 168, 87, 0.25);
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-size: clamp(11px, 1.4vw, 15px);
+      letter-spacing: 0.06em;
+      color: #dfd2b5;
+      pointer-events: none;
+      text-shadow: 0 2px 6px #000;
+      white-space: nowrap;
+    }
+
+    .hud {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 18px;
+      background: #0c0d13;
+      border-top: 1px solid rgba(212, 168, 87, 0.22);
+    }
+
+    .title-block h1 {
+      font-size: 16px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: normal;
+    }
+
+    .title-block p {
+      font-size: 12px;
+      color: #8f887a;
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
+      background: #171923;
+      color: var(--text);
+      border: 1px solid var(--gold-dim);
+      padding: 7px 14px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      background: #232635;
+      border-color: var(--gold);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    button.active {
+      background: rgba(212, 168, 87, 0.18);
+      border-color: var(--gold);
+      color: #ffe3a8;
+    }
+  </style>
+</head>
+<body>
+  <div class="theater-frame">
+    <div class="greek-border"></div>
+
+    <div class="stage-wrapper">
+      <div id="camera-rig">
+        <svg id="scene" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="caveGlow" cx="38%" cy="68%" r="60%">
+              <stop offset="0%" stop-color="#4e200d" stop-opacity="0.9" />
+              <stop offset="35%" stop-color="#211214" stop-opacity="0.95" />
+              <stop offset="75%" stop-color="#0d0e16" />
+              <stop offset="100%" stop-color="#050609" />
+            </radialGradient>
+
+            <linearGradient id="moonSliver" x1="0%" y1="30%" x2="100%" y2="85%">
+              <stop offset="0%" stop-color="#9cc6ff" stop-opacity="0.45" />
+              <stop offset="45%" stop-color="#4c78b8" stop-opacity="0.14" />
+              <stop offset="100%" stop-color="#22375a" stop-opacity="0" />
+            </linearGradient>
+
+            <radialGradient id="fireCore" cx="50%" cy="65%" r="50%">
+              <stop offset="0%" stop-color="#fff4b8" stop-opacity="0.95" />
+              <stop offset="30%" stop-color="#ff8c24" stop-opacity="0.7" />
+              <stop offset="65%" stop-color="#c9360c" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="#c9360c" stop-opacity="0" />
+            </radialGradient>
+
+            <!-- Corrected direction: bright at the Cyclops's eye (100% X), fading outward (0% X) -->
+            <linearGradient id="eyeBeamGrad" x1="100%" y1="50%" x2="0%" y2="50%">
+              <stop offset="0%" stop-color="#ff6a1a" stop-opacity="0.58" />
+              <stop offset="45%" stop-color="#ff3b0a" stop-opacity="0.22" />
+              <stop offset="100%" stop-color="#ff2200" stop-opacity="0" />
+            </linearGradient>
+
+            <radialGradient id="cyclopsEyeGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff5cc" />
+              <stop offset="35%" stop-color="#ff8c1a" />
+              <stop offset="70%" stop-color="#b31d00" stop-opacity="0.75" />
+              <stop offset="100%" stop-color="#b31d00" stop-opacity="0" />
+            </radialGradient>
+
+            <linearGradient id="floorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#171319" />
+              <stop offset="100%" stop-color="#06070a" />
+            </linearGradient>
+
+            <linearGradient id="odysseusRockGrad" x1="100%" y1="0%" x2="20%" y2="100%">
+              <stop offset="0%" stop-color="#3a2016" />
+              <stop offset="22%" stop-color="#151218" />
+              <stop offset="100%" stop-color="#050608" />
+            </linearGradient>
+          </defs>
+
+          <!-- 1. Deep Cavern Backdrop -->
+          <rect width="1280" height="720" fill="url(#caveGlow)" />
+
+          <!-- Stalactites & Cavern Ceiling -->
+          <path d="M0,0 L1280,0 L1280,250 Q1180,210 1130,115 Q1070,220 1010,145 Q930,275 880,120 Q800,230 730,105 Q640,210 560,115 Q480,245 410,110 Q320,210 240,125 Q140,260 65,140 L0,210 Z"
+                fill="#090a10" opacity="0.92" />
+
+          <path d="M350,150 Q520,290 480,530 L850,530 Q810,320 960,170 Z" fill="#130f14" opacity="0.55" />
+
+          <!-- 2. Blocked Cave Mouth & Moonlight -->
+          <g id="cave-entrance">
+            <ellipse cx="105" cy="400" rx="85" ry="165" fill="#1b2d4d" opacity="0.65" />
+            <polygon points="145,255 185,335 760,640 310,670 115,435" fill="url(#moonSliver)" />
+            <path d="M10,545 C-10,410 35,270 125,250 C190,235 215,345 205,465 C195,550 130,570 10,545 Z"
+                  fill="#0b0e17" stroke="#3c5882" stroke-opacity="0.28" stroke-width="2" />
+          </g>
+
+          <!-- 3. Cavern Floor -->
+          <path d="M0,535 Q320,515 640,530 Q980,545 1280,515 L1280,720 L0,720 Z" fill="url(#floorGrad)" />
+
+          <!-- 4. Campfire -->
+          <ellipse id="fire-floor-glow" cx="470" cy="560" rx="260" ry="62" fill="url(#fireCore)" opacity="0.55" />
+          <g id="campfire" transform="translate(470, 548)">
+            <ellipse cx="-32" cy="8" rx="14" ry="8" fill="#181214" />
+            <ellipse cx="32" cy="9" rx="15" ry="8" fill="#141013" />
+            <ellipse cx="0" cy="12" rx="18" ry="8" fill="#100d10" />
+            <rect x="-34" y="-3" width="68" height="9" rx="4" transform="rotate(-12)" fill="#24130c" />
+            <rect x="-32" y="-2" width="64" height="9" rx="4" transform="rotate(14)" fill="#1c0f0a" />
+            <g id="flames">
+              <path d="M-22,4 Q-26,-30 -4,-48 Q6,-22 18,-36 Q28,-10 18,6 Z" fill="#d9440b" />
+              <path d="M-13,4 Q-15,-22 -2,-36 Q8,-16 12,-24 Q18,-5 10,5 Z" fill="#ff8c1a" />
+              <path d="M-6,4 Q-5,-14 0,-22 Q7,-10 6,4 Z" fill="#fff0a6" />
+            </g>
+          </g>
+
+          <!-- 5. Giant Sheep Flock -->
+          <g id="sheep-flock">
+            <g id="sheep-1" transform="translate(290, 520)">
+              <ellipse cx="0" cy="0" rx="46" ry="28" fill="#1b1c24" />
+              <circle cx="-26" cy="-10" r="18" fill="#20212b" />
+              <circle cx="0" cy="-14" r="22" fill="#23242f" />
+              <circle cx="24" cy="-8" r="17" fill="#1e1f29" />
+              <rect x="-24" y="16" width="6" height="24" rx="2" fill="#101116" />
+              <rect x="18" y="16" width="6" height="24" rx="2" fill="#101116" />
+              <g id="sheep-1-head" transform="translate(42, -8)">
+                <ellipse cx="10" cy="2" rx="14" ry="10" fill="#16171d" />
+                <path d="M2,-6 C-12,-14 -14,6 -2,8" fill="none" stroke="#3c3730" stroke-width="4" stroke-linecap="round" />
+                <circle cx="15" cy="0" r="1.8" fill="#8292b0" />
+              </g>
+            </g>
+
+            <g transform="translate(650, 545)">
+              <ellipse cx="0" cy="0" rx="42" ry="22" fill="#161318" />
+              <circle cx="-18" cy="-8" r="16" fill="#1a171c" />
+              <circle cx="12" cy="-10" r="18" fill="#1c181d" />
+              <ellipse cx="-40" cy="2" rx="12" ry="8" fill="#121014" />
+              <path d="M-34,-4 C-22,-12 -22,6 -32,7" fill="none" stroke="#362c26" stroke-width="3.5" stroke-linecap="round" />
+            </g>
+          </g>
+
+          <!-- 6. POLYPHEMUS THE CYCLOPS -->
+          <g id="cyclops-rig" transform="translate(860, 125)">
+            <ellipse cx="110" cy="465" rx="115" ry="22" fill="#030306" opacity="0.75" />
+
+            <g id="cyclops-body">
+              <path id="cy-leg-back" d="M60,300 L42,455 L78,458 L98,315 Z" fill="#100d12" />
+              <path id="cy-leg-front" d="M125,305 L145,462 L188,462 L168,300 Z" fill="#171217" />
+
+              <g id="cy-club" transform="translate(22, 225) rotate(12)">
+                <path d="M0,0 L-16,175 Q-18,195 -4,198 Q12,196 14,175 L8,0 Z" fill="#140e0c" stroke="#422214" stroke-opacity="0.4" stroke-width="2" />
+              </g>
+
+              <path d="M40,145 C10,175 15,275 45,320 L175,320 C215,260 220,165 170,120 C130,90 70,105 40,145 Z"
+                    fill="#161116" stroke="#ff6c24" stroke-opacity="0.22" stroke-width="2.5" />
+
+              <path d="M42,275 Q110,305 182,270 L190,335 L155,320 L130,342 L95,318 L60,340 L38,315 Z" fill="#0d0a0e" />
+              <path d="M168,145 C215,175 225,245 205,295 L182,290 C192,248 188,195 155,168 Z" fill="#191318" />
+              <path d="M48,142 C10,175 8,215 24,242 L44,234 C35,212 36,184 62,162 Z" fill="#130f14" />
+
+              <!-- Head, Brow, Mouth & Glowing Eye -->
+              <g id="cyclops-head" transform="translate(88, 108)">
+                <path d="M-38,-22 C-52,-65 -10,-92 32,-80 C68,-68 72,-20 56,12 C45,35 12,55 -18,45 C-45,36 -48,2 -38,-22 Z"
+                      fill="#120d11" />
+                <path d="M-34,-28 C-40,-58 -8,-72 22,-58 C42,-48 44,-8 32,14 C18,32 -18,28 -32,10 C-42,-2 -38,-14 -34,-28 Z"
+                      fill="#1e161b" stroke="#ff732b" stroke-opacity="0.28" stroke-width="2" />
+                <path d="M-36,-25 Q-18,-38 2,-26" fill="none" stroke="#09070a" stroke-width="8" stroke-linecap="round" />
+
+                <!-- Cyclops Mouth (opens when shouting) -->
+                <ellipse id="cy-mouth" cx="-22" cy="14" rx="11" ry="2.5" fill="#090203" stroke="#52261c" stroke-width="1" />
+
+                <!-- Single Glowing Eye -->
+                <g id="cyclops-eye" transform="translate(-16, -15)">
+                  <polygon id="eye-beam" points="0,0 -680,-115 -680,155" fill="url(#eyeBeamGrad)" opacity="0.0" />
+                  <circle cx="0" cy="0" r="24" fill="url(#cyclopsEyeGlow)" opacity="0.85" />
+                  <ellipse cx="0" cy="0" rx="11" ry="8" fill="#ffb84d" />
+                  <ellipse cx="-2" cy="0" rx="3.2" ry="6.5" fill="#2b0400" />
+                  <circle cx="-4" cy="-3" r="1.8" fill="#ffffff" opacity="0.9" />
+                </g>
+              </g>
+            </g>
+          </g>
+
+          <!-- 7. ODYSSEUS HIDING -->
+          <g id="odysseus-group" transform="translate(310, 488)">
+            <g id="odysseus-rig" transform="translate(0, 0)">
+              <path d="M-24,42 C-38,55 -48,95 -46,130 L34,130 C32,90 22,55 8,42 Z"
+                    fill="#3a1012" stroke="#9e331f" stroke-opacity="0.35" stroke-width="1.5" />
+              <path d="M-12,42 Q6,32 22,46 L16,66 Q0,64 -14,56 Z"
+                    fill="#2b1e14" stroke="#d9873b" stroke-opacity="0.5" stroke-width="1.5" />
+
+              <g transform="translate(22, 66) rotate(-18)">
+                <rect x="-3" y="-14" width="6" height="22" rx="2" fill="#4f371e" />
+                <rect x="-10" y="6" width="20" height="4" rx="2" fill="#b8843c" />
+                <circle cx="0" cy="-16" r="4.5" fill="#b8843c" />
+              </g>
+
+              <g id="odysseus-head" transform="translate(4, 18)">
+                <path d="M-4,-34 C-26,-48 -46,-30 -44,-2 C-34,-12 -24,-20 -10,-20 Z"
+                      fill="#5c1618" stroke="#c94b2c" stroke-opacity="0.45" stroke-width="1.2" />
+                <path d="M-18,12 C-22,-18 -2,-32 18,-22 C28,-16 30,2 24,18 L12,18 L10,2 L-2,2 L-2,20 L-18,18 Z"
+                      fill="#261b12" stroke="#e09443" stroke-opacity="0.55" stroke-width="1.8" />
+                <ellipse cx="14" cy="-3" rx="3.2" ry="1.8" fill="#ffe6b3" opacity="0.9" />
+                <circle cx="15" cy="-3" r="1.2" fill="#110d0b" />
+              </g>
+            </g>
+
+            <!-- Foreground Boulder -->
+            <path d="M-115,148 L-82,78 L-45,62 L-8,36 L44,50 L85,84 L125,148 L125,245 L-145,245 Z"
+                  fill="url(#odysseusRockGrad)" stroke="#ff7a33" stroke-opacity="0.22" stroke-width="2" />
+          </g>
+
+          <!-- 8. Foreground Silhouettes -->
+          <path d="M0,450 L95,525 L165,720 L0,720 Z" fill="#040508" />
+          <path d="M1280,290 L1185,485 L1120,720 L1280,720 Z" fill="#040508" />
+          <path d="M0,0 L210,0 L90,95 L0,130 Z" fill="#040508" />
+          <path d="M1040,0 L1280,0 L1280,175 L1160,92 Z" fill="#040508" />
+
+          <!-- 9. DIALOGUE SPEECH BUBBLES -->
+          <!-- Cyclops Booming Shout: "WHO IS THERE?!" -->
+          <g id="cyclops-bubble" transform="translate(560, 155)" opacity="0">
+            <path d="M-140,-38 L-100,-48 L-45,-40 L0,-50 L55,-40 L105,-48 L135,-32 L125,0 L140,28 L100,36 L142,66 L72,38 L10,46 L-55,38 L-120,44 L-145,15 L-132,-12 Z"
+                  fill="#1a0908" stroke="#ff5e1a" stroke-width="2.5" />
+            <text x="-4" y="8" text-anchor="middle" fill="#ffd9b3" font-family="Georgia, serif" font-size="27" font-weight="bold" letter-spacing="2">
+              WHO IS THERE?!
+            </text>
+          </g>
+
+          <!-- Odysseus Clever Reply: "...Nobody." -->
+          <g id="odysseus-bubble" transform="translate(310, 412)" opacity="0">
+            <rect x="-105" y="-32" width="210" height="58" rx="14" fill="#0f121c" stroke="#d4a857" stroke-width="2" />
+            <polygon points="-12,26 12,26 -4,48" fill="#0f121c" stroke="#d4a857" stroke-width="2" />
+            <line x1="-10" y1="26" x2="10" y2="26" stroke="#0f121c" stroke-width="4" />
+            <text x="0" y="5" text-anchor="middle" fill="#f3e6c8" font-family="Georgia, serif" font-size="24" font-style="italic" letter-spacing="1.5">
+              "...Nobody."
+            </text>
+          </g>
+        </svg>
+
+        <canvas id="particles" width="1280" height="720"></canvas>
+      </div>
+
+      <div class="vignette"></div>
+      <div id="caption" class="caption-bar">Keep low in the shadows...</div>
+    </div>
+
+    <div class="greek-border"></div>
+
+    <div class="hud">
+      <div class="title-block">
+        <h1>The Odyssey &mdash; "Nobody"</h1>
+        <p>"Who is there?" &bull; Book IX</p>
+      </div>
+      <div class="controls">
+        <button id="btn-play" class="active">Pause</button>
+        <button id="btn-sound">Sound: Off</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const cameraRig = document.getElementById("camera-rig");
+      const cyclopsRig = document.getElementById("cyclops-rig");
+      const cyclopsBody = document.getElementById("cyclops-body");
+      const cyclopsHead = document.getElementById("cyclops-head");
+      const cyLegFront = document.getElementById("cy-leg-front");
+      const cyLegBack = document.getElementById("cy-leg-back");
+      const cyClub = document.getElementById("cy-club");
+      const cyMouth = document.getElementById("cy-mouth");
+      const eyeBeam = document.getElementById("eye-beam");
+      const odysseusRig = document.getElementById("odysseus-rig");
+      const odysseusHead = document.getElementById("odysseus-head");
+      const flames = document.getElementById("flames");
+      const fireFloorGlow = document.getElementById("fire-floor-glow");
+      const sheepHead = document.getElementById("sheep-1-head");
+      const cyclopsBubble = document.getElementById("cyclops-bubble");
+      const odysseusBubble = document.getElementById("odysseus-bubble");
+      const captionEl = document.getElementById("caption");
+
+      const btnPlay = document.getElementById("btn-play");
+      const btnSound = document.getElementById("btn-sound");
+
+      const canvas = document.getElementById("particles");
+      const ctx = canvas.getContext("2d");
+
+      // --- State ---
+      const LOOP_DURATION = 15.0;
+      let isPlaying = true;
+      let simTime = 0;
+      let lastFrame = performance.now();
+      let shakeIntensity = 0;
+      let lastStepBucket = -1;
+      let didCyclopsSpeak = false;
+      let didOdysseusSpeak = false;
+
+      // --- Particles ---
+      const embers = [];
+      const dust = [];
+
+      function spawnEmber() {
+        embers.push({
+          x: 455 + (Math.random() - 0.5) * 38,
+          y: 540 + (Math.random() - 0.5) * 10,
+          vx: (Math.random() - 0.5) * 18,
+          vy: -30 - Math.random() * 55,
+          life: 0,
+          maxLife: 1.6 + Math.random() * 2.2,
+          size: 1.2 + Math.random() * 2.4
+        });
+      }
+
+      function spawnCaveDustBurst(count = 18) {
+        for (let i = 0; i < count; i++) {
+          dust.push({
+            x: 160 + Math.random() * 980,
+            y: 40 + Math.random() * 140,
+            vx: (Math.random() - 0.5) * 10,
+            vy: 35 + Math.random() * 85,
+            life: 0,
+            maxLife: 1.5 + Math.random() * 1.5,
+            size: 1 + Math.random() * 2.2
+          });
+        }
+      }
+
+      // --- Procedural Audio ---
+      let audioCtx = null;
+      let soundEnabled = false;
+      let masterGain = null;
+
+      function initAudio() {
+        if (audioCtx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0.45;
+        masterGain.connect(audioCtx.destination);
+
+        const bufferSize = audioCtx.sampleRate * 2;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + 0.02 * white) / 1.02;
+          lastOut = output[i];
+          output[i] *= 3.0;
+        }
+
+        const caveNoise = audioCtx.createBufferSource();
+        caveNoise.buffer = noiseBuffer;
+        caveNoise.loop = true;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = 135;
+
+        const droneGain = audioCtx.createGain();
+        droneGain.gain.value = 0.25;
+
+        caveNoise.connect(filter);
+        filter.connect(droneGain);
+        droneGain.connect(masterGain);
+        caveNoise.start();
+      }
+
+      function playFootstepSound(strength = 1) {
+        if (!soundEnabled || !audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(75, now);
+        osc.frequency.exponentialRampToValueAtTime(26, now + 0.35);
+
+        gain.gain.setValueAtTime(0.45 * strength, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      }
+
+      // Deep booming monster growl when Cyclops asks "Who is there?!"
+      function playCyclopsRoar() {
+        if (!soundEnabled || !audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(92, now);
+        osc.frequency.linearRampToValueAtTime(68, now + 0.35);
+        osc.frequency.linearRampToValueAtTime(105, now + 0.75);
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(340, now);
+        filter.frequency.exponentialRampToValueAtTime(140, now + 0.9);
+
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.32, now + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.95);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(masterGain);
+        osc.start(now);
+        osc.stop(now + 1.0);
+      }
+
+      // Quiet, tense ancient-lyre chime when Odysseus replies "...Nobody."
+      function playOdysseusCue() {
+        if (!soundEnabled || !audioCtx) return;
+        const now = audioCtx.currentTime;
+        [293.66, 220.0].forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const t0 = now + idx * 0.16;
+
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, t0);
+          gain.gain.setValueAtTime(0.001, t0);
+          gain.gain.linearRampToValueAtTime(0.14, t0 + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.8);
+
+          osc.connect(gain);
+          gain.connect(masterGain);
+          osc.start(t0);
+          osc.stop(t0 + 0.85);
+        });
+      }
+
+      btnSound.addEventListener("click", () => {
+        if (!audioCtx) initAudio();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        soundEnabled = !soundEnabled;
+        btnSound.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
+        btnSound.classList.toggle("active", soundEnabled);
+        if (masterGain) {
+          masterGain.gain.setTargetAtTime(soundEnabled ? 0.45 : 0.0, audioCtx.currentTime, 0.08);
+        }
+      });
+
+      btnPlay.addEventListener("click", () => {
+        isPlaying = !isPlaying;
+        btnPlay.textContent = isPlaying ? "Pause" : "Play";
+        btnPlay.classList.toggle("active", isPlaying);
+      });
+
+      // --- Helpers ---
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+      }
+
+      function smoothstep(edge0, edge1, x) {
+        const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+        return t * t * (3 - 2 * t);
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function triggerFootstep(strength = 1) {
+        shakeIntensity = Math.max(shakeIntensity, 9 * strength);
+        spawnCaveDustBurst(Math.round(14 * strength));
+        playFootstepSound(strength);
+      }
+
+      // --- Main Animation Loop ---
+      function update(now) {
+        const dt = Math.min((now - lastFrame) / 1000, 0.05);
+        lastFrame = now;
+
+        if (isPlaying) {
+          const prevTime = simTime;
+          simTime = (simTime + dt) % LOOP_DURATION;
+          if (simTime < prevTime) {
+            lastStepBucket = -1;
+            didCyclopsSpeak = false;
+            didOdysseusSpeak = false;
+          }
+          updateParticles(dt);
+        }
+
+        const t = simTime; // 0 -> 15s
+
+        // 1. Campfire flicker
+        const flicker =
+          1 +
+          Math.sin(t * 17.3) * 0.06 +
+          Math.cos(t * 29.1) * 0.05 +
+          Math.sin(t * 7.7) * 0.04;
+        flames.setAttribute("transform", `scale(${1 + (flicker - 1) * 0.4}, ${flicker})`);
+        fireFloorGlow.setAttribute("opacity", (0.48 + (flicker - 1) * 0.6).toFixed(2));
+
+        // 2. Cyclops Choreography (15s loop)
+        // 0.0 - 3.6s : Stomps in from right shadow
+        // 3.6 - 5.0s : Leans in, eye beam sweeps across cave
+        // 5.0 - 7.6s : Shouts "WHO IS THERE?!"
+        // 7.6 - 10.4s: Odysseus answers "...Nobody."
+        // 10.4 - 11.6s: Cyclops tilts head confused, eye beam fades
+        // 11.6 - 14.4s: Stomps back into cave shadows
+        // 14.4 - 15.0s: Brief stillness before seamless loop
+
+        let cyX = 1080;
+        let walkAmt = 0;
+        let headTilt = 0;
+        let beamOpacity = 0;
+        let beamAngle = -14;
+        let facingFlip = 1;
+        let mouthOpen = 2.2;
+
+        if (t < 3.6) {
+          const p = smoothstep(0.2, 3.5, t);
+          cyX = lerp(1080, 700, p);
+          walkAmt = Math.sin((t - 0.2) * 5.2);
+          const stepBucket = Math.floor((t - 0.2) / 0.85);
+          if (t > 0.5 && stepBucket !== lastStepBucket) {
+            lastStepBucket = stepBucket;
+            triggerFootstep(0.75 + p * 0.35);
+          }
+        } else if (t < 11.6) {
+          cyX = 700;
+          const leanIn = smoothstep(3.6, 4.5, t) * (1 - smoothstep(10.3, 11.4, t));
+          // Confused upward tilt around 10.4 - 11.4s
+          const confusedTilt = smoothstep(10.2, 10.8, t) * (1 - smoothstep(11.1, 11.6, t));
+          headTilt = lerp(0, -14, leanIn) + confusedTilt * 16;
+
+          beamOpacity = smoothstep(4.0, 4.6, t) * (1 - smoothstep(10.4, 11.2, t)) * 0.9;
+          const sweep = smoothstep(4.2, 5.2, t);
+          beamAngle = lerp(-6, -21, sweep);
+
+          // Cyclops shouts "WHO IS THERE?!" (5.0 - 7.6s)
+          if (t >= 5.0 && t <= 7.6) {
+            if (!didCyclopsSpeak && isPlaying) {
+              didCyclopsSpeak = true;
+              shakeIntensity = Math.max(shakeIntensity, 7.5);
+              playCyclopsRoar();
+            }
+            mouthOpen = 3 + Math.abs(Math.sin((t - 5.0) * 14)) * 7;
+          }
+        } else if (t < 14.4) {
+          const p = smoothstep(11.6, 14.3, t);
+          cyX = lerp(700, 1080, p);
+          facingFlip = -1;
+          walkAmt = Math.sin((t - 11.6) * 5.0);
+          const stepBucket = 10 + Math.floor((t - 11.6) / 0.85);
+          if (stepBucket !== lastStepBucket) {
+            lastStepBucket = stepBucket;
+            triggerFootstep(1.0 - p * 0.55);
+          }
+        } else {
+          cyX = 1080;
+        }
+
+        const bobY = Math.abs(walkAmt) * -14;
+        cyclopsRig.setAttribute("transform", `translate(${cyX.toFixed(1)}, ${(125 + bobY).toFixed(1)})`);
+        cyclopsBody.setAttribute(
+          "transform",
+          facingFlip === -1 ? `translate(220, 0) scale(-1, 1)` : `scale(1, 1)`
+        );
+
+        cyLegFront.setAttribute("transform", `rotate(${(walkAmt * 11).toFixed(1)}, 145, 305)`);
+        cyLegBack.setAttribute("transform", `rotate(${(-walkAmt * 11).toFixed(1)}, 80, 305)`);
+        cyClub.setAttribute("transform", `translate(22, 225) rotate(${(12 + walkAmt * 8).toFixed(1)})`);
+        cyMouth.setAttribute("ry", mouthOpen.toFixed(1));
+
+        cyclopsHead.setAttribute("transform", `translate(88, 108) rotate(${headTilt.toFixed(1)})`);
+        eyeBeam.setAttribute("opacity", beamOpacity.toFixed(2));
+        eyeBeam.setAttribute("transform", `rotate(${beamAngle.toFixed(1)})`);
+
+        // 3. Dialogue Bubbles
+        const cyBubbleAlpha = smoothstep(4.95, 5.2, t) * (1 - smoothstep(7.2, 7.6, t));
+        const cyJitterX = cyBubbleAlpha > 0.1 && t < 6.4 ? (Math.random() - 0.5) * 3 : 0;
+        const cyJitterY = cyBubbleAlpha > 0.1 && t < 6.4 ? (Math.random() - 0.5) * 3 : 0;
+        cyclopsBubble.setAttribute("opacity", cyBubbleAlpha.toFixed(2));
+        cyclopsBubble.setAttribute("transform", `translate(${(560 + cyJitterX).toFixed(1)}, ${(155 + cyJitterY).toFixed(1)})`);
+
+        if (t >= 7.7 && !didOdysseusSpeak && isPlaying) {
+          didOdysseusSpeak = true;
+          playOdysseusCue();
+        }
+        const odyBubbleAlpha = smoothstep(7.65, 7.95, t) * (1 - smoothstep(10.0, 10.45, t));
+        const odyFloatY = lerp(420, 408, smoothstep(7.65, 10.4, t));
+        odysseusBubble.setAttribute("opacity", odyBubbleAlpha.toFixed(2));
+        odysseusBubble.setAttribute("transform", `translate(310, ${odyFloatY.toFixed(1)})`);
+
+        // 4. Odysseus Hiding & Peeking Choreography
+        let peekAmount = 1;
+        if (t < 1.2) {
+          peekAmount = 1 - smoothstep(0.4, 1.1, t);
+        } else if (t < 7.4) {
+          peekAmount = 0; // fully tucked behind boulder
+        } else if (t < 10.6) {
+          // Peeks just his eyes over the boulder ridge to whisper "...Nobody."
+          peekAmount = smoothstep(7.4, 7.9, t) * (1 - smoothstep(10.1, 10.55, t)) * 0.62;
+        } else if (t < 13.0) {
+          peekAmount = 0; // stays low until Cyclops leaves
+        } else {
+          peekAmount = smoothstep(13.0, 14.1, t);
+        }
+
+        const odyY = lerp(64, 0, peekAmount);
+        const breath = Math.sin(t * 2.5) * 1.1;
+        odysseusRig.setAttribute("transform", `translate(0, ${(odyY + breath).toFixed(1)})`);
+        odysseusHead.setAttribute("transform", `translate(4, 18) rotate(${lerp(8, -4, peekAmount).toFixed(1)})`);
+
+        // 5. Sheep Alertness
+        const sheepAlert = smoothstep(5.0, 5.6, t) * (1 - smoothstep(9.5, 10.5, t));
+        sheepHead.setAttribute("transform", `translate(42, ${(-8 - sheepAlert * 6).toFixed(1)}) rotate(${(-sheepAlert * 12).toFixed(1)})`);
+
+        // 6. Subtitle Caption
+        if (t < 1.8) {
+          captionEl.textContent = "Heavy footsteps echo through the cavern...";
+        } else if (t < 4.8) {
+          captionEl.textContent = "Duck behind the boulder! Polyphemus approaches.";
+        } else if (t < 7.6) {
+          captionEl.textContent = 'Polyphemus bellows: "WHO IS THERE?!"';
+        } else if (t < 10.5) {
+          captionEl.textContent = 'Odysseus whispers from the shadows: "...Nobody."';
+        } else if (t < 12.2) {
+          captionEl.textContent = "Finding no one, the confused giant turns away...";
+        } else {
+          captionEl.textContent = "Outwitted by a single word.";
+        }
+
+        // 7. Camera Footstep Shake
+        if (isPlaying && shakeIntensity > 0.1) {
+          const sx = (Math.random() - 0.5) * shakeIntensity * 0.9;
+          const sy = (Math.random() - 0.5) * shakeIntensity * 1.4;
+          cameraRig.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)`;
+          shakeIntensity *= Math.pow(0.015, dt);
+        } else {
+          cameraRig.style.transform = "translate(0px, 0px)";
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      function updateParticles(dt) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (Math.random() < 0.45) spawnEmber();
+
+        for (let i = embers.length - 1; i >= 0; i--) {
+          const p = embers[i];
+          p.life += dt;
+          if (p.life >= p.maxLife) {
+            embers.splice(i, 1);
+            continue;
+          }
+          p.x += (p.vx + Math.sin(p.life * 5) * 14) * dt;
+          p.y += p.vy * dt;
+
+          const alpha = 1 - p.life / p.maxLife;
+          ctx.fillStyle = `rgba(255, ${Math.floor(110 + alpha * 120)}, 30, ${alpha.toFixed(2)})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * (0.5 + 0.5 * alpha), 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        for (let i = dust.length - 1; i >= 0; i--) {
+          const d = dust[i];
+          d.life += dt;
+          if (d.life >= d.maxLife) {
+            dust.splice(i, 1);
+            continue;
+          }
+          d.x += d.vx * dt;
+          d.y += d.vy * dt;
+
+          const alpha = (1 - d.life / d.maxLife) * 0.45;
+          ctx.fillStyle = `rgba(185, 175, 165, ${alpha.toFixed(2)})`;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      requestAnimationFrame(update);
+    })();
+  </script>
+</body>
+</html>
