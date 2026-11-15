@@ -31,8 +31,8 @@ If the Cyclops Python backend is running at `http://127.0.0.1:8000`, **New fake 
 ## Polyphemus (decoy data-broker demo)
 `polyphemus/` is a mock data-broker platform that is always dark. Click the coin logo in the Odysseus page (the page fades to black, then Polyphemus fades in; the coin there fades back; Back also works): it opens inside the extension (`polyphemus/viewer.html`) with no server, no internet and no file-access permission needed. The extension feeds it the decoy persona and decoy browsing events (never real browsing).
 
-- **What You Could Have Lost** lists every decoy profile Odysseus has generated (stored in extension storage, newest 100). Pick a lot to see its profile, taxonomy, captured beacons and a 1-minute auction with fictional bidders. **Clear past profiles** keeps only the live one.
-- **Live Data Auction** lists the same profiles as a simulated stock-style market. One symbol per profile (`TRIB.PT` = **T**iago **RIB**eiro, Portugal) with a flag next to the name, the country's development tier, annual income, a live price, change, sparkline, a selected-profile panel (chart, bid/ask book, *sell 1 lot at bid*), a **Why this price** breakdown, a time-and-sales tape and a feed of the signals moving the market. Every new decoy search or visit from Odysseus raises that profile's certainty, so its price steps up. The board has exactly as many rows as there are stored profiles; click a column header to sort. Price history lives in the page, so reloading Polyphemus restarts the trading session.
+- **What You Could Have Lost** is a short educational guide (about a 5-minute read): how tech companies collect your data, how profiles are built, why it matters, how to protect yourself, where Odysseus fits (and what it cannot do), your legal rights and common myths. It is static text with jump links, and a button that opens the Live Data Auction tab.
+- **Live Data Auction** lists the same profiles as a simulated stock-style market. One symbol per profile (`TRIB.PT` = **T**iago **RIB**eiro, Portugal) with a flag next to the name, the country's development tier, annual income, a live price, change, sparkline, a selected-profile panel (chart, bid/ask book, *sell 1 lot at bid*), a **Why this price** breakdown, a time-and-sales tape and a feed of the signals moving the market. Every new decoy search or visit from Odysseus raises that profile's certainty, so its price steps up. The board has exactly as many rows as there are stored profiles (stored in extension storage, newest 100); click a column header to sort, or use **Clear past profiles** in the board header to keep only the live one. Price history lives in the page, so reloading Polyphemus restarts the trading session.
 
 ### How a profile's data is priced
 `fair value = $5.00 × income × development × area × interest × activity` (CPM, simulated; the live price wanders around it)
@@ -45,7 +45,7 @@ If the Cyclops Python backend is running at `http://127.0.0.1:8000`, **New fake 
 | Interest demand | ×1.30 for travel, shopping, technology, photography and automotive interests, else ×1.00 |
 | Signal activity | `0.90 + 0.30 × certainty`, so the price creeps up while the decoy is browsing |
 
-The opening bids on **What You Could Have Lost** use the same fair value. Constants live in `PRICE_MODEL` in `polyphemus/index.html`; each archetype's `cc`, `tier`, `areaAvg` and `incomeUSD` live in `src/data.js`.
+Constants live in `PRICE_MODEL` in `polyphemus/index.html`; each archetype's `cc`, `tier`, `areaAvg` and `incomeUSD` live in `src/data.js`.
 
 Light/dark mode is toggled on the Odysseus page (light by default); the extension popup follows it. Polyphemus does not.
 

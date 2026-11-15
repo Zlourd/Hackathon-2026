@@ -71,7 +71,7 @@
             <div class="flex flex-wrap items-center gap-2.5">
                 <!-- View Switcher -->
                 <div class="inline-flex rounded-xl bg-canvas border border-stroke p-1">
-                    <button id="tabSheepBtn" onclick="switchWorkspaceView('sheep')"
+                    <button id="tabGuideBtn" onclick="switchWorkspaceView('guide')"
                         class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white shadow transition cursor-pointer flex items-center gap-1.5">
                         <span>🔒 What You Could Have Lost</span>
                     </button>
@@ -87,167 +87,173 @@
 
 
     <!-- ===================================================================== -->
-    <!-- VIEW 2: "BUY MY SHEEP — FEED YOUR FLOCK" BUYER BIDDING EXCHANGE        -->
+    <!-- VIEW 1: WHAT YOU COULD HAVE LOST: a short guide to how data is collected and how to protect it -->
     <!-- ===================================================================== -->
-    <main id="sheepExchangeWorkspace" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
-        
-        <!-- Exchange Hero Header -->
-        <div class="bg-gradient-to-r from-panel via-panelLight to-panel border border-amber-500/30 rounded-2xl p-6 shadow-2xl flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold mb-2">
-                    <span>🔒 OMNISIGHT PRIVATE DATA EXCHANGE</span>
-                    <span>•</span>
-                    <span>LIVE PROGRAMMATIC AUCTION</span>
+    <main id="guideWorkspace" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- Intro -->
+        <div class="bg-panel border border-stroke rounded-2xl p-6 shadow-2xl">
+            <div class="gd-hero">
+                <div>
+                    <div class="flex flex-wrap gap-2"><span class="gd-tag">A SHORT GUIDE</span><span class="gd-tag">ABOUT A 5-MINUTE READ</span></div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-3">What You Could Have Lost</h2>
+                    <p class="text-sm text-slate-300 mt-1">Your data is vulnerable and up for grabs.</p>
+                    <p class="gd-lead">Most of what companies know about you, you never told them. It is gathered quietly as you browse, search, shop and move around, then packaged, traded and sold. Here is how it happens, and what you can do about it.</p>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                    What You Could Have Lost
-                </h2>
-                <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-                    Your data is vulnerable and up for grabs.
-                </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-3 shrink-0">
-                <button onclick="clearPastProfiles()"
-                    class="px-4 py-2.5 rounded-xl bg-canvas hover:bg-slate-800 border border-stroke text-slate-300 text-xs font-bold transition cursor-pointer">
-                    Clear past profiles
-                </button>
-            </div>
-        </div>
-
-        <!-- LIVE 1-MINUTE AUCTION COUNTDOWN BANNER (Appears when an offer is posted) -->
-        <div id="activeAuctionBanner" class="hidden bg-panel border-2 border-amber-400/70 rounded-2xl p-5 shadow-2xl shadow-amber-500/10">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-                        <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-300">
-                            LIVE AUCTION IN PROGRESS — AUTO-SELLS AT 00:00
-                        </span>
+                <nav class="gd-toc" aria-label="In this guide">
+                    <b>In this guide</b>
+                    <div>
+                        <button type="button" onclick="jumpTo('g1')"><i>1</i>How it is collected</button>
+                        <button type="button" onclick="jumpTo('g2')"><i>2</i>From clues to a profile</button>
+                        <button type="button" onclick="jumpTo('g3')"><i>3</i>Why it matters</button>
+                        <button type="button" onclick="jumpTo('g4')"><i>4</i>How to protect it</button>
+                        <button type="button" onclick="jumpTo('g5')"><i>5</i>Where Odysseus fits</button>
+                        <button type="button" onclick="jumpTo('g6')"><i>6</i>Your rights</button>
+                        <button type="button" onclick="jumpTo('g7')"><i>7</i>Myths</button>
                     </div>
-                    <h3 id="auctionLotTitle" class="text-lg font-extrabold text-white">
-                        FLOCK LOT #01 — Educator &amp; Creative Writer
-                    </h3>
-                    <p class="text-xs font-mono text-slate-300">
-                        Current Highest Bidder: <strong id="auctionHighestBidder" class="text-emerald-400">Your DSP Desk</strong> • Current Offer: <strong id="auctionHighestAmount" class="text-emerald-300">$18.40</strong>
-                    </p>
-                </div>
-
-                <!-- Countdown Clock & Instant Settle -->
-                <div class="flex items-center gap-4">
-                    <div class="px-4 py-2.5 rounded-xl bg-canvas border border-amber-500/40 text-center">
-                        <div class="text-[10px] font-mono uppercase text-slate-400">Time Remaining</div>
-                        <div id="auctionTimerDisplay" class="text-2xl sm:text-3xl font-extrabold font-mono text-amber-400 tabular-nums">
-                            01:00
-                        </div>
-                    </div>
-                    <button onclick="finalizeTimedAuctionSale()"
-                        class="px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg transition cursor-pointer">
-                        Settle Now ⚡
-                    </button>
-                </div>
-            </div>
-
-            <!-- 60-Second Progress Bar -->
-            <div class="w-full h-2 bg-canvas rounded-full overflow-hidden border border-stroke mt-4">
-                <div id="auctionTimerBar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 transition-all duration-1000 linear" style="width: 100%"></div>
+                </nav>
             </div>
         </div>
 
-        <!-- Flock Lots Grid -->
-        <div id="sheepLotsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <!-- Rendered dynamically -->
-        </div>
-
-        <!-- Selected lot: the profile, taxonomy, auction and beacons -->
-        <div id="lotDetail" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5">
-            <section class="lg:col-span-7 flex flex-col gap-5">
-                <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
-                    <div class="flex items-start justify-between gap-2 pb-4 border-b border-stroke">
-                        <div>
-                            <span class="text-[11px] font-mono uppercase tracking-wider text-blue-400 font-semibold">Selected lot &middot; profile</span>
-                            <h2 id="dTitle" class="text-lg sm:text-xl font-bold text-white mt-1"></h2>
-                            <p id="dSub" class="text-xs text-slate-400 mt-0.5"></p>
-                        </div>
-                        <span class="px-2 py-1 rounded-md text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/40 shrink-0">SYNTHETIC IDENTITY</span>
-                    </div>
-                    <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-mono text-slate-400">
-                        <span>VISITOR ID: <strong id="dVid" class="text-slate-200"></strong></span>
-                        <span>FINGERPRINT: <strong id="dFp" class="text-cyan-400"></strong></span>
-                    </div>
-                    <div class="mt-4">
-                        <div class="flex justify-between items-baseline text-xs mb-1.5">
-                            <span class="font-mono text-slate-400">MODEL CERTAINTY SCORE</span>
-                            <span id="dConf" class="font-mono font-bold text-emerald-400 text-sm"></span>
-                        </div>
-                        <div class="w-full h-2.5 bg-canvas rounded-full overflow-hidden border border-stroke">
-                            <div id="dConfBar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-3.5 rounded-xl bg-canvas/90 border border-stroke">
-                        <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1">Automated Behavioral Synthesis</div>
-                        <p id="dSynth" class="text-xs sm:text-[13px] text-slate-300 leading-relaxed"></p>
-                    </div>
-                    <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                        <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Geo-IP Node</div><div id="dGeo" class="font-semibold text-slate-200 mt-0.5"></div></div>
-                        <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Household Income</div><div id="dIncome" class="font-semibold text-slate-200 mt-0.5"></div></div>
-                        <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Device Signature</div><div id="dDevice" class="font-semibold text-slate-200 mt-0.5"></div></div>
-                        <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Purchase Propensity</div><div id="dProp" class="font-semibold text-emerald-400 mt-0.5"></div></div>
-                    </div>
-                </div>
-                <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
-                    <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 mb-3">Audience Taxonomy Weights</h3>
-                    <div id="dTaxonomy" class="space-y-3"></div>
-                </div>
-            </section>
-            <section class="lg:col-span-5 flex flex-col gap-5">
-                <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">Auction &middot; RTB Exchange</span>
-                        <span class="px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono text-[10px] font-bold">FICTIONAL BIDDERS</span>
-                    </div>
-                    <div class="p-3.5 rounded-xl bg-canvas border border-stroke text-center">
-                        <div class="text-[10px] font-mono uppercase text-slate-400">Highest Clearing Bid</div>
-                        <div id="dCpm" class="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 mt-1 tabular-nums"></div>
-                        <div id="dWinner" class="text-[11px] font-mono text-slate-300 mt-1"></div>
-                    </div>
-                    <button onclick="startSelectedAuction()"
-                        class="w-full mt-3.5 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.99] text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg transition cursor-pointer">
-                        Start 1-minute auction &rarr;
-                    </button>
-                </div>
-                <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
-                    <div class="flex items-center justify-between pb-3 border-b border-stroke">
-                        <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider font-mono">Captured Beacons &middot; Decoy Browsing</h3>
-                        <span id="dBeaconCount" class="px-2.5 py-1 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-300 font-mono text-[11px] font-semibold">0 EVENTS</span>
-                    </div>
-                    <div id="dBeacons" class="mt-3 bg-canvas border border-stroke rounded-xl p-3 h-72 overflow-y-auto font-mono text-xs space-y-2"></div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Custom Bid Desk -->
-        <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wider">
-                    Custom DSP Standing Offer Desk
-                </h3>
-                <p class="text-xs text-slate-400 mt-0.5">
-                    Post a custom CPM offer on the selected profile to start a 1-minute closing clock.
-                </p>
+        <!-- 1. Collection -->
+        <div id="g1" class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-sh"><div class="gd-num">1</div><h3>How your data gets collected</h3></div>
+            <p class="gd-sub">Eight everyday ways tech companies learn about you.</p>
+            <div class="gd-grid4">
+                <div class="gd-mini"><div class="ic">🍪</div><h4>Cookies</h4><p>Small files that let a site recognise your browser. Third-party cookies, set by ads and widgets embedded in pages, let a company follow you across many sites.</p></div>
+                <div class="gd-mini"><div class="ic">🛰️</div><h4>Trackers, pixels &amp; SDKs</h4><p>Invisible images and code snippets in websites and apps report what you view, click and buy to ad and analytics companies, even when you are logged out.</p></div>
+                <div class="gd-mini"><div class="ic">🧩</div><h4>Fingerprinting</h4><p>Your screen size, fonts, graphics card, language and timezone form a pattern that is often unique. It identifies you without cookies, so clearing them does not help.</p></div>
+                <div class="gd-mini"><div class="ic">📍</div><h4>Location</h4><p>GPS, Wi-Fi, Bluetooth, cell towers and your IP address reveal where you are. Location data from apps has been bought and sold by data brokers.</p></div>
+                <div class="gd-mini"><div class="ic">🔍</div><h4>Searches, views &amp; purchases</h4><p>What you search, watch and buy shows your interests, worries, income and plans, whether or not you meant to share them.</p></div>
+                <div class="gd-mini"><div class="ic">🔑</div><h4>Accounts &amp; logins</h4><p>Signing in links your activity across devices. Even a scrambled (hashed) email address can be used to match you between sites and apps.</p></div>
+                <div class="gd-mini"><div class="ic">🗃️</div><h4>Data brokers</h4><p>Little-known companies combine public records, purchases, app data and browsing into detailed profiles, then sell access to advertisers and others.</p></div>
+                <div class="gd-mini"><div class="ic">📺</div><h4>Smart TVs &amp; speakers</h4><p>Many smart TVs recognise what is on screen to build viewing profiles, and voice assistants process what they hear. Settings can limit both.</p></div>
             </div>
-            <div class="flex flex-wrap items-center gap-2.5">
-                <input id="customBidderName" type="text" value="ApexMedia DSP" placeholder="Bidder / DSP Name"
-                    class="bg-canvas border border-stroke rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
-                <input id="customBidAmount" type="number" step="0.50" value="22.50" placeholder="Bid ($)"
-                    class="w-28 bg-canvas border border-stroke rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:outline-none focus:border-amber-400">
-                <button onclick="submitCustomSheepBid()"
-                    class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow transition cursor-pointer">
-                    Post Offer (1m Timer) →
-                </button>
+        </div>
+
+        <!-- 2. Clues to a profile -->
+        <div id="g2" class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-sh"><div class="gd-num">2</div><h3>From clues to a profile</h3></div>
+            <p class="gd-sub">Three kinds of information. Only the first is something you handed over.</p>
+            <div class="gd-grid3">
+                <div class="gd-mini"><span class="gd-chip b">WHAT YOU TELL THEM</span><p class="mt-3">Name, email, birthday, address and phone number, usually when you sign up or check out.</p></div>
+                <div class="gd-mini"><span class="gd-chip s">WHAT THEY WATCH</span><p class="mt-3">Pages, searches, clicks, time spent, purchases, location history and device details.</p></div>
+                <div class="gd-mini"><span class="gd-chip i">WHAT THEY GUESS</span><p class="mt-3">Income range, age group, family situation, health interests, politics, even “likely to buy a car this month”.</p></div>
+            </div>
+            <div class="gd-callout"><span class="ci">⚠️</span><span>Guesses can be wrong, and some are sensitive, but they still decide what you see and what you are offered.</span></div>
+        </div>
+
+        <!-- 3. Why it matters -->
+        <div id="g3" class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-sh"><div class="gd-num">3</div><h3>Why it matters</h3></div>
+            <p class="gd-sub">A single signal is harmless. Years of them add up.</p>
+            <div class="gd-grid4">
+                <div class="gd-mini"><div class="ic">🏷️</div><h4>Different offers</h4><p>Personalisation can change the ads, deals and sometimes prices you are shown.</p></div>
+                <div class="gd-mini"><div class="ic">💧</div><h4>Profiles leak</h4><p>Breaches and people-search sites expose collected data, and copies are hard to pull back.</p></div>
+                <div class="gd-mini"><div class="ic">❓</div><h4>Mistakes stick</h4><p>You can be labelled wrongly, with no easy way to see or fix it.</p></div>
+                <div class="gd-mini"><div class="ic">🕰️</div><h4>It lasts</h4><p>Data is stored, resold and combined for years.</p></div>
+            </div>
+        </div>
+
+        <!-- 4. Protect -->
+        <div id="g4" class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-sh"><div class="gd-num">4</div><h3>How to protect your data</h3></div>
+            <p class="gd-sub">Start with the first column. Every step cuts down what is collected.</p>
+            <div class="gd-grid3">
+                <div class="gd-mini gd-col">
+                    <div class="head"><span class="gd-chip b">QUICK WINS</span><span>about 10 minutes</span></div>
+                    <ul class="gd-list">
+                        <li><span class="ck">✓</span><span>Use a browser that blocks trackers by default (Firefox, Brave, Safari) or add a reputable content blocker.</span></li>
+                        <li><span class="ck">✓</span><span>Turn on Global Privacy Control, so sites that honour it treat you as opted out of data sale or sharing.</span></li>
+                        <li><span class="ck">✓</span><span>Limit app permissions: location “While using” or “Never”, and no microphone, contacts or photos unless needed.</span></li>
+                        <li><span class="ck">✓</span><span>Reset or switch off your phone’s advertising ID, and auto-delete your account activity history.</span></li>
+                    </ul>
+                </div>
+                <div class="gd-mini gd-col">
+                    <div class="head"><span class="gd-chip s">LEVEL UP</span><span>an evening</span></div>
+                    <ul class="gd-list">
+                        <li><span class="ck">✓</span><span>Use a password manager and two-factor authentication, so one breach cannot spread.</span></li>
+                        <li><span class="ck">✓</span><span>Use email aliases for sign-ups, and avoid “Sign in with…” buttons that link your activity across sites.</span></li>
+                        <li><span class="ck">✓</span><span>Keep browsing separate: different browser profiles for banking, social media and everything else.</span></li>
+                        <li><span class="ck">✓</span><span>Prefer search, maps and messaging apps that collect less. For chats, look for end-to-end encryption.</span></li>
+                    </ul>
+                </div>
+                <div class="gd-mini gd-col">
+                    <div class="head"><span class="gd-chip i">GO FURTHER</span><span>when you want more</span></div>
+                    <ul class="gd-list">
+                        <li><span class="ck">✓</span><span>Opt out of data brokers and people-search sites, or use a removal service. Profiles can reappear, so repeat.</span></li>
+                        <li><span class="ck">✓</span><span>Use a VPN or Tor to hide your IP address. A VPN only shifts trust to its provider.</span></li>
+                        <li><span class="ck">✓</span><span>Turn off content recognition on smart TVs and limit voice assistants.</span></li>
+                        <li><span class="ck">✓</span><span>Add noise with an obfuscation tool such as Odysseus (next section).</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Odysseus -->
+        <div id="g5" class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-sh"><div class="gd-num">5</div><h3>Where Odysseus fits</h3></div>
+            <p class="gd-sub">Obfuscation: adding noise instead of trying to disappear.</p>
+            <div class="gd-grid2">
+                <div class="gd-mini gd-col">
+                    <div class="head"><span class="gd-chip b">WHAT IT DOES</span></div>
+                    <ul class="gd-list">
+                        <li><span class="ck">✓</span><span>Gives every site a consistent decoy persona: fake browser details, language, timezone and location.</span></li>
+                        <li><span class="ck">✓</span><span>Runs decoy searches and visits, so trackers learn interests that are not yours.</span></li>
+                        <li><span class="ck">✓</span><span>Sends the Global Privacy Control signal while the decoy is on and masking your browsing.</span></li>
+                    </ul>
+                </div>
+                <div class="gd-mini gd-col">
+                    <div class="head"><span class="gd-chip m">WHAT IT CANNOT DO</span></div>
+                    <ul class="gd-list">
+                        <li><span class="xx">—</span><span>Hide your IP address. Pair it with a VPN if that matters to you.</span></li>
+                        <li><span class="xx">—</span><span>Stop sites you are logged into from knowing it is you.</span></li>
+                        <li><span class="xx">—</span><span>Erase what has already been collected, or prove that a real ad company’s profile of you has changed. The tracker view and Polyphemus are simulations.</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="gd-callout"><span class="ci">🧭</span><span>Obfuscation makes you harder to profile accurately. It is not invisibility, so combine it with the steps in section 4.</span></div>
+        </div>
+
+        <!-- 6. Rights -->
+        <div id="g6" class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-sh"><div class="gd-num">6</div><h3>Your rights</h3></div>
+            <p class="gd-sub">Laws differ by location, but many places give you real control.</p>
+            <div class="gd-grid3">
+                <div class="gd-mini"><div class="ic">⚖️</div><h4>EU and UK (GDPR)</h4><p>Ask what a company holds about you, correct it, have it deleted in many cases, and object to profiling and direct marketing. You can complain to your regulator.</p></div>
+                <div class="gd-mini"><div class="ic">🏛️</div><h4>California and other US states</h4><p>Laws such as the CCPA and CPRA let you see what is collected, delete or correct it, and opt out of its sale or sharing. Other states have similar laws.</p></div>
+                <div class="gd-mini"><div class="ic">✉️</div><h4>How to use them</h4><p>Look for “Privacy” or “Your privacy choices” in a site’s footer. Send access or deletion requests in writing and keep a copy.</p></div>
+            </div>
+            <p class="gd-note">General information, not legal advice.</p>
+        </div>
+
+        <!-- 7. Myths -->
+        <div id="g7" class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-sh"><div class="gd-num">7</div><h3>Myths that keep people exposed</h3></div>
+            <p class="gd-sub">Four things many people believe that are not quite true.</p>
+            <div class="gd-grid4">
+                <div class="gd-mini gd-myth"><span class="gd-chip m">MYTH</span><div class="m">Incognito mode makes me anonymous.</div><span class="gd-chip b">REALITY</span><div class="r">It only stops your browser saving history on your device. Websites, your school or employer, and your internet provider can still see what you do.</div></div>
+                <div class="gd-mini gd-myth"><span class="gd-chip m">MYTH</span><div class="m">Clearing my cookies resets me.</div><span class="gd-chip b">REALITY</span><div class="r">Fingerprints, logins and device IDs can still identify you, and trackers simply set new cookies.</div></div>
+                <div class="gd-mini gd-myth"><span class="gd-chip m">MYTH</span><div class="m">A VPN makes me anonymous.</div><span class="gd-chip b">REALITY</span><div class="r">It hides your IP address from sites, but the provider sees your traffic and logins still identify you.</div></div>
+                <div class="gd-mini gd-myth"><span class="gd-chip m">MYTH</span><div class="m">Ads only use what I click.</div><span class="gd-chip b">REALITY</span><div class="r">Most signals are passive: what you view, how long you linger, where you are and what device you use.</div></div>
+            </div>
+        </div>
+
+        <!-- Keep learning + link to the market -->
+        <div class="bg-panel border border-stroke rounded-2xl p-6 shadow-xl">
+            <div class="gd-foot">
+                <div>
+                    <div class="gd-sh"><div class="gd-num">→</div><h3>Keep learning</h3></div>
+                    <p class="gd-small">ssd.eff.org (EFF Surveillance Self-Defense) · coveryourtracks.eff.org (test your fingerprint) · privacyguides.org (tool recommendations)</p>
+                </div>
+                <div class="gd-cta-wrap">
+                    <button type="button" class="gd-cta" onclick="switchWorkspaceView('auction')">See how a profile is priced →</button>
+                    <div class="gd-small">Opens the Live Data Auction tab</div>
+                </div>
             </div>
         </div>
     </main>
+
 
 
     <!-- ===================================================================== -->
@@ -286,7 +292,10 @@
                 <div class="lg:col-span-8 bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
                     <div class="flex items-center justify-between gap-2">
                         <span class="mk-k">Market board · every profile Odysseus has generated</span>
-                        <span id="auListed" class="mk-tag">0 LISTED</span>
+                        <div class="flex items-center gap-2">
+                            <span id="auListed" class="mk-tag">0 LISTED</span>
+                            <button type="button" onclick="clearPastProfiles()" class="mk-clear">Clear past profiles</button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="mk-table">
@@ -407,16 +416,11 @@
     <script>
         // =========================================================================
         // Polyphemus
-        //   - What You Could Have Lost: every stored Odysseus decoy profile as a lot (inspect + 1-minute auction)
-        //   - Live Data Auction: the same profiles trading live (a simulated market)
-        // All data comes from the Odysseus extension (decoy personas only); nothing here is real user data.
+        //   - What You Could Have Lost: a short educational guide (static)
+        //   - Live Data Auction: every stored Odysseus decoy profile trading live (a simulated market)
+        // The market's data comes from the Odysseus extension (decoy personas only); nothing here is real user data.
         // =========================================================================
         let odysseusProfiles = [];    // every stored decoy profile (newest first), built by buildOdysseusProfile
-        let selectedSeed = null;      // lot open in the "What You Could Have Lost" detail panel
-
-        let activeAuction = null;
-        let auctionInterval = null;
-        let auctionSecondsLeft = 60;
 
         const $ = id => document.getElementById(id);
         const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
@@ -447,7 +451,7 @@
 
         function switchWorkspaceView(view) {
             const views = {
-                sheep: { main: 'sheepExchangeWorkspace', btn: 'tabSheepBtn' },
+                guide: { main: 'guideWorkspace', btn: 'tabGuideBtn' },
                 auction: { main: 'auctionWorkspace', btn: 'tabAuctionBtn' }
             };
             Object.entries(views).forEach(([key, v]) => {
@@ -511,148 +515,32 @@
 
         function buildOdysseusProfile(d) {
             const p = d.persona;
-            const K = 4;
-            const rows = p.interests.map(i => {
-                const n = d.topics[i.topic] || 0;
-                return { label: i.topic, category: i.category, n, pct: Math.round((1 - Math.exp(-n / K)) * 100) };
-            }).sort((a, b) => b.pct - a.pct);
-            const top = rows[0] || { label: 'General', category: 'Recreation' };
-            const second = rows[1];
+            // the interest the decoy has browsed most is what the profile is "about"
+            const top = p.interests.map(i => ({ label: i.topic, category: i.category, n: d.topics[i.topic] || 0 }))
+                .sort((a, b) => b.n - a.n)[0] || { label: 'General', category: 'Recreation' };
             const certainty = d.total ? Math.min(0.99, 1 - Math.exp(-d.total / 14)) : 0;
-            const conf = certainty * 100;
             const lo = +p.incomeLow || 0, hi = +p.incomeHigh || lo;
             const incomeMid = (lo + hi) / 2 || 50000;
             const areaAvg = +p.areaAvg || 30000;
             const tier = +p.tier || 1;
             const model = priceModel({ incomeMid, areaAvg, tier, cat: top.category, certainty });
-            const cpm = +model.fair.toFixed(3);
-            const propScore = Math.min(97, Math.round(35 + conf * 0.35 + Math.min(incomeMid / 1000, 90) * 0.3));
-            const pool = BIDDERS[top.category] || BIDDERS['AI-generated'];
-            const bids = [
-                { dsp: pool[0], price: cpm },
-                { dsp: pool[1], price: +(cpm * 0.88).toFixed(3) },
-                { dsp: pool[2], price: +(cpm * 0.71).toFixed(3) }
-            ];
-            const cityName = p.city.split(',')[0];
             const latest = d.recent[0] ? { kind: d.recent[0].kind, query: d.recent[0].query, host: d.recent[0].host } : null;
             return {
                 seed: p.seed, name: p.name, live: !!d.live, createdTs: d.created || 0,
-                createdLabel: d.created ? new Date(d.created).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'now',
                 visitorId: 'VIS-' + hex(p.seed, 4).toUpperCase() + '-ODY',
-                fingerprint: 'fp_' + hex(p.noiseSeed, 10),
                 title: `${p.occupation} · ${top.label}`,
-                subtitle: `${p.name}, ${p.age} · decoy persona (${p.source === 'gemini' ? 'AI-generated' : 'built-in'})`,
-                confidence: conf, certainty,
-                synthesis: d.total
-                    ? `Subject shows sustained interest in ${top.label}${second && second.n ? ' and ' + second.label : ''}, based on ${d.total} observed signals. All signals originate from a synthetic decoy identity.`
-                    : 'No signals observed yet. Turn the decoy on in Odysseus to start generating activity.',
-                geo: `${cityName}${p.cc ? ' (' + p.cc + ')' : ''}`,
-                income: `${p.income} Est.`,
-                device: `Desktop • ${p.os} / Chrome`,
-                propensity: `${propScore >= 80 ? 'High' : propScore >= 60 ? 'Moderate' : 'Low'} (${propScore}/100)`,
-                // economics
-                cc: p.cc || '', country: p.country || '', cityName, job: p.occupation, tier, areaAvg, incomeMid,
-                cat: top.category, topic: top.label, m: model, fair: model.fair, latest,
-                cpm, winner: bids[0].dsp, bids,
-                taxonomy: rows,
-                beacons: d.recent.map(e => ({
-                    type: e.kind === 'search' ? 'SEARCH' : 'VIEW',
-                    url: e.kind === 'search' ? `query: '${e.query}'` : `https://${e.host}/`,
-                    ref: e.kind === 'search' ? (e.engine || e.host) : 'odysseus-decoy',
-                    time: new Date(e.t).toTimeString().split(' ')[0]
-                })),
-                total: d.total
+                cc: p.cc || '', country: p.country || '', cityName: p.city.split(',')[0], job: p.occupation, tier, areaAvg, incomeMid,
+                cat: top.category, topic: top.label, certainty, total: d.total, m: model, fair: model.fair, latest
             };
         }
 
-        const beaconRow = b => `
-            <div class="p-2.5 rounded-lg bg-panel border border-stroke flex flex-col gap-1">
-                <div class="flex items-center justify-between text-[10px]">
-                    <div class="flex items-center gap-2"><span class="px-1.5 py-0.5 rounded border font-bold ${b.type === 'SEARCH' ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30' : 'bg-blue-500/15 text-blue-300 border-blue-500/30'}">${b.type}</span><span class="text-slate-400">ref: ${escapeHtml(b.ref)}</span></div>
-                    <span class="text-slate-500">${escapeHtml(b.time)}</span>
-                </div>
-                <div class="text-slate-200 truncate">${escapeHtml(b.url)}</div>
-            </div>`;
-
-        const taxonomyBars = rows => rows.map(t => `
-            <div>
-                <div class="flex justify-between text-xs mb-1"><span class="text-slate-300 font-medium">${escapeHtml(t.label)}</span><span class="font-mono text-cyan-400 font-semibold">${t.pct}%</span></div>
-                <div class="w-full h-2 bg-canvas rounded-full overflow-hidden border border-stroke"><div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" style="width:${t.pct}%"></div></div>
-            </div>`).join('');
-
-        // =========================================================================
-        // What You Could Have Lost: lots + selected lot
-        // =========================================================================
-        function selectedProfile() {
-            return odysseusProfiles.find(p => p.seed === selectedSeed) || odysseusProfiles.find(p => p.live) || odysseusProfiles[0] || null;
+        // ---------- guide page ----------
+        function jumpTo(id) {
+            const el = $(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function renderLots() {
-            const grid = $('sheepLotsGrid');
-            const total = odysseusProfiles.length;
-            if (!total) {
-                grid.innerHTML = `<div class="md:col-span-2 lg:col-span-3 bg-panel border border-stroke rounded-2xl p-8 text-center text-slate-400 text-sm">
-                    No Odysseus profiles yet. Open Polyphemus from the Odysseus extension and generate a decoy profile.</div>`;
-                return;
-            }
-            const sel = selectedProfile();
-            odysseusProfiles.forEach((p, i) => { p.lotId = `LOT #${String(total - i).padStart(2, '0')}` + (p.live ? ' · LIVE' : ''); });
-            grid.innerHTML = odysseusProfiles.map((lot, i) => {
-                const isSel = sel && lot.seed === sel.seed;
-                return `
-                <div class="bg-panel border ${isSel ? 'border-blue-400' : 'border-stroke'} rounded-2xl p-5 flex flex-col justify-between gap-4 ${isSel ? 'ring-2 ring-blue-500/60' : ''}">
-                    <div>
-                        <div class="flex items-center justify-between gap-2 mb-2">
-                            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${lot.live ? 'bg-amber-500/20 text-amber-300' : 'bg-canvas text-slate-400 border border-stroke'}">${escapeHtml(lot.lotId)}</span>
-                            <span class="text-[11px] font-mono font-bold text-emerald-400">${lot.confidence.toFixed(1)}% CERT</span>
-                        </div>
-                        <h3 class="text-base font-extrabold text-white leading-snug">${escapeHtml(lot.title)}</h3>
-                        <p class="text-[11px] font-mono text-slate-400 mt-1">${escapeHtml(lot.name)} • ${escapeHtml(lot.geo)}</p>
-                        <p class="text-[11px] font-mono text-slate-500 mt-0.5">SYNTHETIC DECOY • ${lot.total} signals • ${escapeHtml(lot.createdLabel)}</p>
-                    </div>
-                    <div class="pt-3 border-t border-stroke space-y-3">
-                        <div class="flex items-baseline justify-between">
-                            <span class="text-[10px] font-mono uppercase text-slate-400">Opening Bid</span>
-                            <span class="text-xl font-extrabold font-mono text-emerald-400">$${lot.cpm.toFixed(2)}</span>
-                        </div>
-                        <button onclick="selectLot(${i})"
-                            class="w-full py-2.5 px-4 rounded-xl ${isSel ? 'bg-canvas border border-blue-400 text-white' : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950'} active:scale-[0.98] font-extrabold text-xs uppercase tracking-wider shadow transition cursor-pointer">
-                            ${isSel ? 'Selected ✓' : 'Inspect →'}
-                        </button>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function renderDetail() {
-            const p = selectedProfile();
-            $('lotDetail').classList.toggle('hidden', !p);
-            if (!p) return;
-            const set = (id, v) => { $(id).textContent = v; };
-            set('dTitle', p.title); set('dSub', p.subtitle); set('dVid', p.visitorId); set('dFp', p.fingerprint);
-            set('dConf', p.confidence.toFixed(1) + '%'); $('dConfBar').style.width = p.confidence + '%';
-            set('dSynth', p.synthesis); set('dGeo', p.geo); set('dIncome', p.income); set('dDevice', p.device); set('dProp', p.propensity);
-            $('dTaxonomy').innerHTML = taxonomyBars(p.taxonomy);
-            set('dCpm', '$' + p.cpm.toFixed(2)); set('dWinner', 'Winner: ' + p.winner);
-            set('dBeaconCount', `${p.total} EVENTS`);
-            $('dBeacons').innerHTML = p.beacons.length ? p.beacons.map(beaconRow).join('') : '<div class="text-slate-500 text-center py-10">No decoy activity yet.</div>';
-        }
-
-        function selectLot(i) {
-            const p = odysseusProfiles[i];
-            if (!p) return;
-            selectedSeed = p.seed;
-            renderLots();
-            renderDetail();
-        }
-
-        function lotInfo(p) { return { synthetic: true, visitorId: p.visitorId }; }
-
-        function startSelectedAuction() {
-            const p = selectedProfile();
-            if (p) startSheepLotAuction(p.lotId, p.title, p.cpm, p.winner, lotInfo(p));
-        }
-
+        // ---------- housekeeping ----------
         function clearPastProfiles() {
             if (!confirm('Remove all stored profiles except the live one?')) return;
             if (window.parent !== window) window.parent.postMessage({ source: 'polyphemus', type: 'clearProfiles' }, '*');
@@ -664,50 +552,7 @@
             if (window.parent !== window) window.parent.postMessage({ source: 'polyphemus', type: 'goOdysseus' }, '*');
         }
 
-        // ---------- 1-minute auction ----------
-        function startSheepLotAuction(lotId, title, amount, bidder, info) {
-            if (auctionInterval) clearInterval(auctionInterval);
-            auctionSecondsLeft = 60;
-            activeAuction = { lotId, title, amount: parseFloat(amount), bidder: bidder || 'Highest Programmatic Bidder', lotInfo: info || null };
-
-            $('activeAuctionBanner').classList.remove('hidden');
-            $('auctionLotTitle').textContent = `${lotId} — ${title}`;
-            $('auctionHighestBidder').textContent = activeAuction.bidder;
-            $('auctionHighestAmount').textContent = '$' + activeAuction.amount.toFixed(2);
-            updateAuctionTimerUI();
-            $('activeAuctionBanner').scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            auctionInterval = setInterval(() => {
-                auctionSecondsLeft -= 1;
-                if (auctionSecondsLeft <= 0) finalizeTimedAuctionSale();
-                else updateAuctionTimerUI();
-            }, 1000);
-        }
-
-        function submitCustomSheepBid() {
-            const p = selectedProfile();
-            if (!p) return;
-            const bidder = ($('customBidderName').value || 'Custom DSP Desk').trim();
-            const amount = parseFloat($('customBidAmount').value) || p.cpm;
-            startSheepLotAuction(`${p.lotId} (CUSTOM OFFER)`, p.title, amount, bidder, lotInfo(p));
-        }
-
-        function updateAuctionTimerUI() {
-            const mins = String(Math.floor(auctionSecondsLeft / 60)).padStart(2, '0');
-            const secs = String(auctionSecondsLeft % 60).padStart(2, '0');
-            $('auctionTimerDisplay').textContent = `${mins}:${secs}`;
-            $('auctionTimerBar').style.width = Math.max(0, (auctionSecondsLeft / 60) * 100) + '%';
-        }
-
-        function finalizeTimedAuctionSale() {
-            if (auctionInterval) { clearInterval(auctionInterval); auctionInterval = null; }
-            if (!activeAuction) return;
-            const settled = { ...activeAuction };
-            activeAuction = null;
-            $('activeAuctionBanner').classList.add('hidden');
-            showSettlementReceipt(settled.bidder, settled.amount, settled.title, settled.lotInfo);
-        }
-
+        // ---------- receipt for a sale on the Live Data Auction tab ----------
         function showSettlementReceipt(buyer, price, persona, info) {
             $('receiptTxId').textContent = 'TX-' + Math.floor(100000 + Math.random() * 900000);
             $('receiptBuyer').textContent = buyer;
@@ -1117,7 +962,7 @@
             scheduleRender();
         }
 
-        // Sell one lot to the best bidder at the current bid: same synthetic-decoy receipt as the other tab.
+        // Sell one lot to the best bidder at the current bid and show a synthetic-decoy receipt.
         function sellAtBid() {
             const e = market.get(selectedMk);
             if (!e) return;
@@ -1130,7 +975,7 @@
             if (trades.length > 30) trades.pop();
             pushSignal('SOLD', `You sold 1 lot of ${e.sym} to ${buyer}`, `@ ${money(px)}`, -1);
             tapesDirty = true;
-            showSettlementReceipt(buyer, px, e.p.title, lotInfo(e.p));
+            showSettlementReceipt(buyer, px, e.p.title, { synthetic: true, visitorId: e.p.visitorId });
             scheduleRender();
         }
 
@@ -1159,8 +1004,6 @@
                 if (!d.persona || !Array.isArray(d.persona.interests) || !Array.isArray(d.recent) || typeof d.topics !== 'object') return;
                 const valid = x => x && x.persona && Array.isArray(x.persona.interests) && Array.isArray(x.recent) && x.topics && typeof x.topics === 'object';
                 odysseusProfiles = (Array.isArray(d.profiles) ? d.profiles : []).filter(valid).map(buildOdysseusProfile);
-                renderLots();
-                renderDetail();
                 syncMarket(odysseusProfiles);
             });
             if (window.parent !== window) window.parent.postMessage({ source: 'polyphemus', type: 'hello' }, '*');
@@ -1169,8 +1012,6 @@
         }
 
         window.onload = function () {
-            renderLots();
-            renderDetail();
             setupOdysseusReceiver();
             // click a column header to sort the board (default: newest profile first)
             document.querySelector('.mk-table thead').addEventListener('click', ev => {
