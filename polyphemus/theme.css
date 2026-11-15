@@ -49,3 +49,7 @@ html body header{min-height:0}
 
 /* Header height identical to the Odysseus header */
 @media(min-width:1100px){html body header{height:80px;padding-bottom:10px!important}}
+
+/* Left-align the content like the Odysseus page (full width, same side padding) instead of a centered column */
+html body main{max-width:none!important;margin-left:0!important;margin-right:0!important;padding:18px 33px 32px 37px!important}
+html body main section{padding:0}
