@@ -16,5 +16,16 @@ frame.addEventListener('load', push);
 window.addEventListener('message', ev => {
   if (ev.source !== frame.contentWindow || !ev.data || ev.data.source !== 'polyphemus') return;
   if (ev.data.type === 'hello') push();
+  if (ev.data.type === 'goOdysseus') leaveTo('tracker/profile.html#from-polyphemus');
   if (ev.data.type === 'clearProfiles') chrome.runtime.sendMessage({ type: 'clearProfiles' }).then(push);
 });
+
+// Fade to black, then switch to another extension page in this tab (the opposite of the arrival fade).
+function leaveTo(path) {
+  if (document.getElementById('leave')) return;
+  const o = document.createElement('div');
+  o.id = 'leave';
+  document.body.appendChild(o);
+  requestAnimationFrame(() => o.classList.add('on'));
+  setTimeout(() => { location.href = chrome.runtime.getURL(path); }, 700);
+}
