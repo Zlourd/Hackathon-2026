@@ -102,3 +102,38 @@ nav{padding-bottom:12px;padding-top:28px}
 #intro{position:fixed;inset:0;z-index:9999;background:#000;transition:opacity .8s}
 #intro.done{opacity:0;pointer-events:none}
 #intro iframe{width:100%;height:100%;border:0;display:block}
+
+/* Fade to black when entering Polyphemus */
+#fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:all;z-index:10000;transition:opacity .7s ease}
+#fade.on{opacity:1}
+.coin{cursor:pointer}
+
+/* ===== Light mode (parchment & bronze) ===== */
+html[data-theme="light"]{--bg:#f4ede0;--card:#fffaf0;--card2:#f6ecd9;--bd:#cfb487;--fg:#2a1a0d;--mut:#7a6650;--acc:#a8672e;--acc2:#8a4f1c;--ok:#a8672e}
+html[data-theme="light"] body{background:radial-gradient(90% 50% at 50% -10%,#fff8ea 0%,#f4ede0 55%,#eadcc2 100%) fixed}
+html[data-theme="light"] nav,
+html[data-theme="light"] .persona,
+html[data-theme="light"] .site,
+html[data-theme="light"] main>aside.col{background:linear-gradient(160deg,#fffdf7,#f6ecd9);border-color:#a8672e;outline-color:#dcc59c}
+html[data-theme="light"] .fact,
+html[data-theme="light"] .gave .chip{background:#fffdf7}
+html[data-theme="light"] .bar,
+html[data-theme="light"] .int .b{background:#eadbc0}
+html[data-theme="light"] .brand{background:linear-gradient(180deg,#b9772f,#6b3f1c);-webkit-background-clip:text;background-clip:text;color:transparent}
+html[data-theme="light"] h1{background:linear-gradient(180deg,#c4812f 0%,#a8672e 45%,#5e3410 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+html[data-theme="light"] .tag,
+html[data-theme="light"] .badge.decoy{color:#6b3f1c;background:rgba(168,103,46,.12)}
+html[data-theme="light"] .pill.on{background:rgba(168,103,46,.15);color:#6b3f1c;box-shadow:none}
+html[data-theme="light"] .pill.off{background:#f6ecd9;color:var(--mut)}
+html[data-theme="light"] button{background:#f6ecd9;color:#2a1a0d}
+html[data-theme="light"] button.primary{background:linear-gradient(135deg,#b9772f,#8a4f1c);color:#fff;box-shadow:0 6px 16px rgba(138,79,28,.3)}
+html[data-theme="light"] .count{color:#fff}
+html[data-theme="light"] #stats div,
+html[data-theme="light"] .cell{background:#f6ecd9}
+html[data-theme="light"] .empty{border-color:#cfb487}
+html[data-theme="light"] .bar i,
+html[data-theme="light"] .int .b i{box-shadow:none}
+html[data-theme="light"] .coin img{filter:drop-shadow(0 4px 8px rgba(90,50,16,.4))}
+html[data-theme="light"] .flag{background:#fff;box-shadow:0 3px 10px rgba(90,50,16,.3)}
+html[data-theme="light"] .real{background:#f6ecd9;border-color:#cfb487}
+html[data-theme="light"] .real .empty{border-color:#cfb487}

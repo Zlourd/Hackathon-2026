@@ -66,7 +66,15 @@ function render(st) {
 const refresh = () => send({ type: 'state' }).then(render);
 chrome.storage.onChanged.addListener(refresh);
 $('toggle').onclick = () => send({ type: 'toggle' }).then(render);
-$('poly').onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL('polyphemus/viewer.html') });
+// Clicking the coin fades this page to black, then opens Polyphemus (which fades in) in the same tab.
+$('coin').onclick = () => {
+  if (document.getElementById('fade')) return;
+  const fade = document.createElement('div');
+  fade.id = 'fade';
+  document.body.appendChild(fade);
+  requestAnimationFrame(() => fade.classList.add('on'));
+  setTimeout(() => { location.href = chrome.runtime.getURL('polyphemus/viewer.html'); }, 700);
+};
 $('reroll').onclick = () => send({ type: 'reroll' }).then(render);
 $('reset').onclick = () => send({ type: 'reset' }).then(render);
 refresh();
