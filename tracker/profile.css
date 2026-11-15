@@ -88,7 +88,7 @@ main>aside.col{margin:5px 5px 5px 10px}
 .persona .loc{font-family:Georgia,"Times New Roman",serif;letter-spacing:.02em}
 
 /* header card: Greek key */
-nav{position:relative;border-radius:0;background:linear-gradient(160deg,#1c110a,#120a05);border:1px solid #7a4a22;outline:1px solid #3a2410;outline-offset:4px;
+nav{position:sticky;top:22px;z-index:50;border-radius:0;background:linear-gradient(160deg,#1c110a,#120a05);border:1px solid #7a4a22;outline:1px solid #3a2410;outline-offset:4px;
   margin:22px 33px 0;padding-top:30px;backdrop-filter:none}
 nav:before{content:"";position:absolute;left:0;right:0;top:0;height:14px;border-bottom:1px solid #7a4a22;
   background:repeating-linear-gradient(90deg,transparent 0 4px,#c8793a 4px 6px,transparent 6px 10px) 0 4px/100% 2px no-repeat,
@@ -133,6 +133,10 @@ html[data-theme="light"] .flag{background:#fff;box-shadow:0 3px 10px rgba(90,50,
 html{scrollbar-gutter:stable}
 .coin{position:fixed;top:30px;right:46px;width:84px;height:84px;margin:0;z-index:60}
 .ctl{margin-right:96px}
+
+/* Pinned header: an opaque band in the page's own background (inherited, so it follows the theme) sits behind it,
+   so content scrolls out of sight under the header instead of showing around its frame. */
+body::after{content:"";position:fixed;top:0;left:0;right:0;height:110px;background:inherit;z-index:49}
 
 /* Arriving from Polyphemus: stay black from the very first paint, fade in once the page has rendered */
 body::before{content:"";position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:10000;transition:opacity .9s ease}

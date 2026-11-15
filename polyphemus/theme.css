@@ -15,13 +15,16 @@ html body .bg-gradient-to-r.rounded-2xl:before{
    repeating-linear-gradient(90deg,var(--gk) 0 2px,transparent 2px 14px) 0 4px/100% 6px no-repeat,
    repeating-linear-gradient(90deg,transparent 0 6px,var(--gk) 6px 8px,transparent 8px 14px) 0 8px/100% 2px no-repeat}
 html body main section{padding:5px}
+/* Pinned header: an opaque band in the page's own background (inherited, so it follows the theme) sits behind it,
+   so content scrolls out of sight under the header instead of showing around its frame. */
+body::after{content:"";position:fixed;top:0;left:0;right:0;height:110px;background:inherit;z-index:39}
 html body main .space-y-6>*+*{margin-top:30px}
 /* square-ish inner elements to match */
 html body .rounded-xl,html body .rounded-lg{border-radius:4px!important}
 html body .rounded-md{border-radius:3px!important}
 
 /* Header: floating Greek-key card, same construction as the Odysseus header */
-html body header{position:relative!important;top:auto!important;margin:22px 33px 0!important;border:1px solid var(--gk2)!important;outline:1px solid var(--gkdim);outline-offset:4px;
+html body header{position:sticky!important;top:22px!important;z-index:40;margin:22px 33px 0!important;border:1px solid var(--gk2)!important;outline:1px solid var(--gkdim);outline-offset:4px;
   border-radius:0!important;background:linear-gradient(160deg,#0a1426,#050a14)!important;box-shadow:none!important;backdrop-filter:none!important;
   padding:28px 22px 12px!important}
 html body header>div{max-width:none!important;margin:0!important}
@@ -145,7 +148,7 @@ html body #auChart svg,html body .mk-spark svg,html body .mk-flag svg{max-width:
 .gd-toc button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:4px 0;color:#cbd5e1;font-size:13px;background:none;border:0;cursor:pointer;break-inside:avoid}
 .gd-toc button:hover{color:#fff}
 .gd-toc i{font-style:normal;width:20px;height:20px;border:1px solid #1d4ed8;display:grid;place-items:center;font:800 10px ui-monospace,Menlo,Consolas,monospace;color:#93c5fd;flex:none}
-#g1,#g2,#g3,#g4,#g5,#g6,#g7{scroll-margin-top:18px}
+#g1,#g2,#g3,#g4,#g5,#g6,#g7{scroll-margin-top:124px} /* leave room for the pinned header */
 .gd-sh{display:flex;align-items:center;gap:12px}
 .gd-num{width:32px;height:32px;border:1px solid #1d4ed8;background:rgba(37,99,235,.16);display:grid;place-items:center;font:800 14px ui-monospace,Menlo,Consolas,monospace;color:#93c5fd;flex:none}
 .gd-sh h3{margin:0;font-size:22px;font-weight:800;color:#fff}
