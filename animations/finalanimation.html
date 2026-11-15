@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Odyssey — Book IX (Polyart)</title>
+  <style>
+    :root {
+      --bg: #07080c;
+      --gold: #d4a857;
+      --gold-dim: #7c6030;
+      --text: #e8dec8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #1c1820 0%, #07070b 100%);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    .theater-frame {
+      width: 100%;
+      max-width: 1120px;
+      background: #0b0c12;
+      border: 2px solid var(--gold-dim);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.85), 0 0 55px rgba(255, 120, 40, 0.16);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: box-shadow 0.8s ease;
+    }
+
+    .greek-border {
+      height: 14px;
+      background-color: #12100e;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14' viewBox='0 0 28 14'%3E%3Cpath d='M0 12h24V2H8v6h10V5h-4' fill='none' stroke='%239b783b' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      opacity: 0.78;
+    }
+
+    .stage-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #07080c;
+      overflow: hidden;
+    }
+
+    #camera-rig {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+    }
+
+    svg.scene-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      shape-rendering: geometricPrecision;
+    }
+
+    canvas#particles {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse at center,
+        transparent 60%,
+        rgba(8, 5, 6, 0.32) 85%,
+        rgba(4, 3, 6, 0.68) 100%
+      );
+    }
+
+    .caption-bar {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(8, 9, 14, 0.80);
+      border: 1px solid rgba(212, 168, 87, 0.36);
+      padding: 5px 18px;
+      clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%);
+      font-size: clamp(11px, 1.4vw, 15px);
+      letter-spacing: 0.06em;
+      color: #e4d8bd;
+      pointer-events: none;
+      text-shadow: 0 2px 6px #000;
+      white-space: nowrap;
+    }
+
+    #fade-curtain {
+      position: absolute;
+      inset: 0;
+      background: #040407;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 10;
+    }
+
+    .hud {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 18px;
+      background: #0c0d13;
+      border-top: 1px solid rgba(212, 168, 87, 0.22);
+    }
+
+    .title-block h1 {
+      font-size: 16px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: normal;
+    }
+
+    .title-block p {
+      font-size: 12px;
+      color: #8f8a7f;
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
+      background: #171923;
+      color: var(--text);
+      border: 1px solid var(--gold-dim);
+      padding: 7px 14px;
+      border-radius: 2px;
+      font-family: inherit;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s, opacity 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background: #232635;
+      border-color: var(--gold);
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+      border-color: rgba(124, 96, 48, 0.45);
+    }
+  </style>
+</head>
+<body>
+  <div id="theater-frame" class="theater-frame">
+    <div class="greek-border"></div>
+
+    <div class="stage-wrapper">
+      <div id="camera-rig">
+        <!-- ========================================================= -->
+        <!-- SCENE 1: "NOBODY" (FIRE & SHADOWS)                        -->
+        <!-- ========================================================= -->
+        <svg id="scene-1" class="scene-svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="s1-fireAmbientWash" cx="37%" cy="75%" r="76%">
+              <stop offset="0%" stop-color="#ffb84d" stop-opacity="0.46" />
+              <stop offset="32%" stop-color="#e86217" stop-opacity="0.24" />
+              <stop offset="68%" stop-color="#8c2b0e" stop-opacity="0.10" />
+              <stop offset="100%" stop-color="#33110a" stop-opacity="0" />
+            </radialGradient>
+
+            <linearGradient id="s1-moonSliver" x1="0%" y1="30%" x2="100%" y2="85%">
+              <stop offset="0%" stop-color="#9cc6ff" stop-opacity="0.46" />
+              <stop offset="48%" stop-color="#4c78b8" stop-opacity="0.16" />
+              <stop offset="100%" stop-color="#22375a" stop-opacity="0" />
+            </linearGradient>
+
+            <radialGradient id="s1-fireCore" cx="50%" cy="62%" r="54%">
+              <stop offset="0%" stop-color="#fff8cc" stop-opacity="0.95" />
+              <stop offset="28%" stop-color="#ff9d2e" stop-opacity="0.72" />
+              <stop offset="62%" stop-color="#db420e" stop-opacity="0.34" />
+              <stop offset="100%" stop-color="#c9360c" stop-opacity="0" />
+            </radialGradient>
+
+            <radialGradient id="s1-fireHalo" cx="50%" cy="55%" r="50%">
+              <stop offset="0%" stop-color="#ffbb55" stop-opacity="0.50" />
+              <stop offset="45%" stop-color="#ff6a1a" stop-opacity="0.20" />
+              <stop offset="100%" stop-color="#ff3b0a" stop-opacity="0" />
+            </radialGradient>
+
+            <linearGradient id="s1-eyeBeamGrad" x1="100%" y1="50%" x2="0%" y2="50%">
+              <stop offset="0%" stop-color="#ff6a1a" stop-opacity="0.62" />
+              <stop offset="45%" stop-color="#ff3b0a" stop-opacity="0.24" />
+              <stop offset="100%" stop-color="#ff2200" stop-opacity="0" />
+            </linearGradient>
+
+            <radialGradient id="s1-cyclopsEyeGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff5cc" />
+              <stop offset="38%" stop-color="#ff8c1a" />
+              <stop offset="72%" stop-color="#b31d00" stop-opacity="0.7" />
+              <stop offset="100%" stop-color="#b31d00" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <!-- 1. Triangulated Polyart Cavern Backdrop -->
+          <g id="s1-poly-wall"></g>
+
+          <!-- 2. Faceted Background Rock Arch / Pillar -->
+          <g id="s1-arch-group">
+            <polygon points="350,150 475,245 430,360" fill="#4f2519" stroke="#4f2519" stroke-width="0.6" />
+            <polygon points="475,245 555,310 430,360" fill="#5e2c1b" stroke="#5e2c1b" stroke-width="0.6" />
+            <polygon points="430,360 555,310 520,445" fill="#492318" stroke="#492318" stroke-width="0.6" />
+            <polygon points="430,360 520,445 480,535" fill="#592a1a" stroke="#592a1a" stroke-width="0.6" />
+            <polygon points="520,445 645,420 480,535" fill="#422119" stroke="#422119" stroke-width="0.6" />
+            <polygon points="480,535 645,420 675,535" fill="#3a1d17" stroke="#3a1d17" stroke-width="0.6" />
+            <polygon points="350,150 610,165 475,245" fill="#3b1d17" stroke="#3b1d17" stroke-width="0.6" />
+            <polygon points="475,245 610,165 555,310" fill="#341b18" stroke="#341b18" stroke-width="0.6" />
+            <polygon points="610,165 760,215 555,310" fill="#2b1718" stroke="#2b1718" stroke-width="0.6" />
+            <polygon points="555,310 760,215 645,420" fill="#2e1918" stroke="#2e1918" stroke-width="0.6" />
+            <polygon points="555,310 645,420 520,445" fill="#381d18" stroke="#381d18" stroke-width="0.6" />
+            <polygon points="610,165 960,170 760,215" fill="#211316" stroke="#211316" stroke-width="0.6" />
+            <polygon points="760,215 960,170 845,345" fill="#1a1115" stroke="#1a1115" stroke-width="0.6" />
+            <polygon points="760,215 845,345 645,420" fill="#221417" stroke="#221417" stroke-width="0.6" />
+            <polygon points="645,420 845,345 815,455" fill="#1b1216" stroke="#1b1216" stroke-width="0.6" />
+            <polygon points="645,420 815,455 675,535" fill="#241518" stroke="#241518" stroke-width="0.6" />
+            <polygon points="675,535 815,455 855,535" fill="#181014" stroke="#181014" stroke-width="0.6" />
+          </g>
+
+          <!-- 3. Faceted Stalactite Ceiling -->
+          <g id="s1-ceiling-group">
+            <polygon points="0,0 240,0 140,115 0,130" fill="#171016" stroke="#171016" stroke-width="0.6" />
+            <polygon points="240,0 480,0 410,110 240,125" fill="#241416" stroke="#241416" stroke-width="0.6" />
+            <polygon points="240,0 240,125 140,115" fill="#1e1216" stroke="#1e1216" stroke-width="0.6" />
+            <polygon points="480,0 730,0 560,115 410,110" fill="#2d1715" stroke="#2d1715" stroke-width="0.6" />
+            <polygon points="730,0 950,0 880,120 730,105" fill="#201316" stroke="#201316" stroke-width="0.6" />
+            <polygon points="730,0 730,105 560,115" fill="#291616" stroke="#291616" stroke-width="0.6" />
+            <polygon points="950,0 1280,0 1130,115 880,120" fill="#140e14" stroke="#140e14" stroke-width="0.6" />
+            <polygon points="1280,0 1280,250 1130,115" fill="#0f0c13" stroke="#0f0c13" stroke-width="0.6" />
+
+            <polygon points="0,130 65,140 0,215" fill="#1c1116" stroke="#1c1116" stroke-width="0.5" />
+            <polygon points="65,140 140,115 145,255" fill="#1e1419" stroke="#1e1419" stroke-width="0.5" />
+            <polygon points="140,115 240,125 145,255" fill="#3a1d17" stroke="#3a1d17" stroke-width="0.5" />
+            <polygon points="240,125 320,118 320,210" fill="#2b1615" stroke="#2b1615" stroke-width="0.5" />
+            <polygon points="320,118 410,110 320,210" fill="#4f2418" stroke="#4f2418" stroke-width="0.5" />
+            <polygon points="410,110 480,112 480,245" fill="#3c1d16" stroke="#3c1d16" stroke-width="0.5" />
+            <polygon points="480,112 560,115 480,245" fill="#592819" stroke="#592819" stroke-width="0.5" />
+            <polygon points="560,115 640,110 640,210" fill="#4f2418" stroke="#4f2418" stroke-width="0.5" />
+            <polygon points="640,110 730,105 640,210" fill="#261516" stroke="#261516" stroke-width="0.5" />
+            <polygon points="730,105 805,112 800,230" fill="#462017" stroke="#462017" stroke-width="0.5" />
+            <polygon points="805,112 880,120 800,230" fill="#1e1216" stroke="#1e1216" stroke-width="0.5" />
+            <polygon points="880,120 945,132 930,275" fill="#3d1e17" stroke="#3d1e17" stroke-width="0.5" />
+            <polygon points="945,132 1010,145 930,275" fill="#181015" stroke="#181015" stroke-width="0.5" />
+            <polygon points="1010,145 1070,130 1070,220" fill="#2d1716" stroke="#2d1716" stroke-width="0.5" />
+            <polygon points="1070,130 1130,115 1070,220" fill="#130e14" stroke="#130e14" stroke-width="0.5" />
+            <polygon points="1130,115 1205,180 1180,210" fill="#221316" stroke="#221316" stroke-width="0.5" />
+            <polygon points="1205,180 1280,250 1180,210" fill="#100c13" stroke="#100c13" stroke-width="0.5" />
+          </g>
+
+          <!-- Ambient Flickering Firelight Wash -->
+          <rect id="s1-fire-ambient-glow" width="1280" height="720" fill="url(#s1-fireAmbientWash)" opacity="0.88" />
+
+          <!-- 4. Blocked Cave Mouth & Faceted Moonlight -->
+          <g id="s1-cave-entrance">
+            <polygon points="40,350 95,245 170,265 130,390" fill="#213559" />
+            <polygon points="95,245 170,265 198,355" fill="#2b4573" />
+            <polygon points="130,390 170,265 205,465" fill="#1b2c4a" />
+            <polygon points="40,350 130,390 110,510 25,465" fill="#16243d" />
+
+            <polygon points="145,255 185,335 760,640 480,655" fill="url(#s1-moonSliver)" opacity="0.72" />
+            <polygon points="128,310 168,365 560,655 310,670 115,435" fill="url(#s1-moonSliver)" opacity="0.55" />
+
+            <polygon points="10,545 4,420 55,305 95,380" fill="#10131e" stroke="#243554" stroke-width="0.6" />
+            <polygon points="55,305 125,250 155,310 95,380" fill="#1c253b" stroke="#4f71a3" stroke-opacity="0.45" stroke-width="0.8" />
+            <polygon points="125,250 185,275 155,310" fill="#314873" stroke="#6d94d1" stroke-opacity="0.5" stroke-width="0.8" />
+            <polygon points="185,275 210,365 155,310" fill="#283b5e" stroke="#5d83bf" stroke-opacity="0.45" stroke-width="0.8" />
+            <polygon points="95,380 155,310 210,365 150,455" fill="#192133" stroke="#2f4369" stroke-width="0.6" />
+            <polygon points="150,455 210,365 205,465" fill="#2c242b" stroke="#574759" stroke-width="0.6" />
+            <polygon points="10,545 95,380 150,455 125,555" fill="#131622" stroke="#1e2538" stroke-width="0.6" />
+            <polygon points="125,555 150,455 205,465 178,545" fill="#261a1d" stroke="#4a2b24" stroke-width="0.6" />
+          </g>
+
+          <!-- 5. Triangulated Polyart Cavern Floor -->
+          <g id="s1-poly-floor"></g>
+
+          <!-- 6. Campfire Glow & Polyart Campfire -->
+          <polygon id="s1-fire-floor-glow" points="470,480 860,520 940,585 680,660 220,655 15,575 120,510" fill="url(#s1-fireCore)" opacity="0.78" />
+          <circle id="s1-fire-air-halo" cx="470" cy="500" r="240" fill="url(#s1-fireHalo)" opacity="0.72" />
+
+          <g id="s1-campfire" transform="translate(470, 548)">
+            <polygon points="-46,8 -34,1 -19,5 -22,14 -39,15" fill="#3b231b" stroke="#75391e" stroke-width="0.8" />
+            <polygon points="-34,1 -19,5 -28,9" fill="#593121" />
+            <polygon points="18,6 34,1 47,9 38,16 21,15" fill="#331e18" stroke="#75391e" stroke-width="0.8" />
+            <polygon points="18,6 34,1 28,10" fill="#5c3220" />
+            <polygon points="-18,12 0,5 18,11 10,19 -11,19" fill="#291714" stroke="#6b341b" stroke-width="0.8" />
+            <polygon points="-18,12 0,5 0,13" fill="#4f291c" />
+
+            <polygon points="-36,2 -32,-6 32,-12 35,-4" fill="#472112" />
+            <polygon points="-32,-6 32,-12 24,-10 -24,-2" fill="#783416" />
+            <polygon points="-34,-8 -28,-14 34,2 28,9" fill="#36180d" />
+            <polygon points="-28,-14 34,2 20,0 -20,-10" fill="#632912" />
+
+            <g id="s1-flames">
+              <polygon points="-26,5 -28,-22 -14,-14" fill="#d9410b" />
+              <polygon points="-26,5 -14,-14 -5,-64 6,-22" fill="#eb530e" />
+              <polygon points="-5,-64 12,-28 6,-22" fill="#f56914" />
+              <polygon points="6,-22 22,-48 28,-16 22,6" fill="#e64d0c" />
+              <polygon points="-14,-14 6,-22 22,6 -26,5" fill="#f05d11" />
+              <polygon points="-16,5 -17,-20 -2,-48 8,-18" fill="#ff961e" />
+              <polygon points="2,-24 15,-34 19,-10 12,5 -16,5" fill="#ffaa2b" />
+              <polygon points="-8,4 -5,-16 0,-30 6,-14 8,4" fill="#fff7bd" />
+              <polygon points="-4,4 0,-18 4,4" fill="#ffffff" opacity="0.85" />
+              <polygon points="-12,-52 -8,-60 -5,-51" fill="#ff9e22" />
+              <polygon points="10,-56 14,-66 17,-55" fill="#ffd266" />
+            </g>
+          </g>
+
+          <!-- 7. Giant Polyart Sheep Flock -->
+          <g id="s1-sheep-flock">
+            <g id="s1-sheep-1" transform="translate(290, 520)">
+              <polygon points="-26,14 -18,14 -20,40 -26,40" fill="#1b1518" />
+              <polygon points="-18,14 -14,14 -15,40 -20,40" fill="#2a2023" />
+              <polygon points="16,14 23,14 24,40 18,40" fill="#1b1518" />
+              <polygon points="23,14 27,14 27,40 24,40" fill="#332628" />
+
+              <polygon points="-46,-2 -32,-24 -8,-12 -22,12" fill="#2a2125" stroke="#2a2125" stroke-width="0.5" />
+              <polygon points="-32,-24 0,-34 -8,-12" fill="#362a2d" stroke="#362a2d" stroke-width="0.5" />
+              <polygon points="0,-34 26,-24 14,-8 -8,-12" fill="#4a3734" stroke="#4a3734" stroke-width="0.5" />
+              <polygon points="26,-24 44,-6 14,-8" fill="#5e4138" stroke="#8f4c2b" stroke-opacity="0.45" stroke-width="0.7" />
+              <polygon points="-46,-2 -22,12 -30,22" fill="#21191d" stroke="#21191d" stroke-width="0.5" />
+              <polygon points="-22,12 -8,-12 10,16 -14,26 -30,22" fill="#302426" stroke="#302426" stroke-width="0.5" />
+              <polygon points="-8,-12 14,-8 10,16" fill="#423130" stroke="#423130" stroke-width="0.5" />
+              <polygon points="14,-8 44,-6 32,18 10,16" fill="#523832" stroke="#7d4327" stroke-opacity="0.4" stroke-width="0.6" />
+              <polygon points="-14,26 10,16 32,18 12,26" fill="#261c1e" stroke="#261c1e" stroke-width="0.5" />
+
+              <g id="s1-sheep-1-head" transform="translate(42, -8)">
+                <polygon points="-4,-6 14,-10 25,0 16,11 -2,9" fill="#382929" stroke="#7a4227" stroke-opacity="0.45" stroke-width="0.7" />
+                <polygon points="14,-10 25,0 16,4" fill="#4f352e" />
+                <polygon points="2,-6 -6,-13 -12,-6 -5,-2" fill="#705944" />
+                <polygon points="-12,-6 -13,5 -6,9 -5,-2" fill="#594635" />
+                <polygon points="-6,9 0,8 -1,3 -5,-2" fill="#453629" />
+                <polygon points="13,-1 16,-3 19,-1 16,1" fill="#a8bede" />
+              </g>
+            </g>
+
+            <g transform="translate(650, 545)">
+              <polygon points="-42,4 -26,-20 -2,-10 -18,16" fill="#47302a" stroke="#8c4a28" stroke-opacity="0.4" stroke-width="0.7" />
+              <polygon points="-26,-20 6,-26 -2,-10" fill="#54382f" stroke="#54382f" stroke-width="0.5" />
+              <polygon points="6,-26 36,-14 18,4 -2,-10" fill="#382827" stroke="#382827" stroke-width="0.5" />
+              <polygon points="36,-14 42,6 18,4" fill="#291e1f" stroke="#291e1f" stroke-width="0.5" />
+              <polygon points="-42,4 -18,16 14,20 -2,10" fill="#302221" stroke="#302221" stroke-width="0.5" />
+              <polygon points="-2,-10 18,4 14,20 -18,16" fill="#2b1f20" stroke="#2b1f20" stroke-width="0.5" />
+              <polygon points="18,4 42,6 30,20 14,20" fill="#21181a" stroke="#21181a" stroke-width="0.5" />
+              <polygon points="-32,-6 -52,0 -44,10 -28,6" fill="#2e2020" stroke="#7d4225" stroke-opacity="0.45" stroke-width="0.7" />
+              <polygon points="-34,-4 -24,-11 -20,-3 -26,2" fill="#634b3a" />
+              <polygon points="-20,-3 -22,6 -29,7 -26,2" fill="#4a382c" />
+            </g>
+          </g>
+
+          <!-- 8. POLYPHEMUS THE CYCLOPS -->
+          <g id="s1-cyclops-rig" transform="translate(860, 125)">
+            <polygon points="0,465 55,446 165,446 225,465 165,485 55,485" fill="#070508" opacity="0.68" />
+
+            <g id="s1-cyclops-body">
+              <g id="s1-cy-leg-back">
+                <polygon points="60,300 98,315 80,385 52,380" fill="#21171a" stroke="#21171a" stroke-width="0.5" />
+                <polygon points="52,380 80,385 74,458 42,455" fill="#1a1215" stroke="#4a281d" stroke-opacity="0.35" stroke-width="0.6" />
+                <polygon points="42,455 74,458 34,458" fill="#140e11" />
+              </g>
+
+              <g id="s1-cy-leg-front">
+                <polygon points="125,305 168,300 176,382 135,385" fill="#2e2022" stroke="#2e2022" stroke-width="0.5" />
+                <polygon points="125,305 135,385 128,365" fill="#522c20" />
+                <polygon points="135,385 176,382 188,462 145,462" fill="#24191b" stroke="#753922" stroke-opacity="0.45" stroke-width="0.7" />
+                <polygon points="145,462 132,462 142,440" fill="#4d281c" />
+              </g>
+
+              <g id="s1-cy-club" transform="translate(22, 225) rotate(12)">
+                <polygon points="0,0 8,0 12,115 -10,115" fill="#301c15" stroke="#7a3b1c" stroke-opacity="0.55" stroke-width="0.8" />
+                <polygon points="-10,115 12,115 15,175 -16,175" fill="#241510" stroke="#7a3b1c" stroke-opacity="0.55" stroke-width="0.8" />
+                <polygon points="0,0 2,115 -10,115" fill="#542c1a" />
+                <polygon points="-10,115 0,145 -16,175" fill="#472416" />
+                <polygon points="-16,175 15,175 8,197 -10,198" fill="#1c100c" />
+              </g>
+
+              <polygon points="40,145 78,108 106,162 48,200" fill="#633222" stroke="#ff8438" stroke-opacity="0.45" stroke-width="0.8" />
+              <polygon points="78,108 134,102 106,162" fill="#3b2527" stroke="#3b2527" stroke-width="0.5" />
+              <polygon points="134,102 172,124 148,175 106,162" fill="#291b1e" stroke="#291b1e" stroke-width="0.5" />
+              <polygon points="48,200 106,162 104,235 28,235" fill="#472720" stroke="#ff8438" stroke-opacity="0.4" stroke-width="0.7" />
+              <polygon points="106,162 148,175 162,238 104,235" fill="#2c1d20" stroke="#2c1d20" stroke-width="0.5" />
+              <polygon points="148,175 172,124 202,185 162,238" fill="#201518" stroke="#201518" stroke-width="0.5" />
+              <polygon points="28,235 104,235 95,288 42,278" fill="#3b221e" stroke="#ff8438" stroke-opacity="0.35" stroke-width="0.7" />
+              <polygon points="104,235 162,238 182,272 95,288" fill="#24181b" stroke="#24181b" stroke-width="0.5" />
+              <polygon points="162,238 202,185 198,255 182,272" fill="#1b1215" stroke="#1b1215" stroke-width="0.5" />
+
+              <polygon points="42,278 95,288 60,340 38,315" fill="#171014" />
+              <polygon points="95,288 138,284 130,342 95,318" fill="#1f151a" />
+              <polygon points="95,288 95,318 60,340" fill="#120c10" />
+              <polygon points="138,284 182,272 190,335 155,320 130,342" fill="#140e12" />
+
+              <polygon points="165,142 198,175 212,230 185,228" fill="#2c1f22" stroke="#2c1f22" stroke-width="0.5" />
+              <polygon points="185,228 212,230 205,295 182,290" fill="#21171a" stroke="#472820" stroke-opacity="0.4" stroke-width="0.6" />
+
+              <polygon points="48,142 62,162 36,192 18,180" fill="#592e20" stroke="#ff8438" stroke-opacity="0.45" stroke-width="0.7" />
+              <polygon points="18,180 36,192 44,234 22,242" fill="#40231c" stroke="#ff8438" stroke-opacity="0.4" stroke-width="0.7" />
+
+              <g id="s1-cyclops-head" transform="translate(88, 108)">
+                <polygon points="-38,-22 -48,-52 -24,-74 -8,-58" fill="#181013" />
+                <polygon points="-24,-74 8,-86 32,-80 12,-58" fill="#211519" />
+                <polygon points="32,-80 64,-52 66,-18 38,-28" fill="#181013" />
+                <polygon points="38,-28 66,-18 56,12 34,20" fill="#140d10" />
+                <polygon points="34,20 56,12 24,48 4,32" fill="#1c1215" />
+                <polygon points="-42,10 -22,24 4,32 -18,48 -38,34" fill="#1a1013" />
+
+                <polygon points="-34,-28 -16,-56 12,-58 -4,-28" fill="#542c21" stroke="#ff883b" stroke-opacity="0.45" stroke-width="0.7" />
+                <polygon points="-4,-28 12,-58 38,-28 16,-8" fill="#362225" stroke="#362225" stroke-width="0.5" />
+                <polygon points="-34,-28 -4,-28 -8,0 -38,2" fill="#4f2a20" stroke="#ff883b" stroke-opacity="0.45" stroke-width="0.7" />
+                <polygon points="-4,-28 16,-8 14,18 -8,0" fill="#301f22" stroke="#301f22" stroke-width="0.5" />
+                <polygon points="-38,2 -8,0 -10,24 -32,14" fill="#42241d" stroke="#ff883b" stroke-opacity="0.4" stroke-width="0.7" />
+                <polygon points="-8,0 14,18 -10,24" fill="#291a1d" stroke="#291a1d" stroke-width="0.5" />
+
+                <polygon points="-38,-24 -18,-36 4,-26 -16,-20" fill="#110b0d" />
+
+                <g id="s1-cy-mouth" transform="translate(-22, 14) scale(1, 1)">
+                  <polygon points="-12,0 -5,-2.5 5,-2.5 12,0 5,2.5 -5,2.5" fill="#120405" stroke="#8c3b28" stroke-width="1" />
+                </g>
+
+                <g id="s1-cyclops-eye" transform="translate(-16, -15)">
+                  <g id="s1-eye-beam" opacity="0">
+                    <polygon points="0,0 -680,-115 -680,155" fill="url(#s1-eyeBeamGrad)" />
+                    <polygon points="0,0 -680,-55 -680,85" fill="url(#s1-eyeBeamGrad)" opacity="0.65" />
+                    <polygon points="0,0 -680,-16 -680,28" fill="url(#s1-eyeBeamGrad)" opacity="0.5" />
+                  </g>
+                  <circle cx="0" cy="0" r="24" fill="url(#s1-cyclopsEyeGlow)" opacity="0.85" />
+                  <polygon points="-12,0 -5,-8 5,-8 12,0 5,8 -5,8" fill="#ffb84d" />
+                  <polygon points="-12,0 -5,-8 0,0 -5,8" fill="#ffd980" />
+                  <polygon points="-2,-6 1,0 -2,6 -5,0" fill="#2b0400" />
+                  <polygon points="-5,-4 -3,-5 -2,-3 -4,-2" fill="#ffffff" opacity="0.92" />
+                </g>
+              </g>
+            </g>
+          </g>
+
+          <!-- 9. ODYSSEUS HIDING -->
+          <g id="s1-odysseus-group" transform="translate(310, 488)">
+            <g id="s1-odysseus-rig" transform="translate(0, 0)">
+              <polygon points="-24,42 -8,44 -14,130 -46,130 -40,84" fill="#6b1a1b" stroke="#cf4b2b" stroke-opacity="0.45" stroke-width="0.7" />
+              <polygon points="-8,44 10,44 34,130 -14,130" fill="#4f1416" />
+              <polygon points="-40,84 -24,42 -14,130" fill="#852221" />
+
+              <polygon points="-12,42 6,34 22,46 16,66 -14,56" fill="#5c3a21" stroke="#f09b46" stroke-opacity="0.6" stroke-width="0.8" />
+              <polygon points="6,34 22,46 16,66 2,48" fill="#82512b" />
+
+              <g transform="translate(22, 66) rotate(-18)">
+                <polygon points="-3,-14 3,-14 3,7 -3,7" fill="#634222" />
+                <polygon points="-10,6 10,6 8,10 -8,10" fill="#d99d48" />
+                <polygon points="0,-21 5,-16 0,-11 -5,-16" fill="#f0b65b" />
+              </g>
+
+              <g id="s1-odysseus-head" transform="translate(4, 18)">
+                <polygon points="-4,-34 -24,-42 -42,-22 -24,-18" fill="#992324" stroke="#eb633b" stroke-opacity="0.55" stroke-width="0.7" />
+                <polygon points="-42,-22 -44,-2 -28,-12 -24,-18" fill="#70191a" />
+                <polygon points="-24,-18 -28,-12 -10,-20 -4,-34" fill="#ba312d" />
+
+                <polygon points="-18,12 -20,-12 0,-26 8,-4 -2,20 -18,18" fill="#422a1a" stroke="#f5a951" stroke-opacity="0.6" stroke-width="0.8" />
+                <polygon points="0,-26 18,-22 28,-8 8,-4" fill="#734828" stroke="#f5a951" stroke-opacity="0.65" stroke-width="0.8" />
+                <polygon points="8,-4 28,-8 24,18 12,18 10,2" fill="#593820" stroke="#f5a951" stroke-opacity="0.6" stroke-width="0.8" />
+                <polygon points="-2,2 -2,20 10,2" fill="#17100e" />
+                <polygon points="10,-3 14,-5 18,-3 14,-1" fill="#ffe6b3" />
+                <polygon points="13,-3 15,-4 16,-3 15,-2" fill="#110d0b" />
+              </g>
+            </g>
+
+            <g id="s1-foreground-boulder">
+              <polygon points="-145,245 -115,148 -58,155 -62,245" fill="#100b10" stroke="#100b10" stroke-width="0.5" />
+              <polygon points="-115,148 -82,78 -45,62 -28,118 -58,155" fill="#211417" stroke="#211417" stroke-width="0.5" />
+              <polygon points="-45,62 -8,36 18,92 -28,118" fill="#4a2419" stroke="#ff8e42" stroke-opacity="0.4" stroke-width="0.8" />
+              <polygon points="-8,36 44,50 48,108 18,92" fill="#823b1d" stroke="#ff9a4a" stroke-opacity="0.5" stroke-width="0.9" />
+              <polygon points="44,50 85,84 90,140 48,108" fill="#a64b21" stroke="#ffb066" stroke-opacity="0.45" stroke-width="0.9" />
+              <polygon points="85,84 125,148 90,140" fill="#7a361a" stroke="#ff8e42" stroke-opacity="0.4" stroke-width="0.8" />
+              <polygon points="-58,155 -28,118 18,92 32,165 -18,245 -62,245" fill="#2b1718" stroke="#2b1718" stroke-width="0.5" />
+              <polygon points="18,92 48,108 90,140 68,205 32,165" fill="#5c2b1a" stroke="#5c2b1a" stroke-width="0.5" />
+              <polygon points="90,140 125,148 125,245 68,205" fill="#381c18" stroke="#381c18" stroke-width="0.5" />
+              <polygon points="-18,245 32,165 68,205 125,245" fill="#1a1014" stroke="#1a1014" stroke-width="0.5" />
+            </g>
+          </g>
+
+          <!-- 10. Foreground Framing Silhouettes -->
+          <g id="s1-foreground-frames">
+            <polygon points="0,450 95,525 55,620 0,600" fill="#0d0b11" />
+            <polygon points="95,525 165,720 55,620" fill="#08070b" />
+            <polygon points="0,600 55,620 165,720 0,720" fill="#060509" />
+            <polygon points="1280,290 1185,485 1235,565 1280,520" fill="#0e0b12" />
+            <polygon points="1185,485 1120,720 1235,565" fill="#09070d" />
+            <polygon points="1235,565 1120,720 1280,720 1280,520" fill="#060509" />
+            <polygon points="0,0 210,0 90,95 45,55" fill="#0a080e" />
+            <polygon points="0,0 45,55 90,95 0,130" fill="#07060a" />
+            <polygon points="1040,0 1280,0 1160,92 1125,52" fill="#0a080e" />
+            <polygon points="1280,0 1280,175 1160,92" fill="#07060a" />
+          </g>
+
+          <!-- 11. Dialogue Speech Bubbles -->
+          <g id="s1-cyclops-bubble" transform="translate(560, 155)" opacity="0">
+            <polygon points="-140,-38 -100,-48 -45,-40 0,-50 55,-40 105,-48 135,-32 125,0 140,28 100,36 142,66 72,38 10,46 -55,38 -120,44 -145,15 -132,-12"
+                     fill="#1a0908" stroke="#ff5e1a" stroke-width="2.5" stroke-linejoin="miter" />
+            <polygon points="-132,-12 -100,-48 -45,-40 -122,12" fill="#290e0b" opacity="0.7" />
+            <polygon points="105,-48 135,-32 125,0 85,-22" fill="#2e100c" opacity="0.65" />
+            <text x="-4" y="8" text-anchor="middle" fill="#ffd9b3" font-family="Georgia, serif" font-size="27" font-weight="bold" letter-spacing="2">
+              WHO IS THERE?!
+            </text>
+          </g>
+
+          <g id="s1-odysseus-bubble" transform="translate(310, 405)" opacity="0">
+            <polygon points="-96,-32 96,-32 108,-18 108,14 96,26 12,26 -4,48 -12,26 -96,26 -108,14 -108,-18"
+                     fill="#0f121c" stroke="#d4a857" stroke-width="2" stroke-linejoin="miter" />
+            <polygon points="-96,-32 -52,-32 -108,14 -108,-18" fill="#171d2e" opacity="0.7" />
+            <text x="0" y="5" text-anchor="middle" fill="#f3e6c8" font-family="Georgia, serif" font-size="24" font-style="italic" letter-spacing="1.5">
+              ...Nobody.
+            </text>
+          </g>
+        </svg>
+
+        <!-- ========================================================= -->
+        <!-- SCENE 2: ESCAPE FROM THE CAVE (DAWN & HAY)                -->
+        <!-- ========================================================= -->
+        <svg id="scene-2" class="scene-svg" style="display:none;" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="s2-entranceDayWash" cx="10%" cy="50%" r="82%">
+              <stop offset="0%" stop-color="#fff4cc" stop-opacity="0.62" />
+              <stop offset="28%" stop-color="#cbe7f7" stop-opacity="0.34" />
+              <stop offset="58%" stop-color="#5d83a8" stop-opacity="0.14" />
+              <stop offset="100%" stop-color="#0b101c" stop-opacity="0" />
+            </radialGradient>
+
+            <linearGradient id="s2-sunBeamGrad" x1="0%" y1="15%" x2="100%" y2="85%">
+              <stop offset="0%" stop-color="#fff6d1" stop-opacity="0.46" />
+              <stop offset="40%" stop-color="#d8eefc" stop-opacity="0.20" />
+              <stop offset="100%" stop-color="#87b3d4" stop-opacity="0" />
+            </linearGradient>
+
+            <linearGradient id="s2-sunBeamCore" x1="0%" y1="25%" x2="100%" y2="75%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.50" />
+              <stop offset="35%" stop-color="#ffe7a8" stop-opacity="0.22" />
+              <stop offset="100%" stop-color="#9cc6e8" stop-opacity="0" />
+            </linearGradient>
+
+            <radialGradient id="s2-outsideSunGlow" cx="35%" cy="38%" r="60%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
+              <stop offset="30%" stop-color="#fff0ba" stop-opacity="0.72" />
+              <stop offset="68%" stop-color="#a8daf2" stop-opacity="0.28" />
+              <stop offset="100%" stop-color="#5292bf" stop-opacity="0" />
+            </radialGradient>
+
+            <radialGradient id="s2-floorSunPool" cx="22%" cy="55%" r="55%">
+              <stop offset="0%" stop-color="#fff4cc" stop-opacity="0.72" />
+              <stop offset="42%" stop-color="#d9cbb0" stop-opacity="0.28" />
+              <stop offset="100%" stop-color="#4e5c70" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <!-- 1. Triangulated Polyart Cavern Backdrop -->
+          <g id="s2-poly-wall"></g>
+
+          <!-- 2. Open Cave Entrance Vista -->
+          <g id="s2-outside-vista">
+            <polygon points="0,120 220,140 165,365 0,365" fill="#bfe3f5" />
+            <polygon points="0,120 135,130 65,280 0,255" fill="#fff2cc" />
+            <polygon points="135,130 220,140 190,295 65,280" fill="#9bd0eb" />
+            <polygon points="65,280 190,295 165,390 0,375" fill="#d9eef7" />
+
+            <circle cx="78" cy="242" r="115" fill="url(#s2-outsideSunGlow)" />
+            <polygon points="78,214 98,224 106,242 98,260 78,270 58,260 50,242 58,224" fill="#fffdf2" opacity="0.95" />
+
+            <polygon points="105,365 165,328 215,355 215,382 105,382" fill="#829199" />
+            <polygon points="105,365 165,328 148,376" fill="#a8b4ab" />
+
+            <polygon points="0,372 215,376 215,495 0,495" fill="#3a7ca5" />
+            <polygon points="0,372 135,376 75,445 0,435" fill="#6fb4d6" />
+            <polygon points="28,395 92,395 64,412" fill="#fff5d6" opacity="0.72" />
+            <polygon points="15,425 78,425 48,440" fill="#ffe9b3" opacity="0.58" />
+
+            <polygon points="0,465 145,450 200,545 0,585" fill="#8c8378" />
+            <polygon points="0,465 95,460 65,535 0,520" fill="#bfb199" />
+            <polygon points="95,460 145,450 185,545 65,535" fill="#a19585" />
+          </g>
+
+          <!-- 3. Faceted Background Rock Arch / Pillar -->
+          <g id="s2-arch-group">
+            <polygon points="330,150 455,245 410,360" fill="#5e6b7d" stroke="#5e6b7d" stroke-width="0.6" />
+            <polygon points="455,245 545,310 410,360" fill="#465163" stroke="#465163" stroke-width="0.6" />
+            <polygon points="410,360 545,310 510,445" fill="#505c6e" stroke="#505c6e" stroke-width="0.6" />
+            <polygon points="410,360 510,445 460,540" fill="#636e7d" stroke="#a6bfd4" stroke-opacity="0.35" stroke-width="0.7" />
+            <polygon points="510,445 640,420 460,540" fill="#3a4354" stroke="#3a4354" stroke-width="0.6" />
+            <polygon points="460,540 640,420 675,540" fill="#2f3645" stroke="#2f3645" stroke-width="0.6" />
+
+            <polygon points="330,150 610,165 455,245" fill="#404959" stroke="#404959" stroke-width="0.6" />
+            <polygon points="455,245 610,165 545,310" fill="#333b4a" stroke="#333b4a" stroke-width="0.6" />
+            <polygon points="610,165 780,210 545,310" fill="#252c38" stroke="#252c38" stroke-width="0.6" />
+            <polygon points="545,310 780,210 640,420" fill="#222836" stroke="#222836" stroke-width="0.6" />
+            <polygon points="610,165 980,175 780,210" fill="#181c26" stroke="#181c26" stroke-width="0.6" />
+            <polygon points="780,210 980,175 860,350" fill="#131721" stroke="#131721" stroke-width="0.6" />
+            <polygon points="780,210 860,350 640,420" fill="#1a1f2b" stroke="#1a1f2b" stroke-width="0.6" />
+            <polygon points="640,420 860,350 830,540 675,540" fill="#161a24" stroke="#161a24" stroke-width="0.6" />
+          </g>
+
+          <!-- 4. Cave Mouth Stone Rim & Faceted Stalactite Ceiling -->
+          <g id="s2-ceiling-group">
+            <polygon points="0,0 280,0 235,155 155,172 60,158 0,185" fill="#293242" stroke="#293242" stroke-width="0.6" />
+            <polygon points="60,158 155,172 195,215 105,190" fill="#6b7885" stroke="#dcebf5" stroke-opacity="0.45" stroke-width="0.8" />
+            <polygon points="155,172 260,130 235,235 195,215" fill="#4f5c6b" stroke="#9fc0d9" stroke-opacity="0.35" stroke-width="0.7" />
+            <polygon points="235,155 260,130 278,340 218,385 195,215" fill="#3a4554" />
+            <polygon points="218,385 278,340 250,515 195,525" fill="#333c4a" stroke="#96b6cf" stroke-opacity="0.35" stroke-width="0.7" />
+
+            <polygon points="280,0 520,0 440,115 260,130" fill="#2a3240" stroke="#2a3240" stroke-width="0.6" />
+            <polygon points="520,0 760,0 610,115 440,115" fill="#212733" stroke="#212733" stroke-width="0.6" />
+            <polygon points="760,0 990,0 895,120 760,105" fill="#181c26" stroke="#181c26" stroke-width="0.6" />
+            <polygon points="760,0 760,105 610,115" fill="#1d222e" stroke="#1d222e" stroke-width="0.6" />
+            <polygon points="990,0 1280,0 1135,125 895,120" fill="#11141c" stroke="#11141c" stroke-width="0.6" />
+            <polygon points="1280,0 1280,260 1135,125" fill="#0d0f17" stroke="#0d0f17" stroke-width="0.6" />
+
+            <polygon points="260,130 330,122 325,220" fill="#708091" stroke="#b5cee0" stroke-opacity="0.35" stroke-width="0.6" />
+            <polygon points="330,122 440,115 325,220" fill="#262d3b" />
+            <polygon points="440,115 510,112 505,250" fill="#5e6b7d" stroke="#99b5cc" stroke-opacity="0.3" stroke-width="0.6" />
+            <polygon points="510,112 610,115 505,250" fill="#1f2530" />
+            <polygon points="610,115 685,108 680,210" fill="#465061" />
+            <polygon points="685,108 760,105 680,210" fill="#181c26" />
+            <polygon points="760,105 830,112 825,235" fill="#353d4d" />
+            <polygon points="830,112 895,120 825,235" fill="#141721" />
+            <polygon points="895,120 960,132 950,270" fill="#282e3b" />
+            <polygon points="960,132 1030,142 950,270" fill="#10131c" />
+            <polygon points="1030,142 1090,130 1085,215" fill="#1e222e" />
+            <polygon points="1090,130 1135,125 1085,215" fill="#0d0f17" />
+          </g>
+
+          <rect id="s2-daylight-wash" width="1280" height="720" fill="url(#s2-entranceDayWash)" opacity="0.92" />
+
+          <!-- 5. Triangulated Polyart Cavern Floor -->
+          <g id="s2-poly-floor"></g>
+
+          <polygon id="s2-floor-sun-pool" points="0,515 245,515 740,625 560,720 0,720" fill="url(#s2-floorSunPool)" opacity="0.88" />
+
+          <!-- 6. Rolled-Aside Entrance Boulder -->
+          <g id="s2-rolled-boulder">
+            <polygon points="-25,575 18,455 78,472 95,585" fill="#3f4a59" stroke="#adc7db" stroke-opacity="0.45" stroke-width="0.8" />
+            <polygon points="18,455 78,472 52,515" fill="#6f7e8f" />
+            <polygon points="78,472 110,555 95,585 52,515" fill="#272e3a" />
+          </g>
+
+          <!-- 7. BACKGROUND SHEEP -->
+          <g id="s2-sheep-bg" transform="translate(1080, 525)">
+            <polygon points="-15,34 65,30 120,40 35,44" fill="#0a0c14" opacity="0.45" />
+            <polygon id="s2-sbg-leg-fl" points="-28,12 -20,12 -24,38 -31,38" fill="#464b54" />
+            <polygon id="s2-sbg-leg-bl" points="-18,12 -12,12 -14,38 -20,38" fill="#2a2d36" />
+            <polygon id="s2-sbg-leg-fr" points="16,12 24,12 22,38 15,38" fill="#383c45" />
+            <polygon id="s2-sbg-leg-br" points="25,12 31,12 31,38 25,38" fill="#22252e" />
+            <polygon points="-44,-4 -26,-26 0,-12 -18,14" fill="#d8d4c8" stroke="#fff3d1" stroke-opacity="0.6" stroke-width="0.8" />
+            <polygon points="-26,-26 8,-30 0,-12" fill="#beb9ad" />
+            <polygon points="8,-30 36,-18 20,-4 0,-12" fill="#8c8882" />
+            <polygon points="36,-18 46,4 20,-4" fill="#5e5c5c" />
+            <polygon points="-44,-4 -18,14 -26,24" fill="#b5b0a4" />
+            <polygon points="-18,14 0,-12 16,16 -10,24 -26,24" fill="#9a958d" />
+            <polygon points="0,-12 20,-4 16,16" fill="#73706e" />
+            <polygon points="20,-4 46,4 34,20 16,16" fill="#4b4a4d" />
+            <g transform="translate(-40, -6)">
+              <polygon points="4,-8 -14,-10 -24,0 -14,10 2,8" fill="#525052" stroke="#d9d1c3" stroke-opacity="0.5" stroke-width="0.7" />
+              <polygon points="-14,-10 -24,0 -14,4" fill="#706d6c" />
+              <polygon points="-2,-6 6,-13 12,-5 5,-1" fill="#b8a179" />
+              <polygon points="12,-5 13,5 6,9 5,-1" fill="#8c7958" />
+              <polygon points="-13,-2 -16,-4 -18,-2 -16,0" fill="#e8f4ff" />
+            </g>
+          </g>
+
+          <g id="s2-sheep-lead" transform="translate(760, 548)">
+            <polygon points="-15,35 68,31 125,42 35,45" fill="#0a0c14" opacity="0.45" />
+            <polygon id="s2-slead-leg-fl" points="-28,12 -20,12 -24,40 -31,40" fill="#4f545e" />
+            <polygon id="s2-slead-leg-bl" points="-18,12 -12,12 -14,40 -20,40" fill="#2f323b" />
+            <polygon id="s2-slead-leg-fr" points="16,12 24,12 22,40 15,40" fill="#3e424c" />
+            <polygon id="s2-slead-leg-br" points="25,12 31,12 31,40 25,40" fill="#252830" />
+            <polygon points="-46,-4 -28,-28 0,-12 -18,14" fill="#e3dfd3" stroke="#fff6d9" stroke-opacity="0.65" stroke-width="0.8" />
+            <polygon points="-28,-28 8,-32 0,-12" fill="#c7c2b6" />
+            <polygon points="8,-32 38,-18 20,-4 0,-12" fill="#94908a" />
+            <polygon points="38,-18 48,4 20,-4" fill="#636163" />
+            <polygon points="-46,-4 -18,14 -28,24" fill="#bfbab0" />
+            <polygon points="-18,14 0,-12 16,18 -10,25 -28,24" fill="#a39e95" />
+            <polygon points="0,-12 20,-4 16,18" fill="#7a7775" />
+            <polygon points="20,-4 48,4 34,21 16,18" fill="#4f4e52" />
+            <g transform="translate(-42, -7)">
+              <polygon points="4,-8 -15,-10 -25,0 -15,10 2,8" fill="#595759" stroke="#e0d8c8" stroke-opacity="0.55" stroke-width="0.7" />
+              <polygon points="-15,-10 -25,0 -15,4" fill="#787573" />
+              <polygon points="-2,-6 7,-14 13,-5 5,-1" fill="#c4ad84" />
+              <polygon points="13,-5 14,5 6,9 5,-1" fill="#968362" />
+              <polygon points="-14,-2 -17,-4 -19,-2 -17,0" fill="#e8f4ff" />
+            </g>
+          </g>
+
+          <!-- 8. POLYPHEMUS THE BLINDED CYCLOPS -->
+          <g id="s2-cyclops-rig" transform="translate(530, 95)">
+            <polygon points="30,475 180,460 390,485 260,505 80,500" fill="#07080f" opacity="0.62" />
+
+            <g id="s2-cy-club" transform="translate(195, 255) rotate(-14)">
+              <polygon points="-6,0 8,0 14,135 -10,135" fill="#2d201a" stroke="#54433a" stroke-opacity="0.45" stroke-width="0.7" />
+              <polygon points="-10,135 14,135 19,205 -15,205" fill="#211713" />
+              <polygon points="-6,0 -1,135 -10,135" fill="#4a372d" />
+              <polygon points="-10,135 0,170 -15,205" fill="#3b2b23" />
+            </g>
+
+            <polygon points="155,148 195,180 205,235 178,232" fill="#27242e" />
+            <polygon points="178,232 205,235 198,278 175,274" fill="#1e1c24" />
+
+            <g id="s2-cy-leg-back">
+              <polygon points="118,300 162,305 150,390 112,385" fill="#25242e" />
+              <polygon points="112,385 150,390 168,470 125,470" fill="#1d1c24" />
+            </g>
+
+            <g id="s2-cy-leg-front">
+              <polygon points="56,298 106,308 88,392 48,385" fill="#3a3945" stroke="#859eb5" stroke-opacity="0.35" stroke-width="0.7" />
+              <polygon points="48,385 88,392 78,472 36,470" fill="#2d2c36" stroke="#758ca3" stroke-opacity="0.35" stroke-width="0.7" />
+            </g>
+
+            <polygon points="24,148 64,106 96,162 34,205" fill="#6b6369" stroke="#cfe3f2" stroke-opacity="0.5" stroke-width="0.8" />
+            <polygon points="64,106 128,104 96,162" fill="#46424a" />
+            <polygon points="128,104 176,128 148,180 96,162" fill="#2c2a33" />
+            <polygon points="34,205 96,162 94,238 18,236" fill="#524d54" stroke="#b5cee0" stroke-opacity="0.4" stroke-width="0.7" />
+            <polygon points="96,162 148,180 162,240 94,238" fill="#33303a" />
+            <polygon points="148,180 176,128 202,190 162,240" fill="#211f29" />
+            <polygon points="18,236 94,238 88,292 36,282" fill="#423e47" stroke="#99b3c9" stroke-opacity="0.35" stroke-width="0.7" />
+            <polygon points="94,238 162,240 178,278 88,292" fill="#27252e" />
+
+            <polygon points="36,282 88,292 52,342 32,318" fill="#201e26" />
+            <polygon points="88,292 135,286 128,345 88,320" fill="#2b2833" />
+            <polygon points="135,286 178,278 185,336 148,322 128,345" fill="#18161f" />
+
+            <g id="s2-cyclops-head" transform="translate(76, 108)">
+              <polygon points="-40,-20 -50,-52 -24,-74 -8,-58" fill="#1d1b24" />
+              <polygon points="-24,-74 10,-86 34,-78 14,-56" fill="#282630" />
+              <polygon points="34,-78 66,-50 68,-16 40,-26" fill="#1b1921" />
+              <polygon points="40,-26 68,-16 56,14 34,20" fill="#15141c" />
+              <polygon points="34,20 56,14 24,50 4,34" fill="#1d1b24" />
+              <polygon points="-44,10 -24,26 4,34 -18,50 -40,34" fill="#24222c" />
+
+              <polygon points="-36,-28 -16,-56 12,-58 -4,-28" fill="#6b6369" stroke="#cde0f0" stroke-opacity="0.5" stroke-width="0.8" />
+              <polygon points="-4,-28 12,-58 38,-28 16,-8" fill="#423f47" />
+              <polygon points="-36,-28 -4,-28 -8,0 -40,2" fill="#5e575e" stroke="#b8d0e3" stroke-opacity="0.45" stroke-width="0.7" />
+              <polygon points="-4,-28 16,-8 14,18 -8,0" fill="#38353d" />
+              <polygon points="-40,2 -8,0 -10,24 -34,14" fill="#4f4952" />
+              <polygon points="-8,0 14,18 -10,24" fill="#2e2b33" />
+
+              <polygon points="-40,-24 -18,-36 4,-26 -16,-19" fill="#14131a" />
+              <polygon points="-28,-22 -4,-22 -2,-10 -28,-10" fill="#4a1818" />
+              <polygon points="-24,-19 -14,-15 -8,-19 -10,-12 -22,-13" fill="#210808" />
+              <polygon points="-38,-22 22,-30 26,-16 -36,-10" fill="#706259" stroke="#bfb2a4" stroke-opacity="0.45" stroke-width="0.7" opacity="0.82" />
+              <polygon points="-20,-19 -12,-11 -16,-10 -23,-17" fill="#6e1a1a" opacity="0.85" />
+
+              <g id="s2-cy-mouth" transform="translate(-24, 15) scale(1, 1)">
+                <polygon points="-12,0 -5,-2.5 5,-2.5 12,0 5,2.5 -5,2.5" fill="#140708" stroke="#6e413b" stroke-width="1" />
+              </g>
+            </g>
+          </g>
+
+          <!-- 9. THE GRABBED SHEEP -->
+          <g id="s2-sheep-grabbed" transform="translate(920, 545)">
+            <polygon id="s2-sgrab-shadow" points="-15,35 65,31 120,42 35,45" fill="#0a0c14" opacity="0.45" />
+            <g id="s2-sgrab-legs">
+              <polygon id="s2-sgrab-leg-fl" points="-28,12 -20,12 -24,40 -31,40" fill="#4f545e" />
+              <polygon id="s2-sgrab-leg-bl" points="-18,12 -12,12 -14,40 -20,40" fill="#2f323b" />
+              <polygon id="s2-sgrab-leg-fr" points="16,12 24,12 22,40 15,40" fill="#3e424c" />
+              <polygon id="s2-sgrab-leg-br" points="25,12 31,12 31,40 25,40" fill="#252830" />
+            </g>
+            <g id="s2-sgrab-body">
+              <polygon points="-46,-4 -28,-28 0,-12 -18,14" fill="#ece8dc" stroke="#fff9e3" stroke-opacity="0.7" stroke-width="0.8" />
+              <polygon points="-28,-28 8,-32 0,-12" fill="#cfcabd" />
+              <polygon points="8,-32 38,-18 20,-4 0,-12" fill="#9c9891" />
+              <polygon points="38,-18 48,4 20,-4" fill="#686668" />
+              <polygon points="-46,-4 -18,14 -28,24" fill="#c7c2b6" />
+              <polygon points="-18,14 0,-12 16,18 -10,25 -28,24" fill="#aba69c" />
+              <polygon points="0,-12 20,-4 16,18" fill="#827e7b" />
+              <polygon points="20,-4 48,4 34,21 16,18" fill="#575659" />
+              <g id="s2-sgrab-head" transform="translate(-42, -7)">
+                <polygon points="4,-8 -15,-10 -25,0 -15,10 2,8" fill="#5e5b5e" stroke="#e6decb" stroke-opacity="0.6" stroke-width="0.7" />
+                <polygon points="-15,-10 -25,0 -15,4" fill="#7d7a78" />
+                <polygon points="-2,-6 7,-14 13,-5 5,-1" fill="#c9b289" />
+                <polygon points="13,-5 14,5 6,9 5,-1" fill="#998665" />
+                <polygon points="-14,-2 -17,-4 -19,-2 -17,0" fill="#ffffff" />
+              </g>
+            </g>
+          </g>
+
+          <!-- 10. POLYPHEMUS'S GRABBING ARM & HAND -->
+          <g id="s2-cyclops-grab-arm">
+            <g id="s2-cy-upper-arm" transform="translate(575, 250)">
+              <polygon points="0,-18 165,-14 165,16 0,20" fill="#635c63" stroke="#b5cee0" stroke-opacity="0.45" stroke-width="0.8" />
+              <polygon points="0,0 165,-2 165,16 0,20" fill="#46424a" />
+            </g>
+            <g id="s2-cy-forearm" transform="translate(575, 415)">
+              <polygon points="0,-16 165,-12 165,12 0,16" fill="#595359" stroke="#cde0f0" stroke-opacity="0.48" stroke-width="0.8" />
+              <polygon points="0,2 165,0 165,12 0,16" fill="#3d3a42" />
+            </g>
+            <g id="s2-cy-hand" transform="translate(450, 500)">
+              <polygon points="-22,-18 18,-20 26,0 12,16 -18,14 -28,-2" fill="#5e575e" stroke="#d4e6f5" stroke-opacity="0.5" stroke-width="0.8" />
+              <g id="s2-cy-fingers">
+                <polygon points="-20,10 -24,34 -12,38 -8,12" fill="#4d474d" stroke="#a6bfd4" stroke-opacity="0.4" stroke-width="0.6" />
+                <polygon points="-6,12 -8,40 4,40 6,12" fill="#454047" stroke="#a6bfd4" stroke-opacity="0.35" stroke-width="0.6" />
+                <polygon points="8,12 10,36 22,34 18,10" fill="#38343b" />
+                <polygon points="-24,-4 -38,14 -28,22 -16,6" fill="#635c63" stroke="#cde0f0" stroke-opacity="0.45" stroke-width="0.6" />
+              </g>
+            </g>
+          </g>
+
+          <!-- 11. ODYSSEUS CRAWLING OUT WITH HAY ON HIS BACK -->
+          <g id="s2-odysseus-rig" transform="translate(960, 574)">
+            <polygon points="-38,24 55,20 110,30 12,34" fill="#080a12" opacity="0.55" />
+
+            <g id="s2-ody-crawl-body">
+              <g id="s2-ody-leg-b" transform="translate(26, 6)">
+                <polygon points="-6,-4 10,-2 24,14 14,18 -4,6" fill="#382518" />
+                <polygon points="14,18 24,14 40,18 36,24 14,22" fill="#2b1c12" />
+              </g>
+
+              <g id="s2-ody-arm-b" transform="translate(-26, 4)">
+                <polygon points="0,-4 -14,8 -26,18 -18,22 -4,12 6,0" fill="#4f3320" />
+              </g>
+
+              <polygon points="-24,-8 22,-10 38,8 -8,12 -32,6" fill="#701c1e" stroke="#cf5948" stroke-opacity="0.45" stroke-width="0.7" />
+              <polygon points="0,-8 34,-6 44,12 18,12" fill="#4f1315" />
+
+              <polygon points="-34,-6 -4,-14 26,-6 18,10 -22,12" fill="#754c28" stroke="#f0b65b" stroke-opacity="0.55" stroke-width="0.8" />
+              <polygon points="-34,-6 -22,12 -38,4" fill="#9c6838" />
+
+              <g id="s2-ody-hay" transform="translate(0, -14)">
+                <polygon points="-16,16 -10,-6 -4,-6 -10,16" fill="#3b2316" />
+                <polygon points="10,15 16,-8 22,-8 16,15" fill="#2e1b11" />
+
+                <polygon points="-34,6 -22,-18 -4,-10 -14,10" fill="#f7d56e" stroke="#fff3bf" stroke-opacity="0.65" stroke-width="0.8" />
+                <polygon points="-22,-18 6,-22 -4,-10" fill="#e6b647" />
+                <polygon points="6,-22 32,-12 18,2 -4,-10" fill="#c7922c" />
+                <polygon points="32,-12 40,8 18,2" fill="#8f641b" />
+                <polygon points="-14,10 -4,-10 18,2 8,12" fill="#d9a438" />
+                <polygon points="18,2 40,8 26,14 8,12" fill="#7a5315" />
+
+                <polygon points="-30,-8 -48,-16 -24,-14" fill="#ffe17d" />
+                <polygon points="-18,-16 -28,-32 -10,-20" fill="#f5c956" />
+                <polygon points="0,-20 4,-34 12,-19" fill="#e3af3b" />
+                <polygon points="18,-16 36,-28 28,-11" fill="#c9932a" />
+                <polygon points="34,-4 52,-10 38,4" fill="#9c6d1d" />
+                <polygon points="-36,2 -52,0 -34,8" fill="#ffe794" />
+                <polygon points="-8,-14 -6,-28 2,-15" fill="#ffd966" />
+              </g>
+
+              <g id="s2-ody-leg-f" transform="translate(20, 8)">
+                <polygon points="-6,-5 12,-3 26,13 14,18 -4,6" fill="#6b4527" stroke="#e0a95e" stroke-opacity="0.45" stroke-width="0.7" />
+                <polygon points="14,18 26,13 42,17 38,23 14,22" fill="#4f331c" />
+              </g>
+
+              <g id="s2-ody-arm-f" transform="translate(-30, 5)">
+                <polygon points="2,-4 -14,7 -28,17 -18,22 -4,12 8,0" fill="#855630" stroke="#f0b65b" stroke-opacity="0.5" stroke-width="0.7" />
+              </g>
+
+              <g id="s2-ody-head" transform="translate(-44, -4)">
+                <polygon points="2,-24 22,-32 40,-14 20,-10" fill="#a82728" stroke="#f07860" stroke-opacity="0.55" stroke-width="0.7" />
+                <polygon points="40,-14 42,2 26,-6 20,-10" fill="#751a1b" />
+                <polygon points="20,-10 26,-6 10,-12 2,-24" fill="#c43833" />
+
+                <polygon points="16,10 18,-10 0,-22 -8,-2 2,16 16,14" fill="#593a21" stroke="#f5be6b" stroke-opacity="0.65" stroke-width="0.8" />
+                <polygon points="0,-22 -16,-18 -26,-6 -8,-2" fill="#9c6a3b" stroke="#ffe19e" stroke-opacity="0.75" stroke-width="0.9" />
+                <polygon points="-8,-2 -26,-6 -22,14 -10,14 -8,2" fill="#7d532c" stroke="#f5be6b" stroke-opacity="0.65" stroke-width="0.8" />
+                <polygon points="2,2 2,16 -8,2" fill="#1c1411" />
+                <polygon points="-10,-2 -14,-4 -17,-2 -14,0" fill="#fff0c9" />
+                <polygon points="-13,-2 -15,-3 -16,-2 -15,-1" fill="#120d0a" />
+              </g>
+            </g>
+          </g>
+
+          <!-- 12. Volumetric Sunbeams -->
+          <g id="s2-sun-beams" pointer-events="none">
+            <polygon points="10,150 205,155 1120,660 540,720 0,550" fill="url(#s2-sunBeamGrad)" opacity="0.82" />
+            <polygon points="55,195 190,210 920,670 360,720 0,505" fill="url(#s2-sunBeamCore)" opacity="0.72" />
+            <polygon points="90,235 170,255 680,685 210,705" fill="url(#s2-sunBeamCore)" opacity="0.58" />
+          </g>
+
+          <!-- 13. Foreground Framing Silhouettes -->
+          <g id="s2-foreground-frames">
+            <polygon points="1280,290 1185,485 1235,575 1280,530" fill="#0d0f17" />
+            <polygon points="1185,485 1120,720 1235,575" fill="#080a10" />
+            <polygon points="1235,575 1120,720 1280,720 1280,530" fill="#06070c" />
+            <polygon points="1040,0 1280,0 1160,95 1125,52" fill="#0a0c13" />
+            <polygon points="1280,0 1280,185 1160,95" fill="#07080e" />
+            <polygon points="0,0 190,0 75,85 0,120" fill="#111622" />
+            <polygon points="0,585 115,645 185,720 0,720" fill="#242b38" />
+            <polygon points="0,585 75,610 115,645 0,655" fill="#465366" />
+          </g>
+
+          <!-- 14. Dialogue Bubbles -->
+          <g id="s2-sheep-bubble" transform="translate(385, 315)" opacity="0">
+            <polygon points="-46,-22 46,-22 54,-10 54,12 46,22 10,22 24,38 -2,22 -46,22 -54,12 -54,-10"
+                     fill="#141824" stroke="#e6dbc2" stroke-width="2" stroke-linejoin="miter" />
+            <text x="0" y="6" text-anchor="middle" fill="#fff3d6" font-family="Georgia, serif" font-size="21" font-weight="bold" letter-spacing="1.5">
+              BAA!
+            </text>
+          </g>
+
+          <g id="s2-cyclops-bubble" transform="translate(650, 125)" opacity="0">
+            <polygon points="-122,-34 -78,-44 -20,-36 32,-44 96,-36 124,-20 114,4 126,28 84,34 -18,38 -36,64 -48,38 -110,36 -130,12 -118,-10"
+                     fill="#14131c" stroke="#85a6c7" stroke-width="2.2" stroke-linejoin="miter" />
+            <text id="s2-cyclops-bubble-text" x="-2" y="7" text-anchor="middle" fill="#e6eff7" font-family="Georgia, serif" font-size="24" font-weight="bold" letter-spacing="1.5">
+              WHO GOES?!
+            </text>
+          </g>
+        </svg>
+
+        <canvas id="particles" width="1280" height="720"></canvas>
+      </div>
+
+      <div id="vignette" class="vignette"></div>
+      <div id="caption" class="caption-bar">Heavy footsteps echo through the cavern...</div>
+      <div id="fade-curtain"></div>
+    </div>
+
+    <div class="greek-border"></div>
+
+    <div class="hud">
+      <div class="title-block">
+        <h1 id="hud-title">The Odyssey &mdash; "Nobody"</h1>
+        <p id="hud-subtitle">"Who is there?" &bull; Book IX &bull; Act I</p>
+      </div>
+      <div class="controls">
+        <button id="btn-replay">Replay</button>
+        <button id="btn-skip">Skip Animation</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const SVG_NS = "http://www.w3.org/2000/svg";
+
+      // --- Shared Deterministic Polyart Mesh Builder ---
+      function hash2(x, y) {
+        const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
+        return s - Math.floor(s);
+      }
+
+      function mixRGB(c1, c2, t) {
+        const k = Math.max(0, Math.min(1, t));
+        return [
+          Math.round(c1[0] + (c2[0] - c1[0]) * k),
+          Math.round(c1[1] + (c2[1] - c1[1]) * k),
+          Math.round(c1[2] + (c2[2] - c1[2]) * k)
+        ];
+      }
+
+      function rgbStr(c) {
+        return `rgb(${c[0]},${c[1]},${c[2]})`;
+      }
+
+      function buildPolyGrid(containerId, cols, rows, x0, y0, x1, y1, jitterX, jitterY, colorFn) {
+        const container = document.getElementById(containerId);
+        const pts = [];
+        const dx = (x1 - x0) / cols;
+        const dy = (y1 - y0) / rows;
+
+        for (let r = 0; r <= rows; r++) {
+          const rowPts = [];
+          for (let c = 0; c <= cols; c++) {
+            let px = x0 + c * dx;
+            let py = y0 + r * dy;
+            if (c > 0 && c < cols) px += (hash2(c, r) - 0.5) * dx * jitterX;
+            if (r > 0 && r < rows) py += (hash2(c + 31, r + 17) - 0.5) * dy * jitterY;
+            rowPts.push([px, py]);
+          }
+          pts.push(rowPts);
+        }
+
+        const frag = document.createDocumentFragment();
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const p00 = pts[r][c];
+            const p10 = pts[r][c + 1];
+            const p01 = pts[r + 1][c];
+            const p11 = pts[r + 1][c + 1];
+
+            const tris = (r + c) % 2 === 0
+              ? [[p00, p10, p11], [p00, p11, p01]]
+              : [[p00, p10, p01], [p10, p11, p01]];
+
+            tris.forEach((tri, idx) => {
+              const cx = (tri[0][0] + tri[1][0] + tri[2][0]) / 3;
+              const cy = (tri[0][1] + tri[1][1] + tri[2][1]) / 3;
+              const jitterTone = (hash2(c * 3 + idx, r * 5 + idx) - 0.5) * 0.14;
+              const col = colorFn(cx, cy, jitterTone);
+              const poly = document.createElementNS(SVG_NS, "polygon");
+              poly.setAttribute(
+                "points",
+                tri.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ")
+              );
+              poly.setAttribute("fill", col);
+              poly.setAttribute("stroke", col);
+              poly.setAttribute("stroke-width", "0.7");
+              frag.appendChild(poly);
+            });
+          }
+        }
+        container.appendChild(frag);
+      }
+
+      // Scene 1 Meshes (Firelight + Moonlight)
+      buildPolyGrid("s1-poly-wall", 18, 9, 0, 0, 1280, 555, 0.72, 0.68, (cx, cy, jitter) => {
+        const dFire = Math.hypot((cx - 470) / 1.15, cy - 535);
+        const fireAmt = Math.max(0, 1 - dFire / 760);
+        const dMoon = Math.hypot(cx - 105, cy - 390);
+        const moonAmt = Math.max(0, 1 - dMoon / 320) * 0.45;
+
+        const shadow = [13, 12, 19];
+        const midWarm = [72, 31, 22];
+        const brightWarm = [184, 83, 27];
+        const moonTint = [32, 52, 88];
+
+        let base = fireAmt > 0.5
+          ? mixRGB(midWarm, brightWarm, (fireAmt - 0.5) * 2)
+          : mixRGB(shadow, midWarm, fireAmt * 2);
+
+        base = mixRGB(base, moonTint, moonAmt);
+        const factor = 1 + jitter;
+        return rgbStr(base.map((v) => Math.max(4, Math.min(255, Math.round(v * factor)))));
+      });
+
+      buildPolyGrid("s1-poly-floor", 18, 5, 0, 515, 1280, 720, 0.7, 0.65, (cx, cy, jitter) => {
+        const dFire = Math.hypot((cx - 470) / 1.85, cy - 565);
+        const fireAmt = Math.max(0, 1 - dFire / 390);
+        const dMoon = Math.hypot((cx - 280) / 1.7, cy - 600);
+        const moonAmt = Math.max(0, 1 - dMoon / 200) * 0.28;
+
+        const shadow = [16, 12, 18];
+        const midFloor = [56, 29, 23];
+        const brightFloor = [130, 58, 24];
+        const moonTint = [46, 72, 114];
+
+        let base = fireAmt > 0.45
+          ? mixRGB(midFloor, brightFloor, (fireAmt - 0.45) / 0.55)
+          : mixRGB(shadow, midFloor, fireAmt / 0.45);
+
+        base = mixRGB(base, moonTint, moonAmt);
+        const factor = 1 + jitter;
+        return rgbStr(base.map((v) => Math.max(4, Math.min(255, Math.round(v * factor)))));
+      });
+
+      // Scene 2 Meshes (Dawn Daylight Pouring In)
+      buildPolyGrid("s2-poly-wall", 18, 9, 0, 0, 1280, 555, 0.72, 0.68, (cx, cy, jitter) => {
+        const dExit = Math.hypot((cx - 110) / 1.45, cy - 365);
+        const lightAmt = Math.max(0, 1 - dExit / 780);
+
+        const deepShadow = [12, 14, 23];
+        const midSlate = [54, 65, 84];
+        const sunlitStone = [166, 174, 170];
+
+        let base = lightAmt > 0.45
+          ? mixRGB(midSlate, sunlitStone, (lightAmt - 0.45) / 0.55)
+          : mixRGB(deepShadow, midSlate, lightAmt / 0.45);
+
+        const factor = 1 + jitter;
+        return rgbStr(base.map((v) => Math.max(5, Math.min(255, Math.round(v * factor)))));
+      });
+
+      buildPolyGrid("s2-poly-floor", 18, 5, 0, 515, 1280, 720, 0.7, 0.65, (cx, cy, jitter) => {
+        const dExit = Math.hypot((cx - 135) / 2.25, cy - 585);
+        const lightAmt = Math.max(0, 1 - dExit / 440);
+
+        const deepShadow = [12, 13, 21];
+        const midFloor = [48, 55, 70];
+        const brightFloor = [156, 150, 136];
+
+        let base = lightAmt > 0.42
+          ? mixRGB(midFloor, brightFloor, (lightAmt - 0.42) / 0.58)
+          : mixRGB(deepShadow, midFloor, lightAmt / 0.42);
+
+        const factor = 1 + jitter;
+        return rgbStr(base.map((v) => Math.max(5, Math.min(255, Math.round(v * factor)))));
+      });
+
+      // --- Shared UI & Stage Elements ---
+      const theaterFrame = document.getElementById("theater-frame");
+      const cameraRig = document.getElementById("camera-rig");
+      const scene1Svg = document.getElementById("scene-1");
+      const scene2Svg = document.getElementById("scene-2");
+      const vignetteEl = document.getElementById("vignette");
+      const captionEl = document.getElementById("caption");
+      const fadeCurtain = document.getElementById("fade-curtain");
+      const hudTitle = document.getElementById("hud-title");
+      const hudSubtitle = document.getElementById("hud-subtitle");
+      const btnReplay = document.getElementById("btn-replay");
+      const btnSkip = document.getElementById("btn-skip");
+
+      const canvas = document.getElementById("particles");
+      const ctx = canvas.getContext("2d");
+
+      // --- Scene 1 Elements ---
+      const s1 = {
+        cyclopsRig: document.getElementById("s1-cyclops-rig"),
+        cyclopsBody: document.getElementById("s1-cyclops-body"),
+        cyclopsHead: document.getElementById("s1-cyclops-head"),
+        cyLegFront: document.getElementById("s1-cy-leg-front"),
+        cyLegBack: document.getElementById("s1-cy-leg-back"),
+        cyClub: document.getElementById("s1-cy-club"),
+        cyMouth: document.getElementById("s1-cy-mouth"),
+        eyeBeam: document.getElementById("s1-eye-beam"),
+        odysseusRig: document.getElementById("s1-odysseus-rig"),
+        odysseusHead: document.getElementById("s1-odysseus-head"),
+        flames: document.getElementById("s1-flames"),
+        fireFloorGlow: document.getElementById("s1-fire-floor-glow"),
+        fireAirHalo: document.getElementById("s1-fire-air-halo"),
+        fireAmbientGlow: document.getElementById("s1-fire-ambient-glow"),
+        sheepHead: document.getElementById("s1-sheep-1-head"),
+        cyclopsBubble: document.getElementById("s1-cyclops-bubble"),
+        odysseusBubble: document.getElementById("s1-odysseus-bubble")
+      };
+
+      // --- Scene 2 Elements ---
+      const s2 = {
+        sunBeams: document.getElementById("s2-sun-beams"),
+        daylightWash: document.getElementById("s2-daylight-wash"),
+        floorSunPool: document.getElementById("s2-floor-sun-pool"),
+        sheepLead: document.getElementById("s2-sheep-lead"),
+        sLeadLegs: [
+          document.getElementById("s2-slead-leg-fl"),
+          document.getElementById("s2-slead-leg-bl"),
+          document.getElementById("s2-slead-leg-fr"),
+          document.getElementById("s2-slead-leg-br")
+        ],
+        sheepBg: document.getElementById("s2-sheep-bg"),
+        sBgLegs: [
+          document.getElementById("s2-sbg-leg-fl"),
+          document.getElementById("s2-sbg-leg-bl"),
+          document.getElementById("s2-sbg-leg-fr"),
+          document.getElementById("s2-sbg-leg-br")
+        ],
+        sheepGrabbed: document.getElementById("s2-sheep-grabbed"),
+        sGrabShadow: document.getElementById("s2-sgrab-shadow"),
+        sGrabHead: document.getElementById("s2-sgrab-head"),
+        sGrabLegs: [
+          document.getElementById("s2-sgrab-leg-fl"),
+          document.getElementById("s2-sgrab-leg-bl"),
+          document.getElementById("s2-sgrab-leg-fr"),
+          document.getElementById("s2-sgrab-leg-br")
+        ],
+        cyclopsRig: document.getElementById("s2-cyclops-rig"),
+        cyclopsHead: document.getElementById("s2-cyclops-head"),
+        cyMouth: document.getElementById("s2-cy-mouth"),
+        cyUpperArm: document.getElementById("s2-cy-upper-arm"),
+        cyForearm: document.getElementById("s2-cy-forearm"),
+        cyHand: document.getElementById("s2-cy-hand"),
+        cyFingers: document.getElementById("s2-cy-fingers"),
+        odysseusRig: document.getElementById("s2-odysseus-rig"),
+        odyCrawlBody: document.getElementById("s2-ody-crawl-body"),
+        odyHead: document.getElementById("s2-ody-head"),
+        odyHay: document.getElementById("s2-ody-hay"),
+        odyArmF: document.getElementById("s2-ody-arm-f"),
+        odyArmB: document.getElementById("s2-ody-arm-b"),
+        odyLegF: document.getElementById("s2-ody-leg-f"),
+        odyLegB: document.getElementById("s2-ody-leg-b"),
+        sheepBubble: document.getElementById("s2-sheep-bubble"),
+        cyclopsBubble: document.getElementById("s2-cyclops-bubble"),
+        cyclopsBubbleText: document.getElementById("s2-cyclops-bubble-text")
+      };
+
+      // --- Combined Timeline Constants ---
+      // 0.0 -> 15.0 : Scene 1 ("Nobody" by the fire)
+      // 14.0 -> 15.2 : Fade out to black
+      // 15.4 : Switch from Scene 1 to Scene 2 while fully black
+      // 15.4 -> 16.6 : Fade in from black into Scene 2
+      // 15.4 -> 30.4 : Scene 2 (Escape beneath the flock)
+      // 29.5 -> 30.7 : Fade out to black before looping back to Scene 1
+      const SCENE2_START = 15.4;
+      const TOTAL_DURATION = 30.9;
+
+      let globalT = 0;
+      let isSkipped = false;
+      let lastFrame = performance.now();
+      let shakeIntensity = 0;
+      let activeScene = 1;
+
+      // Scene 1 state flags
+      let s1LastStepBucket = -1;
+      let s1DidCyclopsSpeak = false;
+      const s1Embers = [];
+      const s1Dust = [];
+
+      // Scene 2 state flags
+      let s2DidGrabShake = false;
+      const s2Motes = [];
+      const s2Chaff = [];
+      const s2CaveDust = [];
+
+      for (let i = 0; i < 36; i++) {
+        s2Motes.push({
+          x: 40 + Math.random() * 880,
+          y: 170 + Math.random() * 480,
+          vx: 8 + Math.random() * 14,
+          vy: -4 + Math.random() * 10,
+          angle: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 2.5,
+          size: 1.6 + Math.random() * 2.8,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+
+      // --- Math Helpers ---
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+      }
+
+      function smoothstep(edge0, edge1, x) {
+        const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+        return t * t * (3 - 2 * t);
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      // --- Particle Spawners ---
+      function spawnS1Ember() {
+        s1Embers.push({
+          x: 455 + (Math.random() - 0.5) * 42,
+          y: 540 + (Math.random() - 0.5) * 10,
+          vx: (Math.random() - 0.5) * 20,
+          vy: -34 - Math.random() * 58,
+          angle: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 6,
+          life: 0,
+          maxLife: 1.7 + Math.random() * 2.2,
+          size: 2.2 + Math.random() * 3.0
+        });
+      }
+
+      function spawnS1CaveDust(count = 18) {
+        for (let i = 0; i < count; i++) {
+          s1Dust.push({
+            x: 160 + Math.random() * 980,
+            y: 40 + Math.random() * 140,
+            vx: (Math.random() - 0.5) * 10,
+            vy: 35 + Math.random() * 85,
+            angle: Math.random() * Math.PI * 2,
+            spin: (Math.random() - 0.5) * 4,
+            life: 0,
+            maxLife: 1.5 + Math.random() * 1.5,
+            size: 1.8 + Math.random() * 2.8
+          });
+        }
+      }
+
+      function triggerS1Footstep(strength = 1) {
+        shakeIntensity = Math.max(shakeIntensity, 9 * strength);
+        spawnS1CaveDust(Math.round(14 * strength));
+      }
+
+      function spawnS2Chaff(x, y) {
+        s2Chaff.push({
+          x: x + (Math.random() - 0.5) * 34,
+          y: y - 16 + (Math.random() - 0.5) * 14,
+          vx: 14 + Math.random() * 26,
+          vy: -14 - Math.random() * 20,
+          angle: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 9,
+          life: 0,
+          maxLife: 1.0 + Math.random() * 1.1,
+          size: 2.4 + Math.random() * 2.8
+        });
+      }
+
+      function spawnS2CaveDust(count = 16) {
+        for (let i = 0; i < count; i++) {
+          s2CaveDust.push({
+            x: 340 + Math.random() * 460,
+            y: 60 + Math.random() * 130,
+            vx: (Math.random() - 0.5) * 12,
+            vy: 42 + Math.random() * 85,
+            angle: Math.random() * Math.PI * 2,
+            spin: (Math.random() - 0.5) * 4,
+            life: 0,
+            maxLife: 1.4 + Math.random() * 1.2,
+            size: 1.8 + Math.random() * 2.6
+          });
+        }
+      }
+
+      // --- Scene Switching & Controls ---
+      function setActiveScene(sceneNum) {
+        if (activeScene === sceneNum) return;
+        activeScene = sceneNum;
+        shakeIntensity = 0;
+
+        if (sceneNum === 1) {
+          scene1Svg.style.display = "block";
+          scene2Svg.style.display = "none";
+          s1LastStepBucket = -1;
+          s1DidCyclopsSpeak = false;
+          s2Chaff.length = 0;
+          s2CaveDust.length = 0;
+
+          hudTitle.innerHTML = 'The Odyssey &mdash; "Nobody"';
+          hudSubtitle.innerHTML = '"Who is there?" &bull; Book IX &bull; Act I';
+          theaterFrame.style.boxShadow = "0 24px 80px rgba(0, 0, 0, 0.85), 0 0 55px rgba(255, 120, 40, 0.16)";
+          vignetteEl.style.background = "radial-gradient(ellipse at center, transparent 60%, rgba(8, 5, 6, 0.32) 85%, rgba(4, 3, 6, 0.68) 100%)";
+        } else {
+          scene1Svg.style.display = "none";
+          scene2Svg.style.display = "block";
+          s2DidGrabShake = false;
+          s1Embers.length = 0;
+          s1Dust.length = 0;
+
+          hudTitle.innerHTML = "The Odyssey &mdash; Escape Beneath the Flock";
+          hudSubtitle.innerHTML = '"Hidden beneath the hay" &bull; Book IX &bull; Act II';
+          theaterFrame.style.boxShadow = "0 24px 80px rgba(0, 0, 0, 0.85), 0 0 55px rgba(130, 185, 235, 0.14)";
+          vignetteEl.style.background = "radial-gradient(ellipse at 26% 52%, transparent 52%, rgba(8, 10, 18, 0.30) 80%, rgba(4, 5, 10, 0.72) 100%)";
+        }
+      }
+
+      btnSkip.addEventListener("click", () => {
+        if (isSkipped) return;
+        isSkipped = true;
+        setActiveScene(2);
+        globalT = SCENE2_START + 11.4;
+        shakeIntensity = 0;
+        fadeCurtain.style.opacity = "0";
+        btnSkip.textContent = "Skipped";
+        btnSkip.disabled = true;
+      });
+
+      btnReplay.addEventListener("click", () => {
+        isSkipped = false;
+        globalT = 0;
+        shakeIntensity = 0;
+        s1Embers.length = 0;
+        s1Dust.length = 0;
+        s2Chaff.length = 0;
+        s2CaveDust.length = 0;
+        s1LastStepBucket = -1;
+        s1DidCyclopsSpeak = false;
+        s2DidGrabShake = false;
+        setActiveScene(1);
+        btnSkip.textContent = "Skip Animation";
+        btnSkip.disabled = false;
+      });
+
+      // --- Scene 2 Helpers ---
+      function solveGrabArm(targetX, targetY, fingerClamp) {
+        const sx = 575;
+        const sy = 250;
+        const L1 = 165;
+        const L2 = 165;
+
+        const dx = targetX - sx;
+        const dy = targetY - sy;
+        const dist = clamp(Math.hypot(dx, dy), 30, L1 + L2 - 2);
+        const baseAngle = Math.atan2(dy, dx);
+        const cosA = clamp((L1 * L1 + dist * dist - L2 * L2) / (2 * L1 * dist), -1, 1);
+        const angleA = Math.acos(cosA);
+
+        const upperAngle = baseAngle - angleA;
+        const ex = sx + Math.cos(upperAngle) * L1;
+        const ey = sy + Math.sin(upperAngle) * L1;
+        const foreAngle = Math.atan2(targetY - ey, targetX - ex);
+
+        s2.cyUpperArm.setAttribute("transform", `translate(${sx}, ${sy}) rotate(${(upperAngle * 180 / Math.PI).toFixed(1)})`);
+        s2.cyForearm.setAttribute("transform", `translate(${ex.toFixed(1)}, ${ey.toFixed(1)}) rotate(${(foreAngle * 180 / Math.PI).toFixed(1)})`);
+        s2.cyHand.setAttribute("transform", `translate(${targetX.toFixed(1)}, ${targetY.toFixed(1)}) rotate(${lerp(-6, 8, fingerClamp).toFixed(1)})`);
+        s2.cyFingers.setAttribute("transform", `scale(${lerp(1.08, 0.88, fingerClamp).toFixed(2)}, ${lerp(1.0, 0.82, fingerClamp).toFixed(2)})`);
+      }
+
+      function animateWalkLegs(legs, phase, amp = 14) {
+        const s1Rot = Math.sin(phase) * amp;
+        const s2Rot = Math.sin(phase + Math.PI) * amp;
+        legs[0].setAttribute("transform", `rotate(${s1Rot.toFixed(1)}, -24, 12)`);
+        legs[1].setAttribute("transform", `rotate(${s2Rot.toFixed(1)}, -15, 12)`);
+        legs[2].setAttribute("transform", `rotate(${s2Rot.toFixed(1)}, 20, 12)`);
+        legs[3].setAttribute("transform", `rotate(${s1Rot.toFixed(1)}, 28, 12)`);
+      }
+
+      // --- Scene 1 Update ---
+      function updateScene1(t, dt, ambientT) {
+        const flicker =
+          1 +
+          Math.sin(ambientT * 17.3) * 0.06 +
+          Math.cos(ambientT * 29.1) * 0.05 +
+          Math.sin(ambientT * 7.7) * 0.04;
+        s1.flames.setAttribute("transform", `scale(${1 + (flicker - 1) * 0.45}, ${flicker})`);
+        s1.fireFloorGlow.setAttribute("opacity", clamp(0.74 + (flicker - 1) * 0.8, 0.62, 0.94).toFixed(2));
+        s1.fireAirHalo.setAttribute("opacity", clamp(0.68 + (flicker - 1) * 0.85, 0.56, 0.9).toFixed(2));
+        s1.fireAmbientGlow.setAttribute("opacity", clamp(0.84 + (flicker - 1) * 0.75, 0.72, 1.0).toFixed(2));
+
+        let cyX = 1080;
+        let walkAmt = 0;
+        let headTilt = 0;
+        let beamOpacity = 0;
+        let beamAngle = -14;
+        let facingFlip = 1;
+        let mouthOpen = 2.2;
+
+        if (t < 3.6) {
+          const p = smoothstep(0.2, 3.5, t);
+          cyX = lerp(1080, 700, p);
+          walkAmt = Math.sin((t - 0.2) * 5.2);
+          const stepBucket = Math.floor((t - 0.2) / 0.85);
+          if (t > 0.5 && stepBucket !== s1LastStepBucket) {
+            s1LastStepBucket = stepBucket;
+            triggerS1Footstep(0.75 + p * 0.35);
+          }
+        } else if (t < 11.6) {
+          cyX = 700;
+          const leanIn = smoothstep(3.6, 4.5, t) * (1 - smoothstep(10.3, 11.4, t));
+          const confusedTilt = smoothstep(10.2, 10.8, t) * (1 - smoothstep(11.1, 11.6, t));
+          headTilt = lerp(0, -14, leanIn) + confusedTilt * 16;
+
+          beamOpacity = smoothstep(4.0, 4.6, t) * (1 - smoothstep(10.4, 11.2, t)) * 0.9;
+          const sweep = smoothstep(4.2, 5.2, t);
+          beamAngle = lerp(-6, -21, sweep);
+
+          if (t >= 5.0 && t <= 7.6) {
+            if (!s1DidCyclopsSpeak && !isSkipped) {
+              s1DidCyclopsSpeak = true;
+              shakeIntensity = Math.max(shakeIntensity, 7.5);
+            }
+            mouthOpen = 3 + Math.abs(Math.sin((t - 5.0) * 14)) * 7;
+          }
+        } else if (t < 14.4) {
+          const p = smoothstep(11.6, 14.3, t);
+          cyX = lerp(700, 1080, p);
+          facingFlip = -1;
+          walkAmt = Math.sin((t - 11.6) * 5.0);
+          const stepBucket = 10 + Math.floor((t - 11.6) / 0.85);
+          if (stepBucket !== s1LastStepBucket) {
+            s1LastStepBucket = stepBucket;
+            triggerS1Footstep(1.0 - p * 0.55);
+          }
+        } else {
+          cyX = 1080;
+        }
+
+        const bobY = Math.abs(walkAmt) * -14;
+        s1.cyclopsRig.setAttribute("transform", `translate(${cyX.toFixed(1)}, ${(125 + bobY).toFixed(1)})`);
+        s1.cyclopsBody.setAttribute(
+          "transform",
+          facingFlip === -1 ? `translate(220, 0) scale(-1, 1)` : `scale(1, 1)`
+        );
+
+        s1.cyLegFront.setAttribute("transform", `rotate(${(walkAmt * 11).toFixed(1)}, 145, 305)`);
+        s1.cyLegBack.setAttribute("transform", `rotate(${(-walkAmt * 11).toFixed(1)}, 80, 305)`);
+        s1.cyClub.setAttribute("transform", `translate(22, 225) rotate(${(12 + walkAmt * 8).toFixed(1)})`);
+        s1.cyMouth.setAttribute("transform", `translate(-22, 14) scale(1, ${(mouthOpen / 2.5).toFixed(2)})`);
+
+        s1.cyclopsHead.setAttribute("transform", `translate(88, 108) rotate(${headTilt.toFixed(1)})`);
+        s1.eyeBeam.setAttribute("opacity", beamOpacity.toFixed(2));
+        s1.eyeBeam.setAttribute("transform", `rotate(${beamAngle.toFixed(1)})`);
+
+        const cyBubbleAlpha = smoothstep(4.95, 5.2, t) * (1 - smoothstep(7.2, 7.6, t));
+        const cyJitterX = cyBubbleAlpha > 0.1 && t < 6.4 ? (Math.random() - 0.5) * 3 : 0;
+        const cyJitterY = cyBubbleAlpha > 0.1 && t < 6.4 ? (Math.random() - 0.5) * 3 : 0;
+        s1.cyclopsBubble.setAttribute("opacity", cyBubbleAlpha.toFixed(2));
+        s1.cyclopsBubble.setAttribute("transform", `translate(${(560 + cyJitterX).toFixed(1)}, ${(155 + cyJitterY).toFixed(1)})`);
+
+        const odyBubbleAlpha = smoothstep(7.65, 7.95, t) * (1 - smoothstep(10.0, 10.45, t));
+        const odyFloatY = lerp(412, 398, smoothstep(7.65, 10.4, t));
+        s1.odysseusBubble.setAttribute("opacity", odyBubbleAlpha.toFixed(2));
+        s1.odysseusBubble.setAttribute("transform", `translate(310, ${odyFloatY.toFixed(1)})`);
+
+        let peekAmount = 1;
+        if (t < 1.2) {
+          peekAmount = 1 - smoothstep(0.4, 1.1, t);
+        } else if (t < 7.4) {
+          peekAmount = 0;
+        } else if (t < 10.6) {
+          peekAmount = smoothstep(7.4, 7.9, t) * (1 - smoothstep(10.1, 10.55, t)) * 0.90;
+        } else if (t < 13.0) {
+          peekAmount = 0;
+        } else {
+          peekAmount = smoothstep(13.0, 14.1, t);
+        }
+
+        const odyY = lerp(66, -8, peekAmount);
+        const breath = Math.sin(ambientT * 2.5) * 1.1;
+        s1.odysseusRig.setAttribute("transform", `translate(0, ${(odyY + breath).toFixed(1)})`);
+        s1.odysseusHead.setAttribute("transform", `translate(4, 18) rotate(${lerp(8, -5, peekAmount).toFixed(1)})`);
+
+        const sheepAlert = smoothstep(5.0, 5.6, t) * (1 - smoothstep(9.5, 10.5, t));
+        s1.sheepHead.setAttribute("transform", `translate(42, ${(-8 - sheepAlert * 6).toFixed(1)}) rotate(${(-sheepAlert * 12).toFixed(1)})`);
+
+        if (t < 1.8) {
+          captionEl.textContent = "Heavy footsteps echo through the cavern...";
+        } else if (t < 4.8) {
+          captionEl.textContent = "Duck behind the boulder! Polyphemus approaches.";
+        } else if (t < 7.6) {
+          captionEl.textContent = 'Polyphemus bellows: "WHO IS THERE?!"';
+        } else if (t < 10.5) {
+          captionEl.textContent = 'Odysseus whispers from the shadows: "...Nobody."';
+        } else if (t < 12.2) {
+          captionEl.textContent = "Finding no one, the confused giant turns away...";
+        } else {
+          captionEl.textContent = "Outwitted by a single word.";
+        }
+
+        updateParticlesScene1(dt);
+      }
+
+      // --- Scene 2 Update ---
+      function updateScene2(t, dt, ambientT) {
+        const sunPulse = 1 + Math.sin(ambientT * 1.8) * 0.04 + Math.cos(ambientT * 3.1) * 0.03;
+        s2.sunBeams.setAttribute("opacity", clamp(0.88 * sunPulse, 0.76, 1.0).toFixed(2));
+        s2.daylightWash.setAttribute("opacity", clamp(0.92 * sunPulse, 0.82, 1.0).toFixed(2));
+        s2.floorSunPool.setAttribute("opacity", clamp(0.86 * sunPulse, 0.75, 0.96).toFixed(2));
+
+        const leadProgress = smoothstep(0.0, 5.2, t);
+        const leadX = lerp(740, -140, leadProgress);
+        const leadPhase = t * 8.5;
+        const leadBob = Math.abs(Math.sin(leadPhase)) * -4;
+        s2.sheepLead.setAttribute("transform", `translate(${leadX.toFixed(1)}, ${(548 + leadBob).toFixed(1)})`);
+        animateWalkLegs(s2.sLeadLegs, leadPhase, 14);
+
+        const bgProgress = smoothstep(0.4, 13.8, t);
+        const bgX = lerp(1090, -130, bgProgress);
+        const bgPhase = t * 6.8;
+        const bgBob = Math.abs(Math.sin(bgPhase)) * -3.5;
+        s2.sheepBg.setAttribute("transform", `translate(${bgX.toFixed(1)}, ${(525 + bgBob).toFixed(1)})`);
+        animateWalkLegs(s2.sBgLegs, bgPhase, 12);
+
+        let grabX = 910;
+        let grabY = 545;
+        let grabRot = 0;
+        let grabPhase = t * 7.5;
+        let kickStrength = 0;
+
+        let handX = 450;
+        let handY = 470 + Math.sin(ambientT * 2.6) * 16;
+        let fingerClamp = 0;
+        let cyHeadTilt = Math.sin(ambientT * 1.4) * 5;
+        let mouthOpen = 2.0;
+
+        if (t < 3.6) {
+          const p = smoothstep(0.0, 3.6, t);
+          grabX = lerp(910, 445, p);
+          grabY = 545 + Math.abs(Math.sin(grabPhase)) * -3.5;
+          handX = lerp(470, 445, smoothstep(2.4, 3.6, t)) + Math.sin(t * 2.5) * 18 * (1 - smoothstep(2.4, 3.6, t));
+          handY = lerp(455, 498, smoothstep(2.8, 3.6, t));
+          cyHeadTilt = lerp(4, -10, smoothstep(2.2, 3.6, t));
+        } else if (t < 4.5) {
+          const p = smoothstep(3.6, 4.4, t);
+          grabX = 445;
+          grabY = lerp(545, 420, smoothstep(3.9, 4.5, t));
+          grabRot = lerp(0, -10, smoothstep(3.9, 4.5, t));
+          handX = 445;
+          handY = grabY - 14;
+          fingerClamp = smoothstep(3.6, 4.0, t);
+          kickStrength = smoothstep(3.9, 4.5, t);
+          cyHeadTilt = lerp(-10, -16, p);
+
+          if (!s2DidGrabShake && t > 3.75 && !isSkipped) {
+            s2DidGrabShake = true;
+            shakeIntensity = 8.5;
+            spawnS2CaveDust(18);
+          }
+        } else if (t < 8.6) {
+          const wiggle = Math.sin(t * 10.5) * 4;
+          grabX = 445 + wiggle;
+          grabY = 415 + Math.cos(t * 8.0) * 6;
+          grabRot = -8 + Math.sin(t * 11.0) * 7;
+          handX = grabX;
+          handY = grabY - 14;
+          fingerClamp = 1;
+          kickStrength = 1;
+          cyHeadTilt = -14 + Math.sin(t * 3.0) * 5;
+          if ((t >= 4.7 && t <= 6.2) || (t >= 7.0 && t <= 8.5)) {
+            mouthOpen = 3 + Math.abs(Math.sin(t * 13)) * 5.5;
+          }
+        } else if (t < 9.5) {
+          const p = smoothstep(8.6, 9.5, t);
+          grabX = 445;
+          grabY = lerp(415, 545, p);
+          grabRot = lerp(-8, 0, p);
+          handX = 445;
+          handY = lerp(401, 496, p);
+          fingerClamp = 1 - smoothstep(9.2, 9.5, t);
+          kickStrength = 1 - p;
+          cyHeadTilt = lerp(-12, 6, p);
+        } else {
+          const p = smoothstep(9.5, 12.6, t);
+          grabX = lerp(445, -145, p);
+          grabPhase = t * 13.0;
+          grabY = 545 + Math.abs(Math.sin(grabPhase)) * -6;
+          handX = lerp(445, 485, smoothstep(9.5, 11.0, t)) + Math.sin(t * 2.2) * 14;
+          handY = lerp(496, 445, smoothstep(9.5, 11.0, t));
+          fingerClamp = 0;
+          cyHeadTilt = lerp(6, -8, smoothstep(11.0, 14.0, t));
+        }
+
+        s2.sheepGrabbed.setAttribute(
+          "transform",
+          `translate(${grabX.toFixed(1)}, ${grabY.toFixed(1)}) rotate(${grabRot.toFixed(1)})`
+        );
+        const liftAmt = clamp((545 - grabY) / 130, 0, 1);
+        s2.sGrabShadow.setAttribute("opacity", (0.45 * (1 - liftAmt * 0.85)).toFixed(2));
+        s2.sGrabShadow.setAttribute("transform", `translate(0, ${(545 - grabY).toFixed(1)}) scale(${(1 - liftAmt * 0.35).toFixed(2)}, 1)`);
+
+        if (kickStrength > 0.05) {
+          const kPhase = t * 24;
+          animateWalkLegs(s2.sGrabLegs, kPhase, 26 * kickStrength + 10);
+          s2.sGrabHead.setAttribute("transform", `translate(-42, -7) rotate(${(Math.sin(t * 16) * 12).toFixed(1)})`);
+        } else {
+          animateWalkLegs(s2.sGrabLegs, grabPhase, 15);
+          s2.sGrabHead.setAttribute("transform", `translate(-42, -7)`);
+        }
+
+        solveGrabArm(handX, handY, fingerClamp);
+        s2.cyclopsHead.setAttribute("transform", `translate(76, 108) rotate(${cyHeadTilt.toFixed(1)})`);
+        s2.cyMouth.setAttribute("transform", `translate(-24, 15) scale(1, ${(mouthOpen / 2.5).toFixed(2)})`);
+        const cyBreathe = Math.sin(ambientT * 2.1) * 3;
+        s2.cyclopsRig.setAttribute("transform", `translate(530, ${(95 + cyBreathe).toFixed(1)})`);
+
+        let odyX = 960;
+        let crawlSpeed = 1;
+        let hunker = 0;
+        let headLook = 0;
+
+        if (t < 3.6) {
+          const p = smoothstep(0.2, 3.6, t);
+          odyX = lerp(960, 595, p);
+          crawlSpeed = 1;
+        } else if (t < 5.3) {
+          odyX = 595;
+          crawlSpeed = 0;
+          hunker = smoothstep(3.6, 4.0, t) * (1 - smoothstep(4.9, 5.3, t));
+        } else if (t < 11.4) {
+          const p = smoothstep(5.3, 11.4, t);
+          odyX = lerp(595, 165, p);
+          crawlSpeed = 1.25;
+        } else if (t < 12.6) {
+          odyX = 165;
+          crawlSpeed = 0;
+          headLook = smoothstep(11.4, 11.9, t) * (1 - smoothstep(12.2, 12.6, t));
+        } else {
+          const p = smoothstep(12.6, 14.3, t);
+          odyX = lerp(165, -150, p);
+          crawlSpeed = 1.35;
+        }
+
+        const crawlCycle = t * 6.8 * (crawlSpeed > 0 ? 1 : 0);
+        const bobCrawl = crawlSpeed > 0 ? Math.abs(Math.sin(crawlCycle)) * -3.5 : 0;
+        const hunkerY = hunker * 10;
+        s2.odysseusRig.setAttribute("transform", `translate(${odyX.toFixed(1)}, ${(574 + bobCrawl + hunkerY).toFixed(1)})`);
+        s2.odyCrawlBody.setAttribute("transform", `scale(1, ${(1 - hunker * 0.14).toFixed(2)})`);
+
+        if (crawlSpeed > 0) {
+          const swingA = Math.sin(crawlCycle) * 22;
+          const swingB = Math.sin(crawlCycle + Math.PI) * 22;
+          s2.odyArmF.setAttribute("transform", `translate(-30, 5) rotate(${swingA.toFixed(1)})`);
+          s2.odyArmB.setAttribute("transform", `translate(-26, 4) rotate(${swingB.toFixed(1)})`);
+          s2.odyLegF.setAttribute("transform", `translate(20, 8) rotate(${swingB.toFixed(1)})`);
+          s2.odyLegB.setAttribute("transform", `translate(26, 6) rotate(${swingA.toFixed(1)})`);
+          s2.odyHay.setAttribute("transform", `translate(0, -14) rotate(${(Math.sin(crawlCycle * 2) * 2.2).toFixed(1)})`);
+          if (Math.random() < 0.25 && odyX > 0 && odyX < 1200) {
+            spawnS2Chaff(odyX, 574 + bobCrawl);
+          }
+        } else {
+          s2.odyArmF.setAttribute("transform", `translate(-30, 5) rotate(${lerp(0, 12, hunker).toFixed(1)})`);
+          s2.odyArmB.setAttribute("transform", `translate(-26, 4) rotate(${lerp(0, 10, hunker).toFixed(1)})`);
+          s2.odyLegF.setAttribute("transform", `translate(20, 8) rotate(${lerp(0, -10, hunker).toFixed(1)})`);
+          s2.odyLegB.setAttribute("transform", `translate(26, 6) rotate(${lerp(0, -8, hunker).toFixed(1)})`);
+          s2.odyHay.setAttribute("transform", `translate(0, -14)`);
+        }
+
+        const headRot = lerp(0, 12, hunker) + lerp(0, 26, headLook);
+        s2.odyHead.setAttribute("transform", `translate(-44, -4) rotate(${headRot.toFixed(1)})`);
+
+        const sheepBleatAlpha = smoothstep(4.2, 4.45, t) * (1 - smoothstep(6.2, 6.6, t));
+        s2.sheepBubble.setAttribute("opacity", sheepBleatAlpha.toFixed(2));
+        s2.sheepBubble.setAttribute("transform", `translate(${(grabX - 65).toFixed(1)}, ${(grabY - 82).toFixed(1)})`);
+
+        let cyAlpha = 0;
+        if (t >= 4.5 && t <= 6.5) {
+          cyAlpha = smoothstep(4.5, 4.75, t) * (1 - smoothstep(6.1, 6.5, t));
+          s2.cyclopsBubbleText.textContent = "WHO GOES?!";
+        } else if (t >= 6.8 && t <= 9.0) {
+          cyAlpha = smoothstep(6.8, 7.1, t) * (1 - smoothstep(8.6, 9.0, t));
+          s2.cyclopsBubbleText.textContent = "...ONLY WOOL.";
+        }
+        s2.cyclopsBubble.setAttribute("opacity", cyAlpha.toFixed(2));
+
+        if (t < 2.2) {
+          captionEl.textContent = "Dawn breaks outside the open cavern mouth...";
+        } else if (t < 3.8) {
+          captionEl.textContent = "Odysseus crawls low beneath the hay along with the sheep.";
+        } else if (t < 6.7) {
+          captionEl.textContent = "Polyphemus's hand lunges down—a sheep gets grabbed!";
+        } else if (t < 9.5) {
+          captionEl.textContent = "Distracted feeling the struggling ram, the blind giant misses him.";
+        } else if (t < 12.6) {
+          captionEl.textContent = "Hidden under the straw, Odysseus crawls into the morning light!";
+        } else {
+          captionEl.textContent = "Escaped from the Cyclops's cave into the dawn.";
+        }
+
+        updateParticlesScene2(dt, ambientT);
+      }
+
+      // --- Particle Renderers ---
+      function drawPolyShard(x, y, r, angle, color) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(0, -r);
+        ctx.lineTo(r * 0.86, r * 0.65);
+        ctx.lineTo(-r * 0.86, r * 0.65);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawStrawWisp(x, y, len, angle, color) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(-len, -1.2);
+        ctx.lineTo(len, 0);
+        ctx.lineTo(-len, 1.4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function updateParticlesScene1(dt) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (Math.random() < 0.55) spawnS1Ember();
+
+        for (let i = s1Embers.length - 1; i >= 0; i--) {
+          const p = s1Embers[i];
+          p.life += dt;
+          if (p.life >= p.maxLife) {
+            s1Embers.splice(i, 1);
+            continue;
+          }
+          p.x += (p.vx + Math.sin(p.life * 5) * 14) * dt;
+          p.y += p.vy * dt;
+          p.angle += p.spin * dt;
+
+          const alpha = 1 - p.life / p.maxLife;
+          const r = p.size * (0.5 + 0.5 * alpha);
+          drawPolyShard(
+            p.x,
+            p.y,
+            r,
+            p.angle,
+            `rgba(255, ${Math.floor(125 + alpha * 125)}, 35, ${alpha.toFixed(2)})`
+          );
+        }
+
+        for (let i = s1Dust.length - 1; i >= 0; i--) {
+          const d = s1Dust[i];
+          d.life += dt;
+          if (d.life >= d.maxLife) {
+            s1Dust.splice(i, 1);
+            continue;
+          }
+          d.x += d.vx * dt;
+          d.y += d.vy * dt;
+          d.angle += d.spin * dt;
+
+          const alpha = (1 - d.life / d.maxLife) * 0.45;
+          drawPolyShard(
+            d.x,
+            d.y,
+            d.size,
+            d.angle,
+            `rgba(210, 185, 165, ${alpha.toFixed(2)})`
+          );
+        }
+      }
+
+      function updateParticlesScene2(dt, ambientT) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < s2Motes.length; i++) {
+          const m = s2Motes[i];
+          m.x += m.vx * dt;
+          m.y += (m.vy + Math.sin(ambientT * 1.6 + m.phase) * 6) * dt;
+          m.angle += m.spin * dt;
+          if (m.x > 960 || m.y > 690 || m.y < 140) {
+            m.x = 30 + Math.random() * 140;
+            m.y = 180 + Math.random() * 360;
+          }
+          const beamFade = Math.max(0.06, 0.55 * (1 - m.x / 980));
+          drawPolyShard(
+            m.x,
+            m.y,
+            m.size,
+            m.angle,
+            `rgba(255, 242, 194, ${beamFade.toFixed(2)})`
+          );
+        }
+
+        for (let i = s2Chaff.length - 1; i >= 0; i--) {
+          const c = s2Chaff[i];
+          c.life += dt;
+          if (c.life >= c.maxLife) {
+            s2Chaff.splice(i, 1);
+            continue;
+          }
+          c.x += c.vx * dt;
+          c.y += (c.vy + 28 * c.life) * dt;
+          c.angle += c.spin * dt;
+          const alpha = (1 - c.life / c.maxLife) * 0.85;
+          drawStrawWisp(
+            c.x,
+            c.y,
+            c.size * 2.2,
+            c.angle,
+            `rgba(245, 203, 92, ${alpha.toFixed(2)})`
+          );
+        }
+
+        for (let i = s2CaveDust.length - 1; i >= 0; i--) {
+          const d = s2CaveDust[i];
+          d.life += dt;
+          if (d.life >= d.maxLife) {
+            s2CaveDust.splice(i, 1);
+            continue;
+          }
+          d.x += d.vx * dt;
+          d.y += d.vy * dt;
+          d.angle += d.spin * dt;
+          const alpha = (1 - d.life / d.maxLife) * 0.45;
+          drawPolyShard(
+            d.x,
+            d.y,
+            d.size,
+            d.angle,
+            `rgba(195, 208, 224, ${alpha.toFixed(2)})`
+          );
+        }
+      }
+
+      // --- Master Animation Loop ---
+      function update(now) {
+        const dt = Math.min((now - lastFrame) / 1000, 0.05);
+        lastFrame = now;
+
+        if (!isSkipped) {
+          globalT = (globalT + dt) % TOTAL_DURATION;
+        }
+
+        const ambientT = now / 1000;
+
+        // Calculate fade-out / fade-in curtain opacity
+        let curtainAlpha = 0;
+        if (!isSkipped) {
+          if (globalT < 0.8) {
+            // Smooth fade-in at start / loop restart
+            curtainAlpha = 1 - smoothstep(0.0, 0.8, globalT);
+          } else if (globalT >= 14.0 && globalT < SCENE2_START) {
+            // Fade-out at end of Act I (fire)
+            curtainAlpha = smoothstep(14.0, 15.2, globalT);
+          } else if (globalT >= SCENE2_START && globalT < SCENE2_START + 1.2) {
+            // Fade-in at start of Act II (dawn escape)
+            curtainAlpha = 1 - smoothstep(SCENE2_START, SCENE2_START + 1.2, globalT);
+          } else if (globalT >= 29.5) {
+            // Fade-out at end of Act II before looping
+            curtainAlpha = smoothstep(29.5, 30.7, globalT);
+          }
+        }
+        fadeCurtain.style.opacity = curtainAlpha.toFixed(3);
+
+        // Switch & update active scene
+        if (globalT < SCENE2_START) {
+          setActiveScene(1);
+          const t1 = Math.min(globalT, 15.0);
+          updateScene1(t1, dt, ambientT);
+        } else {
+          setActiveScene(2);
+          const t2 = Math.min(globalT - SCENE2_START, 15.0);
+          updateScene2(t2, dt, ambientT);
+        }
+
+        // Camera shake
+        if (!isSkipped && shakeIntensity > 0.1) {
+          const sx = (Math.random() - 0.5) * shakeIntensity * 0.9;
+          const sy = (Math.random() - 0.5) * shakeIntensity * 1.4;
+          cameraRig.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)`;
+          shakeIntensity *= Math.pow(0.015, dt);
+        } else {
+          cameraRig.style.transform = "translate(0px, 0px)";
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      requestAnimationFrame(update);
+    })();
+  </script>
+</body>
+</html>
