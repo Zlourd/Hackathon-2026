@@ -132,8 +132,8 @@
     <main id="identityWorkspace" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5">
 
         <!-- LEFT COLUMN (4 cols): Probabilistic Identity & Behavioral Synthesis -->
-        <section class="lg:col-span-4 flex flex-col gap-5">
-            
+        <section class="lg:col-span-7 flex flex-col gap-5">
+
             <!-- Subject Profile & Confidence Card -->
             <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl relative overflow-hidden">
                 <div class="flex items-start justify-between gap-2 pb-4 border-b border-stroke">
@@ -175,21 +175,8 @@
                     </p>
                 </div>
 
-                <!-- Buyer Monetization & Targeting Advisory -->
-                <div class="mt-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300">
-                            Highest-Bidder Exploitation Advisory
-                        </span>
-                        <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 font-mono text-[10px]">DSP INTEL</span>
-                    </div>
-                    <p id="buyerAdvisoryText" class="text-xs text-amber-100/90 leading-relaxed">
-                        Deploy urgency-framed annual SaaS retargeting between 20:00–23:30 local time; suppress introductory discount tiers as subject demonstrates low price elasticity on productivity tooling.
-                    </p>
-                </div>
-
                 <!-- Extracted Attribute Matrix -->
-                <div class="mt-4 grid grid-cols-2 gap-2.5 text-xs">
+                <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
                     <div class="p-2.5 rounded-xl bg-canvas border border-stroke">
                         <div class="text-[10px] font-mono text-slate-500 uppercase">Geo-IP Node</div>
                         <div id="attrGeo" class="font-semibold text-slate-200 mt-0.5">Arlington, TX (US)</div>
@@ -223,63 +210,8 @@
             </div>
         </section>
 
-        <!-- MIDDLE COLUMN (5 cols): Live Beacon Ingestion & Pixel Inspector -->
+        <!-- RIGHT COLUMN (5 cols): RTB clearing bid & captured beacons -->
         <section class="lg:col-span-5 flex flex-col gap-5">
-            
-            <!-- Live Pixel / Search Signal Injector -->
-            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
-                        Live Pixel &amp; Search Query Inspector
-                    </span>
-                    <span class="text-[11px] font-mono text-slate-400">POST /v2/collect</span>
-                </div>
-                <p class="text-xs text-slate-400 mb-3">
-                    Simulate a live search query or outbound URL ping to observe real-time taxonomy &amp; bid recalculation:
-                </p>
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <input id="pixelTestInput" type="text"
-                        placeholder="e.g. flights to Tokyo, bulk goat rennet, RTX 5090..."
-                        onkeydown="if(event.key==='Enter') sendCustomPixelPing()"
-                        class="flex-1 bg-canvas border border-stroke rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
-                    <button onclick="sendCustomPixelPing()"
-                        class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow transition cursor-pointer shrink-0">
-                        Send Beacon
-                    </button>
-                </div>
-                <!-- Quick Search Presets -->
-                <div class="flex flex-wrap items-center gap-1.5 mt-2.5 text-[11px]">
-                    <span class="font-mono text-slate-500">Quick Ping:</span>
-                    <button onclick="quickPing('best flights to Tokyo')" class="px-2 py-0.5 rounded bg-canvas hover:bg-slate-800 border border-stroke text-slate-300 transition cursor-pointer">✈️ Tokyo Flights</button>
-                    <button onclick="quickPing('enterprise cloud security SaaS')" class="px-2 py-0.5 rounded bg-canvas hover:bg-slate-800 border border-stroke text-slate-300 transition cursor-pointer">☁️ Cloud SaaS</button>
-                    <button onclick="quickPing('bulk alpine goat cheese rennet')" class="px-2 py-0.5 rounded bg-canvas hover:bg-slate-800 border border-stroke text-slate-300 transition cursor-pointer">🧀 Goat Rennet</button>
-                </div>
-            </div>
-
-            <!-- Live Captured HTTP Beacons Log -->
-            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
-                <div class="flex items-center justify-between pb-3 border-b border-stroke">
-                    <div>
-                        <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider font-mono">
-                            Captured HTTP Beacons &amp; Clickstream
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">
-                            Real-time cross-site pixel events &amp; referral headers
-                        </p>
-                    </div>
-                    <span id="beaconCountPill" class="px-2.5 py-1 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-300 font-mono text-[11px] font-semibold">
-                        6 EVENTS
-                    </span>
-                </div>
-
-                <div id="beaconStreamList" class="mt-3 bg-canvas border border-stroke rounded-xl p-3 h-80 overflow-y-auto font-mono text-xs space-y-2">
-                    <!-- Rendered dynamically -->
-                </div>
-            </div>
-        </section>
-
-        <!-- RIGHT COLUMN (3 cols): RTB Ad Auction & Direct Data Monetization -->
-        <section class="lg:col-span-3 flex flex-col gap-5">
             
             <!-- Programmatic RTB Auction & Sell User Data Box -->
             <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
@@ -308,46 +240,26 @@
                     class="w-full mt-3.5 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.99] text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition cursor-pointer flex items-center justify-center gap-2">
                     <span>💰 Sell User Data ($18.40)</span>
                 </button>
-                <p class="text-[10px] font-mono text-slate-500 text-center mt-1.5">
-                    Instant programmatic transfer to top DSP bidder
-                </p>
-
-                <!-- Competing DSP Bids -->
-                <div class="mt-4 pt-3 border-t border-stroke">
-                    <div class="text-[10px] font-mono uppercase text-slate-400 mb-2">Active DSP Order Book</div>
-                    <div id="dspOrderBook" class="space-y-1.5 text-xs font-mono">
-                        <!-- Rendered dynamically -->
-                    </div>
-                </div>
-
-                <!-- Simulated Ad Creative Preview -->
-                <div class="mt-4 pt-3 border-t border-stroke">
-                    <div class="text-[10px] font-mono uppercase text-slate-400 mb-2">Served Ad Creative</div>
-                    <div class="p-3 rounded-xl bg-panelLight border border-stroke">
-                        <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-1">
-                            <span id="adSponsorTag">SPONSORED • SAAS</span>
-                            <span>300×250</span>
-                        </div>
-                        <div id="adHeadline" class="text-xs font-bold text-white">
-                            Upgrade Your Research &amp; Writing Stack
-                        </div>
-                        <p id="adBody" class="text-[11px] text-slate-400 mt-1 leading-snug">
-                            AI-assisted citation &amp; manuscript workflow built for educators and authors.
-                        </p>
-                    </div>
-                </div>
             </div>
 
-            <!-- Sold User Data Ledger -->
+            <!-- Live Captured HTTP Beacons Log -->
             <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
-                <div class="flex items-center justify-between mb-2.5">
-                    <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-                        Sold User Data Ledger
-                    </h3>
-                    <span id="soldCountBadge" class="text-[11px] font-mono text-emerald-400 font-bold">0 SOLD</span>
+                <div class="flex items-center justify-between pb-3 border-b border-stroke">
+                    <div>
+                        <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider font-mono">
+                            Captured HTTP Beacons &amp; Clickstream
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Real-time cross-site pixel events &amp; referral headers
+                        </p>
+                    </div>
+                    <span id="beaconCountPill" class="px-2.5 py-1 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-300 font-mono text-[11px] font-semibold">
+                        6 EVENTS
+                    </span>
                 </div>
-                <div id="soldLedgerList" class="bg-canvas border border-stroke rounded-xl p-2.5 flex-1 min-h-[120px] max-h-48 overflow-y-auto space-y-2 text-[11px] font-mono">
-                    <div class="text-slate-500 text-center py-6">No user data packages liquidated yet.</div>
+
+                <div id="beaconStreamList" class="mt-3 bg-canvas border border-stroke rounded-xl p-3 h-80 overflow-y-auto font-mono text-xs space-y-2">
+                    <!-- Rendered dynamically -->
                 </div>
             </div>
         </section>
@@ -779,7 +691,6 @@
             document.getElementById('confidenceBar').style.width = Math.min(100, p.confidence) + '%';
 
             document.getElementById('synthesisNarrative').textContent = p.synthesis;
-            document.getElementById('buyerAdvisoryText').textContent = p.advisory;
 
             document.getElementById('attrGeo').textContent = p.geo;
             document.getElementById('attrIncome').textContent = p.income;
@@ -804,20 +715,6 @@
             document.getElementById('clearingCpm').textContent = '$' + p.cpm.toFixed(2);
             document.getElementById('winningBidderName').textContent = 'Winner: ' + p.winner;
             document.getElementById('sellDataBtn').innerHTML = `<span>💰 Sell User Data ($${p.cpm.toFixed(2)})</span>`;
-
-            // DSP Order Book
-            const orderBook = document.getElementById('dspOrderBook');
-            orderBook.innerHTML = p.bids.map((b, idx) => `
-                <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg ${idx === 0 ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300' : 'bg-canvas border border-stroke text-slate-400'}">
-                    <span class="truncate pr-2">${idx === 0 ? '★ ' : ''}${b.dsp}</span>
-                    <span class="font-bold shrink-0">$${b.price.toFixed(2)}</span>
-                </div>
-            `).join('');
-
-            // Ad Creative
-            document.getElementById('adSponsorTag').textContent = p.ad.tag;
-            document.getElementById('adHeadline').textContent = p.ad.headline;
-            document.getElementById('adBody').textContent = p.ad.body;
 
             // Update Sheep Exchange Lots too
             renderSheepLotsGrid();
@@ -874,22 +771,6 @@
         // =========================================================================
         // 4. LIVE PIXEL & SEARCH QUERY ADAPTATION
         // =========================================================================
-        function quickPing(query) {
-            document.getElementById('pixelTestInput').value = query;
-            sendCustomPixelPing();
-        }
-
-        function sendCustomPixelPing() {
-            const input = document.getElementById('pixelTestInput');
-            const raw = input.value.trim();
-            if (!raw) return;
-
-            const isUrl = /^https?:\/\//i.test(raw);
-            appendBeaconRow(isUrl ? 'PIXEL' : 'SEARCH', isUrl ? raw : `query: '${raw}'`, 'live-session', '19s', true);
-            adaptProfileFromQuery(raw);
-            input.value = '';
-        }
-
         function adaptProfileFromQuery(query) {
             const q = query.toLowerCase();
             const cleanLabel = query.replace(/^https?:\/\//i, '').slice(0, 42);
@@ -960,25 +841,8 @@
             soldCount += 1;
 
             document.getElementById('totalRevenueTicker').textContent = '$' + totalYield.toFixed(2);
-            document.getElementById('soldCountBadge').textContent = `${soldCount} SOLD`;
 
             const txId = 'TX-' + Math.floor(100000 + Math.random() * 900000);
-            const now = new Date().toTimeString().split(' ')[0];
-
-            // Prepend to Ledger
-            const ledger = document.getElementById('soldLedgerList');
-            if (soldCount === 1) ledger.innerHTML = '';
-
-            const item = document.createElement('div');
-            item.className = 'p-2.5 rounded-lg bg-panel border border-emerald-500/30 flex items-center justify-between gap-2';
-            item.innerHTML = `
-                <div class="min-w-0">
-                    <div class="text-emerald-300 font-bold truncate">${escapeHtml(buyer)}</div>
-                    <div class="text-slate-400 text-[10px] truncate">${escapeHtml(persona)} • ${now}</div>
-                </div>
-                <div class="text-emerald-400 font-extrabold shrink-0">+$${price.toFixed(2)}</div>
-            `;
-            ledger.insertBefore(item, ledger.firstChild);
 
             // Show Settlement Receipt Modal
             document.getElementById('receiptTxId').textContent = txId;
