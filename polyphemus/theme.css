@@ -180,3 +180,4 @@ html body #auChart svg,html body .mk-spark svg,html body .mk-flag svg{max-width:
 .gd-cta:hover{filter:brightness(1.12)}
 .mk-clear{padding:3px 10px;border:1px solid #142544;background:#02040a;color:#94a3b8;font:700 10px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;border-radius:3px;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
 .mk-clear:hover{color:#fff;border-color:#3b82f6}
+.gd-also{display:block;margin-top:10px;color:#64748b;font-size:12px}
