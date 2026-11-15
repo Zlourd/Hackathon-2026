@@ -1,6 +1,6 @@
-// Dark/light mode for the Odysseus tracker view. Loaded in <head> so the saved theme applies before first paint.
+// Dark/light mode for the tracker view (light by default). Loaded in <head> so the saved theme applies before first paint.
 const KEY = 'odysseusTheme';
-const read = () => { try { return localStorage.getItem(KEY) === 'light' ? 'light' : 'dark'; } catch { return 'dark'; } };
+const read = () => { try { return localStorage.getItem(KEY) === 'dark' ? 'dark' : 'light'; } catch { return 'light'; } };
 const write = t => { try { localStorage.setItem(KEY, t); } catch { /* storage unavailable: theme just won't persist */ } };
 
 function apply(theme) {

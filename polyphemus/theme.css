@@ -45,3 +45,7 @@ html{scrollbar-gutter:stable}
 html body header{padding-right:136px!important}
 ::-webkit-scrollbar{width:8px;height:8px} /* match the Odysseus page so the coin lines up to the pixel */
 html body header h1{white-space:nowrap}
+html body header{min-height:0}
+
+/* Header height identical to the Odysseus header */
+@media(min-width:1100px){html body header{height:80px;padding-bottom:10px!important}}

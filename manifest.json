@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Odysseus — Decoy Persona Privacy",
+  "name": "Become Nobody.",
   "version": "1.0.0",
   "description": "Obfuscation, not silence: feeds trackers a coherent fake persona with decoy interests and browsing, so the profile they build is detailed, confident — and useless.",
   "minimum_chrome_version": "111",
@@ -19,7 +19,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Odysseus",
+    "default_title": "Become Nobody.",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/16.png",
