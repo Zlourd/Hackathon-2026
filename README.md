@@ -9,7 +9,7 @@ Incognito leaves no trace, and trackers can still piece you together. **Odysseus
 ## 30-second demo
 1. Click the Odysseus icon → **Open tracker's view**: "Become nobody." with the decoy persona, and an empty list of sites.
 2. Hit **Turn decoy on**. The decoy starts browsing in the background (a fast burst of ~24 visits, then a natural, irregular cadence).
-3. Watch the profile fill with the decoy's interests, location, age band and occupation — while **Your real profile** stays blank.
+3. Watch the profile fill with the decoy's interests, location, age band and occupation, and the **decoy data leaks** counter climb. None of it is the real you.
 
 ## What it does
 | Layer | Mechanism |

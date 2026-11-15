@@ -46,7 +46,7 @@ function render(st) {
   renderSites(st.sites || {});
   const log = st.log;
   $('empty').hidden = log.length > 0; $('profile').hidden = !log.length;
-  $('stats').innerHTML = `<div><b>${log.length}</b>decoy signals</div><div><b>0</b>real signals</div>`;
+  $('stats').innerHTML = `<div><b>${log.length}</b>decoy data leaks</div>`;
   if (!log.length) return;
   const by = {};
   log.forEach(e => { by[e.topic] = by[e.topic] || { n: 0, cat: e.category }; by[e.topic].n++; });
