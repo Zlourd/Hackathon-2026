@@ -1,8 +1,8 @@
 // Injected into every page (MAIN world) at document start with the decoy persona.
 // MUST be fully self-contained: it is serialised and run in the page.
 export function injectedSpoof(P) {
-  if (window.__mirage) return;
-  Object.defineProperty(window, '__mirage', { value: true });
+  if (window.__odysseus) return;
+  Object.defineProperty(window, '__odysseus', { value: true });
 
   const def = (obj, prop, value) => {
     try { Object.defineProperty(obj, prop, { get: () => value, configurable: true, enumerable: true }); } catch (e) {}

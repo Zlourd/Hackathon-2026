@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyphemus DMP — Enterprise Audience &amp; Identity Graph</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter & JetBrains Mono Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Black & blue theme: the warm/green palettes used by the original page are remapped to blues.
+        const BLUE = {50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a',950:'#0b1a44'};
+        const SKY  = {50:'#f0f9ff',100:'#e0f2fe',200:'#bae6fd',300:'#7dd3fc',400:'#38bdf8',500:'#0ea5e9',600:'#0284c7',700:'#0369a1',800:'#075985',900:'#0c4a6e',950:'#06223a'};
+        const INDIGO = {50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81',950:'#1e1b4b'};
+        if (window.tailwind) {
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Inter', 'sans-serif'],
+                            mono: ['JetBrains Mono', 'monospace'],
+                        },
+                        colors: {
+                            canvas: '#02040a',
+                            panel: '#060b17',
+                            panelLight: '#0b1426',
+                            stroke: '#142544',
+                            accent: '#3b82f6',
+                            cyanGlow: '#06b6d4',
+                            amber: BLUE, orange: INDIGO, emerald: SKY, teal: SKY,
+                        }
+                    }
+                }
+            };
+        }
+        // Handshake secret for messages from the Odysseus extension bridge.
+        document.documentElement.dataset.odysseusNonce = (crypto.randomUUID && crypto.randomUUID()) || String(Math.random()).slice(2);
+    </script>
+    <style>
+        body {
+            background-color: #02040a;
+            color: #e2e8f0;
+        }
+        svg {
+            max-width: 1.5rem;
+            max-height: 1.5rem;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #02040a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        @keyframes pulseScan {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+        .animate-scan {
+            animation: pulseScan 2.2s infinite ease-in-out;
+        }
+    </style>
+    <link rel="stylesheet" href="theme.css">
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-blue-500/30 selection:text-blue-200">
+
+    <!-- Top Enterprise Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-panel/95 backdrop-blur-md border-b border-stroke px-4 sm:px-6 py-3.5 shadow-xl">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            
+            <!-- Brand & Live Sensor Telemetry -->
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
+                    <!-- Single Optical Eye SVG -->
+                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <circle cx="12" cy="12" r="3" fill="currentColor" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white">
+                            POLYPHEMUS DMP <span class="text-blue-400 font-mono font-semibold text-xs sm:text-sm">// OMNISIGHT IDENTITY GRAPH</span>
+                        </h1>
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            LIVE PIXEL • <span id="eventsPerMin" class="tabular-nums">142</span> req/min
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-mono text-slate-400 mt-0.5">
+                        <span>VISITOR ID: <strong id="headerVisitorId" class="text-slate-200">VIS-8942-X9</strong></span>
+                        <span>FINGERPRINT: <strong class="text-cyan-400">fp_9a81e4c07b2d</strong></span>
+                        <span class="hidden sm:inline">ENDPOINT: <strong class="text-slate-300">pixel.omnisight.io/collect</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workspace Switcher, Telemetry Stream Selector & Revenue Ticker -->
+            <div class="flex flex-wrap items-center gap-2.5">
+                <!-- View Switcher -->
+                <div class="inline-flex rounded-xl bg-canvas border border-stroke p-1">
+                    <button id="tabIdentityBtn" onclick="switchWorkspaceView('identity')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white shadow transition cursor-pointer">
+                        Identity Graph
+                    </button>
+                    <button id="tabSheepBtn" onclick="switchWorkspaceView('sheep')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer flex items-center gap-1.5">
+                        <span>🐑 Buy My Sheep</span>
+                        <span class="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono text-[10px]">EXCHANGE</span>
+                    </button>
+                    <button id="tabOdysseusBtn" onclick="switchWorkspaceView('odysseus')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer flex items-center gap-1.5">
+                        <span>🎭 Odysseus Profile</span>
+                        <span class="px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px]">DECOY</span>
+                    </button>
+                </div>
+
+                <!-- Telemetry Feed Selector -->
+                <div class="flex items-center gap-1.5 bg-canvas border border-stroke rounded-xl px-2.5 py-1.5">
+                    <label for="telemetryStreamSelect" class="text-[11px] font-mono text-slate-400">FEED:</label>
+                    <select id="telemetryStreamSelect" onchange="switchTelemetryFeed(this.value)"
+                        class="bg-transparent text-xs font-semibold text-slate-200 focus:outline-none cursor-pointer">
+                        <option value="baseline" class="bg-panel text-slate-200">Primary Stream (Active Session)</option>
+                        <option value="webhook_alpine" class="bg-panel text-slate-200">Stream #02 (Alpine &amp; Dairy)</option>
+                        <option value="webhook_arctic" class="bg-panel text-slate-200">Stream #03 (Nordic Winter Sport)</option>
+                        <option value="webhook_agri" class="bg-panel text-slate-200">Stream #04 (Heavy Agri-Machinery)</option>
+                    </select>
+                </div>
+
+                <!-- Cumulative Yield Ticker -->
+                <div class="flex items-center gap-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl px-3 py-1.5">
+                    <span class="text-[10px] font-mono uppercase text-emerald-400">Session Yield</span>
+                    <span id="totalRevenueTicker" class="font-mono text-xs sm:text-sm font-extrabold text-emerald-300 tabular-nums">$0.00</span>
+                </div>
+
+                <button onclick="ingestSessionBurst()"
+                    class="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white text-xs font-semibold shadow-lg shadow-blue-600/20 transition cursor-pointer">
+                    + Simulate Burst
+                </button>
+
+                <div class="coin" title="Nobody"><img class="f" src="assets/coin-front.png" alt=""><img class="b" src="assets/coin-back.png" alt=""></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 1: IDENTITY GRAPH & DATA HARVESTER DASHBOARD                     -->
+    <!-- ===================================================================== -->
+    <main id="identityWorkspace" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- LEFT COLUMN (4 cols): Probabilistic Identity & Behavioral Synthesis -->
+        <section class="lg:col-span-4 flex flex-col gap-5">
+            
+            <!-- Subject Profile & Confidence Card -->
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                <div class="flex items-start justify-between gap-2 pb-4 border-b border-stroke">
+                    <div>
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-blue-400 font-semibold">
+                            Probabilistic Identity Resolution
+                        </span>
+                        <h2 id="personaTitle" class="text-lg sm:text-xl font-bold text-white mt-1">
+                            Educator &amp; Creative Writer
+                        </h2>
+                        <p id="personaSubtitle" class="text-xs text-slate-400 mt-0.5">
+                            Inferred Cohort • Cross-Device Graph Linked
+                        </p>
+                    </div>
+                    <span id="segmentTierBadge" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30 shrink-0">
+                        TIER-1 HIGH LTV
+                    </span>
+                </div>
+
+                <!-- Inference Confidence Bar -->
+                <div class="mt-4">
+                    <div class="flex justify-between items-baseline text-xs mb-1.5">
+                        <span class="font-mono text-slate-400">MODEL CERTAINTY SCORE</span>
+                        <span id="confidencePct" class="font-mono font-bold text-emerald-400 text-sm">98.4%</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-canvas rounded-full overflow-hidden border border-stroke">
+                        <div id="confidenceBar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full transition-all duration-500" style="width: 98.4%"></div>
+                    </div>
+                </div>
+
+                <!-- Automated Behavioral Synthesis -->
+                <div class="mt-4 p-3.5 rounded-xl bg-canvas/90 border border-stroke">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400">Automated Behavioral Synthesis</span>
+                        <span class="text-[10px] font-mono text-emerald-400 animate-scan">● SYNCED</span>
+                    </div>
+                    <p id="synthesisNarrative" class="text-xs sm:text-[13px] text-slate-300 leading-relaxed">
+                        Subject exhibits sustained academic &amp; creative writing workflows, frequent comparative research on productivity SaaS, and high evening editorial engagement.
+                    </p>
+                </div>
+
+                <!-- Buyer Monetization & Targeting Advisory -->
+                <div class="mt-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300">
+                            Highest-Bidder Exploitation Advisory
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 font-mono text-[10px]">DSP INTEL</span>
+                    </div>
+                    <p id="buyerAdvisoryText" class="text-xs text-amber-100/90 leading-relaxed">
+                        Deploy urgency-framed annual SaaS retargeting between 20:00–23:30 local time; suppress introductory discount tiers as subject demonstrates low price elasticity on productivity tooling.
+                    </p>
+                </div>
+
+                <!-- Extracted Attribute Matrix -->
+                <div class="mt-4 grid grid-cols-2 gap-2.5 text-xs">
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke">
+                        <div class="text-[10px] font-mono text-slate-500 uppercase">Geo-IP Node</div>
+                        <div id="attrGeo" class="font-semibold text-slate-200 mt-0.5">Arlington, TX (US)</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke">
+                        <div class="text-[10px] font-mono text-slate-500 uppercase">Household Income</div>
+                        <div id="attrIncome" class="font-semibold text-slate-200 mt-0.5">$115k – $145k Est.</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke">
+                        <div class="text-[10px] font-mono text-slate-500 uppercase">Device Signature</div>
+                        <div id="attrDevice" class="font-semibold text-slate-200 mt-0.5">Desktop • macOS / Chrome</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke">
+                        <div class="text-[10px] font-mono text-slate-500 uppercase">Purchase Propensity</div>
+                        <div id="attrPropensity" class="font-semibold text-emerald-400 mt-0.5">High (87/100)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inferred Interest Taxonomy Bars -->
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+                        IAB Audience Taxonomy Weights
+                    </h3>
+                    <span class="text-[11px] font-mono text-slate-500">v4.1</span>
+                </div>
+                <div id="taxonomyContainer" class="space-y-3">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- MIDDLE COLUMN (5 cols): Live Beacon Ingestion & Pixel Inspector -->
+        <section class="lg:col-span-5 flex flex-col gap-5">
+            
+            <!-- Live Pixel / Search Signal Injector -->
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
+                        Live Pixel &amp; Search Query Inspector
+                    </span>
+                    <span class="text-[11px] font-mono text-slate-400">POST /v2/collect</span>
+                </div>
+                <p class="text-xs text-slate-400 mb-3">
+                    Simulate a live search query or outbound URL ping to observe real-time taxonomy &amp; bid recalculation:
+                </p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input id="pixelTestInput" type="text"
+                        placeholder="e.g. flights to Tokyo, bulk goat rennet, RTX 5090..."
+                        onkeydown="if(event.key==='Enter') sendCustomPixelPing()"
+                        class="flex-1 bg-canvas border border-stroke rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    <button onclick="sendCustomPixelPing()"
+                        class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow transition cursor-pointer shrink-0">
+                        Send Beacon
+                    </button>
+                </div>
+                <!-- Quick Search Presets -->
+                <div class="flex flex-wrap items-center gap-1.5 mt-2.5 text-[11px]">
+                    <span class="font-mono text-slate-500">Quick Ping:</span>
+                    <button onclick="quickPing('best flights to Tokyo')" class="px-2 py-0.5 rounded bg-canvas hover:bg-slate-800 border border-stroke text-slate-300 transition cursor-pointer">✈️ Tokyo Flights</button>
+                    <button onclick="quickPing('enterprise cloud security SaaS')" class="px-2 py-0.5 rounded bg-canvas hover:bg-slate-800 border border-stroke text-slate-300 transition cursor-pointer">☁️ Cloud SaaS</button>
+                    <button onclick="quickPing('bulk alpine goat cheese rennet')" class="px-2 py-0.5 rounded bg-canvas hover:bg-slate-800 border border-stroke text-slate-300 transition cursor-pointer">🧀 Goat Rennet</button>
+                </div>
+            </div>
+
+            <!-- Live Captured HTTP Beacons Log -->
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
+                <div class="flex items-center justify-between pb-3 border-b border-stroke">
+                    <div>
+                        <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider font-mono">
+                            Captured HTTP Beacons &amp; Clickstream
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Real-time cross-site pixel events &amp; referral headers
+                        </p>
+                    </div>
+                    <span id="beaconCountPill" class="px-2.5 py-1 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-300 font-mono text-[11px] font-semibold">
+                        6 EVENTS
+                    </span>
+                </div>
+
+                <div id="beaconStreamList" class="mt-3 bg-canvas border border-stroke rounded-xl p-3 h-80 overflow-y-auto font-mono text-xs space-y-2">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN (3 cols): RTB Ad Auction & Direct Data Monetization -->
+        <section class="lg:col-span-3 flex flex-col gap-5">
+            
+            <!-- Programmatic RTB Auction & Sell User Data Box -->
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+                        RTB Ad Exchange
+                    </span>
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] font-bold">
+                        OPENRTB 2.6
+                    </span>
+                </div>
+
+                <!-- Winning Clearing Bid -->
+                <div class="p-3.5 rounded-xl bg-canvas border border-stroke text-center">
+                    <div class="text-[10px] font-mono uppercase text-slate-400">Highest Clearing Bid</div>
+                    <div id="clearingCpm" class="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 mt-1 tabular-nums">
+                        $18.40
+                    </div>
+                    <div id="winningBidderName" class="text-[11px] font-mono text-slate-300 mt-1">
+                        Winner: LexiconAI Enterprise DSP
+                    </div>
+                </div>
+
+                <!-- Sell User Data CTA -->
+                <button id="sellDataBtn" onclick="executeHighestBidderSale()"
+                    class="w-full mt-3.5 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.99] text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition cursor-pointer flex items-center justify-center gap-2">
+                    <span>💰 Sell User Data ($18.40)</span>
+                </button>
+                <p class="text-[10px] font-mono text-slate-500 text-center mt-1.5">
+                    Instant programmatic transfer to top DSP bidder
+                </p>
+
+                <!-- Competing DSP Bids -->
+                <div class="mt-4 pt-3 border-t border-stroke">
+                    <div class="text-[10px] font-mono uppercase text-slate-400 mb-2">Active DSP Order Book</div>
+                    <div id="dspOrderBook" class="space-y-1.5 text-xs font-mono">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Simulated Ad Creative Preview -->
+                <div class="mt-4 pt-3 border-t border-stroke">
+                    <div class="text-[10px] font-mono uppercase text-slate-400 mb-2">Served Ad Creative</div>
+                    <div class="p-3 rounded-xl bg-panelLight border border-stroke">
+                        <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-1">
+                            <span id="adSponsorTag">SPONSORED • SAAS</span>
+                            <span>300×250</span>
+                        </div>
+                        <div id="adHeadline" class="text-xs font-bold text-white">
+                            Upgrade Your Research &amp; Writing Stack
+                        </div>
+                        <p id="adBody" class="text-[11px] text-slate-400 mt-1 leading-snug">
+                            AI-assisted citation &amp; manuscript workflow built for educators and authors.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sold User Data Ledger -->
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
+                <div class="flex items-center justify-between mb-2.5">
+                    <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+                        Sold User Data Ledger
+                    </h3>
+                    <span id="soldCountBadge" class="text-[11px] font-mono text-emerald-400 font-bold">0 SOLD</span>
+                </div>
+                <div id="soldLedgerList" class="bg-canvas border border-stroke rounded-xl p-2.5 flex-1 min-h-[120px] max-h-48 overflow-y-auto space-y-2 text-[11px] font-mono">
+                    <div class="text-slate-500 text-center py-6">No user data packages liquidated yet.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 2: "BUY MY SHEEP — FEED YOUR FLOCK" BUYER BIDDING EXCHANGE        -->
+    <!-- ===================================================================== -->
+    <main id="sheepExchangeWorkspace" class="hidden flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+        
+        <!-- Exchange Hero Header -->
+        <div class="bg-gradient-to-r from-panel via-panelLight to-panel border border-amber-500/30 rounded-2xl p-6 shadow-2xl flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold mb-2">
+                    <span>🐑 OMNISIGHT PRIVATE DATA EXCHANGE</span>
+                    <span>•</span>
+                    <span>LIVE PROGRAMMATIC AUCTION</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                    Buy My Sheep — Feed Your Flock
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
+                    Acquire verified, real-time behavioral user profiles directly from the Polyphemus Identity Graph. Select a live audience lot below to initiate a <strong class="text-amber-300">1-minute programmatic auction</strong> and lock in exclusive retargeting rights.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+                <button onclick="switchWorkspaceView('identity')"
+                    class="px-4 py-2.5 rounded-xl bg-canvas hover:bg-slate-800 border border-stroke text-slate-200 text-xs font-bold transition cursor-pointer">
+                    ← Back to Identity Graph
+                </button>
+            </div>
+        </div>
+
+        <!-- LIVE 1-MINUTE AUCTION COUNTDOWN BANNER (Appears when an offer is posted) -->
+        <div id="activeAuctionBanner" class="hidden bg-panel border-2 border-amber-400/70 rounded-2xl p-5 shadow-2xl shadow-amber-500/10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                        <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-300">
+                            LIVE AUCTION IN PROGRESS — AUTO-SELLS AT 00:00
+                        </span>
+                    </div>
+                    <h3 id="auctionLotTitle" class="text-lg font-extrabold text-white">
+                        FLOCK LOT #01 — Educator &amp; Creative Writer
+                    </h3>
+                    <p class="text-xs font-mono text-slate-300">
+                        Current Highest Bidder: <strong id="auctionHighestBidder" class="text-emerald-400">Your DSP Desk</strong> • Current Offer: <strong id="auctionHighestAmount" class="text-emerald-300">$18.40</strong>
+                    </p>
+                </div>
+
+                <!-- Countdown Clock & Instant Settle -->
+                <div class="flex items-center gap-4">
+                    <div class="px-4 py-2.5 rounded-xl bg-canvas border border-amber-500/40 text-center">
+                        <div class="text-[10px] font-mono uppercase text-slate-400">Time Remaining</div>
+                        <div id="auctionTimerDisplay" class="text-2xl sm:text-3xl font-extrabold font-mono text-amber-400 tabular-nums">
+                            01:00
+                        </div>
+                    </div>
+                    <button onclick="finalizeTimedAuctionSale()"
+                        class="px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg transition cursor-pointer">
+                        Settle Now ⚡
+                    </button>
+                </div>
+            </div>
+
+            <!-- 60-Second Progress Bar -->
+            <div class="w-full h-2 bg-canvas rounded-full overflow-hidden border border-stroke mt-4">
+                <div id="auctionTimerBar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 transition-all duration-1000 linear" style="width: 100%"></div>
+            </div>
+        </div>
+
+        <!-- Flock Lots Grid -->
+        <div id="sheepLotsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Custom Bid Desk -->
+        <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wider">
+                    Custom DSP Standing Offer Desk
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                    Post a custom CPM offer on the currently active Identity Graph subject to start a 1-minute closing clock.
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2.5">
+                <input id="customBidderName" type="text" value="ApexMedia DSP" placeholder="Bidder / DSP Name"
+                    class="bg-canvas border border-stroke rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                <input id="customBidAmount" type="number" step="0.50" value="22.50" placeholder="Bid ($)"
+                    class="w-28 bg-canvas border border-stroke rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:outline-none focus:border-amber-400">
+                <button onclick="submitCustomSheepBid()"
+                    class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow transition cursor-pointer">
+                    Post Offer (1m Timer) →
+                </button>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 3: ODYSSEUS DECOY PROFILE (imported from the Odysseus extension) -->
+    <!-- ===================================================================== -->
+    <main id="odysseusWorkspace" class="hidden flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <section id="odyEmpty" class="lg:col-span-12 bg-panel border border-stroke rounded-2xl p-8 text-center">
+            <div class="text-4xl mb-2">🎭</div>
+            <h2 class="text-lg font-bold text-white">Waiting for Odysseus</h2>
+            <p class="text-xs text-slate-400 mt-1 max-w-xl mx-auto">
+                Open this page in a browser with the Odysseus extension installed (the page must be served from
+                <span class="font-mono text-slate-300">http://127.0.0.1:5172</span>). The decoy persona and its browsing activity appear here automatically.
+            </p>
+        </section>
+
+        <section id="odyLeft" class="hidden lg:col-span-4 flex flex-col gap-5">
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
+                <div class="flex items-start justify-between gap-2 pb-4 border-b border-stroke">
+                    <div>
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-blue-400 font-semibold">Imported from Odysseus</span>
+                        <h2 id="odyTitle" class="text-lg sm:text-xl font-bold text-white mt-1"></h2>
+                        <p id="odySubtitle" class="text-xs text-slate-400 mt-0.5"></p>
+                    </div>
+                    <span class="px-2 py-1 rounded-md text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/40 shrink-0">SYNTHETIC IDENTITY</span>
+                </div>
+                <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-mono text-slate-400">
+                    <span>VISITOR ID: <strong id="odyVid" class="text-slate-200"></strong></span>
+                    <span>FINGERPRINT: <strong id="odyFp" class="text-cyan-400"></strong></span>
+                </div>
+                <div class="mt-4">
+                    <div class="flex justify-between items-baseline text-xs mb-1.5">
+                        <span class="font-mono text-slate-400">MODEL CERTAINTY SCORE</span>
+                        <span id="odyConf" class="font-mono font-bold text-emerald-400 text-sm"></span>
+                    </div>
+                    <div class="w-full h-2.5 bg-canvas rounded-full overflow-hidden border border-stroke">
+                        <div id="odyConfBar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3.5 rounded-xl bg-canvas/90 border border-stroke">
+                    <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1">Automated Behavioral Synthesis</div>
+                    <p id="odySynthesis" class="text-xs sm:text-[13px] text-slate-300 leading-relaxed"></p>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-2.5 text-xs">
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Geo-IP Node</div><div id="odyGeo" class="font-semibold text-slate-200 mt-0.5"></div></div>
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Household Income</div><div id="odyIncome" class="font-semibold text-slate-200 mt-0.5"></div></div>
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Device Signature</div><div id="odyDevice" class="font-semibold text-slate-200 mt-0.5"></div></div>
+                    <div class="p-2.5 rounded-xl bg-canvas border border-stroke"><div class="text-[10px] font-mono text-slate-500 uppercase">Purchase Propensity</div><div id="odyPropensity" class="font-semibold text-emerald-400 mt-0.5"></div></div>
+                </div>
+            </div>
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
+                <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 mb-3">Audience Taxonomy Weights</h3>
+                <div id="odyTaxonomy" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <section id="odyMid" class="hidden lg:col-span-5 flex flex-col gap-5">
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
+                <div class="flex items-center justify-between pb-3 border-b border-stroke">
+                    <div>
+                        <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider font-mono">Captured Beacons &middot; Decoy Browsing</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Searches and visits generated by the decoy persona</p>
+                    </div>
+                    <span id="odyBeaconCount" class="px-2.5 py-1 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-300 font-mono text-[11px] font-semibold">0 EVENTS</span>
+                </div>
+                <div id="odyBeacons" class="mt-3 bg-canvas border border-stroke rounded-xl p-3 h-96 overflow-y-auto font-mono text-xs space-y-2"></div>
+            </div>
+        </section>
+
+        <section id="odyRight" class="hidden lg:col-span-3 flex flex-col gap-5">
+            <div class="bg-panel border border-stroke rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">RTB Exchange</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono text-[10px] font-bold">FICTIONAL BIDDERS</span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-canvas border border-stroke text-center">
+                    <div class="text-[10px] font-mono uppercase text-slate-400">Highest Clearing Bid</div>
+                    <div id="odyCpm" class="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 mt-1 tabular-nums"></div>
+                    <div id="odyWinner" class="text-[11px] font-mono text-slate-300 mt-1"></div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-stroke">
+                    <div class="text-[10px] font-mono uppercase text-slate-400 mb-2">Active DSP Order Book</div>
+                    <div id="odyBids" class="space-y-1.5 text-xs font-mono"></div>
+                </div>
+                <button onclick="switchWorkspaceView('sheep')"
+                    class="w-full mt-4 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg transition cursor-pointer">
+                    Open Lot #05 in Buy My Sheep &rarr;
+                </button>
+                <div class="mt-4 pt-3 border-t border-stroke">
+                    <div class="text-[10px] font-mono uppercase text-slate-400 mb-2">Served Ad Creative</div>
+                    <div class="p-3 rounded-xl bg-panelLight border border-stroke">
+                        <div id="odyAdTag" class="text-[10px] font-mono text-slate-400 mb-1"></div>
+                        <div id="odyAdHeadline" class="text-xs font-bold text-white"></div>
+                    </div>
+                </div>
+                <p class="text-[10px] font-mono text-slate-500 mt-3">Simulation: bidders and prices are fictional and derived from the decoy's interests and income band. No real user data is sold.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Wire Settlement Receipt Modal (Replaces alert) -->
+    <div id="settlementModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-panel border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-stroke pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <h3 class="text-sm font-extrabold font-mono uppercase text-emerald-400">
+                        User Data Transfer Settled
+                    </h3>
+                </div>
+                <button onclick="closeSettlementModal()" class="text-slate-400 hover:text-white text-sm font-mono cursor-pointer">✕</button>
+            </div>
+
+            <div class="space-y-2 text-xs font-mono bg-canvas border border-stroke rounded-xl p-4">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">TRANSACTION ID:</span>
+                    <span id="receiptTxId" class="text-slate-200">TX-994810</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">BUYING DSP:</span>
+                    <span id="receiptBuyer" class="text-cyan-300 font-bold">LexiconAI Enterprise DSP</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">SUBJECT COHORT:</span>
+                    <span id="receiptPersona" class="text-white">Educator &amp; Creative Writer</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">VISITOR GRAPH ID:</span>
+                    <span id="receiptVisitorId" class="text-slate-300">VIS-8942-X9</span>
+                </div>
+                <div id="receiptSynthetic" class="hidden text-[11px] text-amber-300 border border-amber-500/40 bg-amber-500/10 rounded-lg px-2 py-1.5">SYNTHETIC DECOY IDENTITY &mdash; simulated sale, no real user data transferred.</div>
+                <div class="flex justify-between pt-2 border-t border-stroke text-sm">
+                    <span class="text-slate-300 font-bold">CLEARED PAYOUT:</span>
+                    <span id="receiptAmount" class="text-emerald-400 font-extrabold">$18.40</span>
+                </div>
+            </div>
+
+            <button onclick="closeSettlementModal()"
+                class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition cursor-pointer">
+                Done
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // 1. COHORT PROFILES & MONETIZATION DATA
+        // =========================================================================
+        const COHORTS = {
+            baseline: {
+                visitorId: 'VIS-8942-X9',
+                title: 'Educator & Creative Writer',
+                subtitle: 'Inferred Cohort • Cross-Device Graph Linked',
+                tier: 'TIER-1 HIGH LTV',
+                confidence: 98.4,
+                synthesis: 'Subject exhibits sustained academic & creative writing workflows, frequent comparative research on productivity SaaS, and high evening editorial engagement.',
+                advisory: 'Deploy urgency-framed annual SaaS retargeting between 20:00–23:30 local time; suppress introductory discount tiers as subject demonstrates low price elasticity on productivity tooling.',
+                geo: 'Arlington, TX (US)',
+                income: '$115k – $145k Est.',
+                device: 'Desktop • macOS / Chrome',
+                propensity: 'High (87/100)',
+                cpm: 18.40,
+                winner: 'LexiconAI Enterprise DSP',
+                bids: [
+                    { dsp: 'LexiconAI Enterprise DSP', price: 18.40 },
+                    { dsp: 'NorthStar EdTech Exchange', price: 16.95 },
+                    { dsp: 'Meridian Cloud Retargeter', price: 14.20 }
+                ],
+                ad: {
+                    tag: 'SPONSORED • PRODUCTIVITY SAAS',
+                    headline: 'Upgrade Your Research & Writing Stack',
+                    body: 'AI-assisted citation & manuscript workflow built for educators and authors.'
+                },
+                taxonomy: [
+                    { label: 'Academic & Literary Publishing', pct: 94 },
+                    { label: 'Enterprise Productivity SaaS', pct: 88 },
+                    { label: 'Higher Education & Curriculum', pct: 81 },
+                    { label: 'Specialty Coffee & Home Office', pct: 64 }
+                ],
+                beacons: [
+                    { type: 'SEARCH', url: "query: 'best distraction free manuscript software'", ref: 'google.com', dwell: '48s' },
+                    { type: 'PIXEL', url: 'https://academic-press.org/fellowships-2026', ref: 'scholar.google', dwell: '112s' },
+                    { type: 'CLICK', url: 'https://notion-alternative.io/pricing-pro', ref: 'direct', dwell: '34s' },
+                    { type: 'VIEW', url: 'https://literaryreview.net/essays/craft', ref: 'substack.com', dwell: '95s' }
+                ]
+            },
+            webhook_alpine: {
+                visitorId: 'VIS-8942-X9',
+                title: 'Alpine Cheesemaker & Accordion Restorer',
+                subtitle: 'Inferred Cohort • Niche Artisan & Dairy Supply',
+                tier: 'NICHE AGRI-CRAFT',
+                confidence: 99.1,
+                synthesis: 'Subject demonstrates intense procurement intent for bulk goat milk rennet, copper cheese vats, and vintage Helikon button-accordion reed plates.',
+                advisory: 'Serve wholesale dairy culture bundles and Swiss reed-tuning consumables; exclude all metropolitan SaaS and consumer finance campaigns due to zero conversion correlation.',
+                geo: 'Gruyères / Bern Relay (CH)',
+                income: '$62k – $78k Est.',
+                device: 'Desktop • Linux / Firefox',
+                propensity: 'Niche (91/100)',
+                cpm: 2.45,
+                winner: 'Fromagex Wholesale EU',
+                bids: [
+                    { dsp: 'Fromagex Wholesale EU', price: 2.45 },
+                    { dsp: 'AlpineFolk Instrument Supply', price: 2.10 },
+                    { dsp: 'Generic Retail Remnant', price: 0.85 }
+                ],
+                ad: {
+                    tag: 'SPONSORED • DAIRY & FOLK CRAFT',
+                    headline: '20L Artisanal Goat Rennet — Bulk Drum Sale',
+                    body: 'Direct-from-vat microbial rennet & brass accordion reed wax shipped fast.'
+                },
+                taxonomy: [
+                    { label: 'Artisanal Cheese & Dairy Cultures', pct: 97 },
+                    { label: 'Vintage Folk & Accordion Repair', pct: 92 },
+                    { label: 'Alpine Pasture & Livestock', pct: 79 },
+                    { label: 'Copper Fermentation Vessels', pct: 71 }
+                ],
+                beacons: [
+                    { type: 'SEARCH', url: "query: 'bulk liquid goat rennet 20 liter drum'", ref: 'duckduckgo.com', dwell: '54s' },
+                    { type: 'PIXEL', url: 'https://accordion-parts.ch/helikon-bass-reeds', ref: 'forum.melodeon', dwell: '88s' },
+                    { type: 'CLICK', url: 'https://alpine-dairy-supply.eu/copper-vats', ref: 'search', dwell: '61s' },
+                    { type: 'VIEW', url: 'https://cheesemaking-guild.org/thermophilic-cultures', ref: 'direct', dwell: '120s' }
+                ]
+            },
+            webhook_arctic: {
+                visitorId: 'VIS-8942-X9',
+                title: 'Arctic Curling & Ice-Core Logistics Buyer',
+                subtitle: 'Inferred Cohort • Cold-Chain & Winter Sport',
+                tier: 'SPECIALTY NORDIC',
+                confidence: 97.6,
+                synthesis: 'Behavioral footprint centers on tournament curling broom heads, tungsten ice-pebbling nozzles, and sub-zero thermal freight containers.',
+                advisory: 'Target with Scandinavian winter athletic federation sponsorships and thermal gear clearances; suppress warm-weather travel and mainstream consumer electronics.',
+                geo: 'Tromsø / Oslo Node (NO)',
+                income: '$84k – $102k Est.',
+                device: 'Desktop • Windows / Edge',
+                propensity: 'Moderate (74/100)',
+                cpm: 3.15,
+                winner: 'NordicIce Athletic Supply',
+                bids: [
+                    { dsp: 'NordicIce Athletic Supply', price: 3.15 },
+                    { dsp: 'PolarFreight Cold-Chain', price: 2.80 },
+                    { dsp: 'Remnant Sports Network', price: 1.10 }
+                ],
+                ad: {
+                    tag: 'SPONSORED • WINTER FEDERATION',
+                    headline: 'WCF-Approved Carbon Curling Broom Heads',
+                    body: 'Competition-grade directional fabric & thermal rink timers in stock.'
+                },
+                taxonomy: [
+                    { label: 'Competitive Curling & Ice Rinks', pct: 96 },
+                    { label: 'Sub-Zero Thermal Equipment', pct: 85 },
+                    { label: 'Arctic Maritime Logistics', pct: 73 },
+                    { label: 'Wool Base-Layer Apparel', pct: 66 }
+                ],
+                beacons: [
+                    { type: 'SEARCH', url: "query: 'competition curling broom fabric replacement'", ref: 'bing.com', dwell: '39s' },
+                    { type: 'PIXEL', url: 'https://nordic-curling.no/pebbling-nozzle-specs', ref: 'direct', dwell: '76s' },
+                    { type: 'CLICK', url: 'https://arctic-gear.se/minus-40-parkas', ref: 'search', dwell: '44s' }
+                ]
+            },
+            webhook_agri: {
+                visitorId: 'VIS-8942-X9',
+                title: '1970s Tractor Restorer & Soil pH Analyst',
+                subtitle: 'Inferred Cohort • Heavy Salvage & Agronomy',
+                tier: 'RURAL INDUSTRIAL',
+                confidence: 98.9,
+                synthesis: 'Subject actively sources 1974 hydraulic PTO rebuild gaskets, cast-iron manifold castings, and bulk agricultural lime spreaders.',
+                advisory: 'Route inventory to salvage diesel parts marketplaces and regional agronomy co-ops; high click-through on PDF service manuals and hydraulic seal kits.',
+                geo: 'Des Moines, IA (US)',
+                income: '$74k – $95k Est.',
+                device: 'Desktop • ChromeOS',
+                propensity: 'High (83/100)',
+                cpm: 4.10,
+                winner: 'AgriSalvage Parts Exchange',
+                bids: [
+                    { dsp: 'AgriSalvage Parts Exchange', price: 4.10 },
+                    { dsp: 'Midwest Soil & Lime Co-op', price: 3.65 },
+                    { dsp: 'HeavyDiesel Classifieds', price: 2.30 }
+                ],
+                ad: {
+                    tag: 'SPONSORED • VINTAGE TRACTOR PARTS',
+                    headline: '1970–1978 Hydraulic PTO Rebuild Kits',
+                    body: 'OEM-spec viton seals, gaskets & cast manifolds ready for same-day freight.'
+                },
+                taxonomy: [
+                    { label: 'Vintage Tractor & Diesel Salvage', pct: 98 },
+                    { label: 'Agronomy & Soil pH Testing', pct: 89 },
+                    { label: 'Hydraulic & PTO Hydraulics', pct: 84 },
+                    { label: 'Rural Machine Shop Tooling', pct: 69 }
+                ],
+                beacons: [
+                    { type: 'SEARCH', url: "query: '1974 international harvester hydraulic pump seal kit'", ref: 'google.com', dwell: '67s' },
+                    { type: 'PIXEL', url: 'https://tractor-salvage.us/cast-manifolds', ref: 'forum.ytmag', dwell: '104s' },
+                    { type: 'CLICK', url: 'https://agronomy-lab.org/bulk-lime-calculator', ref: 'search', dwell: '52s' }
+                ]
+            }
+        };
+
+        // =========================================================================
+        // 2. APPLICATION STATE
+        // =========================================================================
+        let activeCohortKey = 'baseline';
+        let currentProfile = JSON.parse(JSON.stringify(COHORTS.baseline));
+        let totalYield = 0.00;
+        let soldCount = 0;
+        let beaconTotal = 4;
+        let odysseusProfile = null; // synthetic profile imported from the Odysseus extension
+
+        // 1-Minute Auction Timer State
+        let activeAuction = null;
+        let auctionInterval = null;
+        let auctionSecondsLeft = 60;
+
+        // =========================================================================
+        // 3. CORE RENDERING & DASHBOARD UPDATES
+        // =========================================================================
+        function renderDashboard() {
+            const p = currentProfile;
+
+            document.getElementById('headerVisitorId').textContent = p.visitorId;
+            document.getElementById('personaTitle').textContent = p.title;
+            document.getElementById('personaSubtitle').textContent = p.subtitle;
+            document.getElementById('segmentTierBadge').textContent = p.tier;
+
+            document.getElementById('confidencePct').textContent = p.confidence.toFixed(1) + '%';
+            document.getElementById('confidenceBar').style.width = Math.min(100, p.confidence) + '%';
+
+            document.getElementById('synthesisNarrative').textContent = p.synthesis;
+            document.getElementById('buyerAdvisoryText').textContent = p.advisory;
+
+            document.getElementById('attrGeo').textContent = p.geo;
+            document.getElementById('attrIncome').textContent = p.income;
+            document.getElementById('attrDevice').textContent = p.device;
+            document.getElementById('attrPropensity').textContent = p.propensity;
+
+            // Taxonomy Bars
+            const taxContainer = document.getElementById('taxonomyContainer');
+            taxContainer.innerHTML = p.taxonomy.map(item => `
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-300 font-medium">${item.label}</span>
+                        <span class="font-mono text-cyan-400 font-semibold">${item.pct}%</span>
+                    </div>
+                    <div class="w-full h-2 bg-canvas rounded-full overflow-hidden border border-stroke">
+                        <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" style="width: ${item.pct}%"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            // RTB Auction & Sell User Data Button
+            document.getElementById('clearingCpm').textContent = '$' + p.cpm.toFixed(2);
+            document.getElementById('winningBidderName').textContent = 'Winner: ' + p.winner;
+            document.getElementById('sellDataBtn').innerHTML = `<span>💰 Sell User Data ($${p.cpm.toFixed(2)})</span>`;
+
+            // DSP Order Book
+            const orderBook = document.getElementById('dspOrderBook');
+            orderBook.innerHTML = p.bids.map((b, idx) => `
+                <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg ${idx === 0 ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300' : 'bg-canvas border border-stroke text-slate-400'}">
+                    <span class="truncate pr-2">${idx === 0 ? '★ ' : ''}${b.dsp}</span>
+                    <span class="font-bold shrink-0">$${b.price.toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            // Ad Creative
+            document.getElementById('adSponsorTag').textContent = p.ad.tag;
+            document.getElementById('adHeadline').textContent = p.ad.headline;
+            document.getElementById('adBody').textContent = p.ad.body;
+
+            // Update Sheep Exchange Lots too
+            renderSheepLotsGrid();
+        }
+
+        function renderInitialBeacons() {
+            const list = document.getElementById('beaconStreamList');
+            list.innerHTML = '';
+            beaconTotal = 0;
+            currentProfile.beacons.forEach(b => {
+                appendBeaconRow(b.type, b.url, b.ref, b.dwell, false);
+            });
+        }
+
+        function appendBeaconRow(type, url, ref, dwell, prepend = true) {
+            const list = document.getElementById('beaconStreamList');
+            beaconTotal++;
+            document.getElementById('beaconCountPill').textContent = `${beaconTotal} EVENTS`;
+
+            const badgeColor = type === 'SEARCH'
+                ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
+                : type === 'CLICK'
+                ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                : 'bg-blue-500/15 text-blue-300 border-blue-500/30';
+
+            const now = new Date().toTimeString().split(' ')[0];
+            const row = document.createElement('div');
+            row.className = 'p-2.5 rounded-lg bg-panel border border-stroke flex flex-col gap-1 transition-all';
+            row.innerHTML = `
+                <div class="flex items-center justify-between text-[10px]">
+                    <div class="flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded border font-bold ${badgeColor}">${type}</span>
+                        <span class="text-slate-400">ref: ${ref}</span>
+                    </div>
+                    <span class="text-slate-500">${now} • dwell ${dwell}</span>
+                </div>
+                <div class="text-slate-200 truncate">${escapeHtml(url)}</div>
+            `;
+
+            if (prepend && list.firstChild) {
+                list.insertBefore(row, list.firstChild);
+            } else {
+                list.appendChild(row);
+            }
+        }
+
+        function switchTelemetryFeed(feedKey) {
+            activeCohortKey = feedKey;
+            currentProfile = JSON.parse(JSON.stringify(COHORTS[feedKey] || COHORTS.baseline));
+            renderDashboard();
+            renderInitialBeacons();
+        }
+
+        // =========================================================================
+        // 4. LIVE PIXEL & SEARCH QUERY ADAPTATION
+        // =========================================================================
+        function quickPing(query) {
+            document.getElementById('pixelTestInput').value = query;
+            sendCustomPixelPing();
+        }
+
+        function sendCustomPixelPing() {
+            const input = document.getElementById('pixelTestInput');
+            const raw = input.value.trim();
+            if (!raw) return;
+
+            const isUrl = /^https?:\/\//i.test(raw);
+            appendBeaconRow(isUrl ? 'PIXEL' : 'SEARCH', isUrl ? raw : `query: '${raw}'`, 'live-session', '19s', true);
+            adaptProfileFromQuery(raw);
+            input.value = '';
+        }
+
+        function adaptProfileFromQuery(query) {
+            const q = query.toLowerCase();
+            const cleanLabel = query.replace(/^https?:\/\//i, '').slice(0, 42);
+
+            if (q.includes('cheese') || q.includes('rennet') || q.includes('accordion')) {
+                switchTelemetryFeed('webhook_alpine');
+                document.getElementById('telemetryStreamSelect').value = 'webhook_alpine';
+                return;
+            }
+            if (q.includes('curling') || q.includes('arctic') || q.includes('snow')) {
+                switchTelemetryFeed('webhook_arctic');
+                document.getElementById('telemetryStreamSelect').value = 'webhook_arctic';
+                return;
+            }
+            if (q.includes('tractor') || q.includes('soil') || q.includes('pto')) {
+                switchTelemetryFeed('webhook_agri');
+                document.getElementById('telemetryStreamSelect').value = 'webhook_agri';
+                return;
+            }
+
+            // Dynamic commercial re-profiling for any live search
+            const isHighTicket = /flight|tokyo|luxury|laptop|rtx|invest|mortgage|cloud|saas|security|car/i.test(q);
+            const newCpm = isHighTicket ? +(19.50 + Math.random() * 6).toFixed(2) : +(9.80 + Math.random() * 4.5).toFixed(2);
+
+            currentProfile.title = `Active Commercial Seeker: "${cleanLabel}"`;
+            currentProfile.subtitle = 'Real-Time Intent Recalibrated • Live Signal';
+            currentProfile.confidence = Math.min(99.6, +(currentProfile.confidence + 0.3).toFixed(1));
+            currentProfile.synthesis = `Live clickstream confirms immediate transactional intent around "${cleanLabel}". Historical baseline weighted alongside fresh query vector.`;
+            currentProfile.advisory = `Bid aggressively in next 15-minute window using dynamic keyword insertion for "${cleanLabel}". Subject is actively comparing vendors.`;
+            currentProfile.cpm = newCpm;
+            currentProfile.winner = isHighTicket ? 'VelocityIntent Prime DSP' : 'PulseCommerce Retargeter';
+            currentProfile.bids = [
+                { dsp: currentProfile.winner, price: newCpm },
+                { dsp: 'OmniBid Programmatic', price: +(newCpm * 0.88).toFixed(2) },
+                { dsp: 'ApexMedia Exchange', price: +(newCpm * 0.74).toFixed(2) }
+            ];
+            currentProfile.taxonomy.unshift({ label: `Live Intent: ${cleanLabel}`, pct: 96 });
+            currentProfile.taxonomy = currentProfile.taxonomy.slice(0, 4);
+            currentProfile.ad = {
+                tag: 'SPONSORED • REAL-TIME INTENT',
+                headline: `Top Deals & Options for ${cleanLabel}`,
+                body: `Instant comparison and exclusive buyer rates matched to your active search.`
+            };
+
+            renderDashboard();
+        }
+
+        function ingestSessionBurst() {
+            const samples = currentProfile.beacons;
+            samples.forEach((s, i) => {
+                setTimeout(() => {
+                    appendBeaconRow(s.type, s.url, s.ref, `${12 + i * 7}s`, true);
+                    const reqEl = document.getElementById('eventsPerMin');
+                    reqEl.textContent = parseInt(reqEl.textContent, 10) + 1;
+                }, i * 160);
+            });
+        }
+
+        // =========================================================================
+        // 5. DIRECT DATA SALE & LEDGER
+        // =========================================================================
+        function executeHighestBidderSale(customBuyer, customPrice, customTitle, lotInfo) {
+            const buyer = customBuyer || currentProfile.winner;
+            const price = typeof customPrice === 'number' ? customPrice : currentProfile.cpm;
+            const persona = customTitle || currentProfile.title;
+
+            totalYield += price;
+            soldCount += 1;
+
+            document.getElementById('totalRevenueTicker').textContent = '$' + totalYield.toFixed(2);
+            document.getElementById('soldCountBadge').textContent = `${soldCount} SOLD`;
+
+            const txId = 'TX-' + Math.floor(100000 + Math.random() * 900000);
+            const now = new Date().toTimeString().split(' ')[0];
+
+            // Prepend to Ledger
+            const ledger = document.getElementById('soldLedgerList');
+            if (soldCount === 1) ledger.innerHTML = '';
+
+            const item = document.createElement('div');
+            item.className = 'p-2.5 rounded-lg bg-panel border border-emerald-500/30 flex items-center justify-between gap-2';
+            item.innerHTML = `
+                <div class="min-w-0">
+                    <div class="text-emerald-300 font-bold truncate">${escapeHtml(buyer)}</div>
+                    <div class="text-slate-400 text-[10px] truncate">${escapeHtml(persona)} • ${now}</div>
+                </div>
+                <div class="text-emerald-400 font-extrabold shrink-0">+$${price.toFixed(2)}</div>
+            `;
+            ledger.insertBefore(item, ledger.firstChild);
+
+            // Show Settlement Receipt Modal
+            document.getElementById('receiptTxId').textContent = txId;
+            document.getElementById('receiptBuyer').textContent = buyer;
+            document.getElementById('receiptPersona').textContent = persona;
+            document.getElementById('receiptVisitorId').textContent = (lotInfo && lotInfo.visitorId) || currentProfile.visitorId;
+            document.getElementById('receiptSynthetic').classList.toggle('hidden', !(lotInfo && lotInfo.synthetic));
+            document.getElementById('receiptAmount').textContent = '$' + price.toFixed(2);
+            document.getElementById('settlementModal').classList.remove('hidden');
+        }
+
+        function closeSettlementModal() {
+            document.getElementById('settlementModal').classList.add('hidden');
+        }
+
+        // =========================================================================
+        // 6. "BUY MY SHEEP — FEED YOUR FLOCK" EXCHANGE & 1-MINUTE TIMER
+        // =========================================================================
+        function switchWorkspaceView(view) {
+            const views = {
+                identity: { main: 'identityWorkspace', btn: 'tabIdentityBtn' },
+                odysseus: { main: 'odysseusWorkspace', btn: 'tabOdysseusBtn' },
+                sheep: { main: 'sheepExchangeWorkspace', btn: 'tabSheepBtn' }
+            };
+            Object.entries(views).forEach(([key, v]) => {
+                const on = key === view;
+                document.getElementById(v.main).classList.toggle('hidden', !on);
+                document.getElementById(v.btn).className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ' +
+                    (on ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white');
+            });
+            if (view === 'sheep') renderSheepLotsGrid();
+        }
+
+        function renderSheepLotsGrid() {
+            const grid = document.getElementById('sheepLotsGrid');
+            if (!grid) return;
+
+            const lots = [
+                {
+                    lotId: 'FLOCK LOT #01 (LIVE)',
+                    key: activeCohortKey,
+                    title: currentProfile.title,
+                    tier: currentProfile.tier,
+                    confidence: currentProfile.confidence,
+                    geo: currentProfile.geo,
+                    cpm: currentProfile.cpm,
+                    buyer: currentProfile.winner,
+                    highlight: true
+                },
+                {
+                    lotId: 'FLOCK LOT #02',
+                    key: 'webhook_alpine',
+                    title: COHORTS.webhook_alpine.title,
+                    tier: COHORTS.webhook_alpine.tier,
+                    confidence: COHORTS.webhook_alpine.confidence,
+                    geo: COHORTS.webhook_alpine.geo,
+                    cpm: COHORTS.webhook_alpine.cpm,
+                    buyer: COHORTS.webhook_alpine.winner,
+                    highlight: false
+                },
+                {
+                    lotId: 'FLOCK LOT #03',
+                    key: 'webhook_arctic',
+                    title: COHORTS.webhook_arctic.title,
+                    tier: COHORTS.webhook_arctic.tier,
+                    confidence: COHORTS.webhook_arctic.confidence,
+                    geo: COHORTS.webhook_arctic.geo,
+                    cpm: COHORTS.webhook_arctic.cpm,
+                    buyer: COHORTS.webhook_arctic.winner,
+                    highlight: false
+                },
+                {
+                    lotId: 'FLOCK LOT #04',
+                    key: 'webhook_agri',
+                    title: COHORTS.webhook_agri.title,
+                    tier: COHORTS.webhook_agri.tier,
+                    confidence: COHORTS.webhook_agri.confidence,
+                    geo: COHORTS.webhook_agri.geo,
+                    cpm: COHORTS.webhook_agri.cpm,
+                    buyer: COHORTS.webhook_agri.winner,
+                    highlight: false
+                }
+            ];
+
+            if (odysseusProfile) {
+                lots.push({
+                    lotId: 'FLOCK LOT #05 (ODYSSEUS)',
+                    key: 'odysseus',
+                    title: odysseusProfile.title,
+                    tier: 'SYNTHETIC DECOY',
+                    confidence: odysseusProfile.confidence.toFixed(1),
+                    geo: odysseusProfile.geo,
+                    cpm: odysseusProfile.cpm,
+                    buyer: odysseusProfile.winner,
+                    highlight: true,
+                    synthetic: true
+                });
+            }
+
+            grid.innerHTML = lots.map(lot => `
+                <div class="bg-panel border ${lot.highlight ? 'border-amber-400/60 shadow-lg shadow-amber-500/10' : 'border-stroke'} rounded-2xl p-5 flex flex-col justify-between gap-4">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${lot.highlight ? 'bg-amber-500/20 text-amber-300' : 'bg-canvas text-slate-400 border border-stroke'}">
+                                ${lot.lotId}
+                            </span>
+                            <span class="text-[11px] font-mono font-bold text-emerald-400">${lot.confidence}% CERT</span>
+                        </div>
+                        <h3 class="text-base font-extrabold text-white leading-snug">
+                            ${escapeHtml(lot.title)}
+                        </h3>
+                        <p class="text-[11px] font-mono text-slate-400 mt-1">
+                            ${lot.tier} • ${lot.geo}
+                        </p>
+                    </div>
+
+                    <div class="pt-3 border-t border-stroke space-y-3">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-[10px] font-mono uppercase text-slate-400">Opening Bid</span>
+                            <span class="text-xl font-extrabold font-mono text-emerald-400">$${lot.cpm.toFixed(2)}</span>
+                        </div>
+                        <button onclick="startSheepLotAuction('${escapeAttr(lot.lotId)}', '${escapeAttr(lot.title)}', ${lot.cpm}, '${escapeAttr(lot.buyer)}'${lot.synthetic ? ', { synthetic: true, visitorId: odysseusProfile.visitorId }' : ''})"
+                            class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow transition cursor-pointer">
+                            Give Me This One→
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function startSheepLotAuction(lotId, title, amount, bidder, lotInfo) {
+            if (auctionInterval) {
+                clearInterval(auctionInterval);
+            }
+
+            auctionSecondsLeft = 60;
+            activeAuction = {
+                lotId,
+                title,
+                amount: parseFloat(amount),
+                bidder: bidder || 'Highest Programmatic Bidder',
+                lotInfo: lotInfo || null
+            };
+
+            const banner = document.getElementById('activeAuctionBanner');
+            banner.classList.remove('hidden');
+            document.getElementById('auctionLotTitle').textContent = `${lotId} — ${title}`;
+            document.getElementById('auctionHighestBidder').textContent = activeAuction.bidder;
+            document.getElementById('auctionHighestAmount').textContent = '$' + activeAuction.amount.toFixed(2);
+            updateAuctionTimerUI();
+
+            auctionInterval = setInterval(() => {
+                auctionSecondsLeft -= 1;
+                if (auctionSecondsLeft <= 0) {
+                    finalizeTimedAuctionSale();
+                } else {
+                    updateAuctionTimerUI();
+                }
+            }, 1000);
+        }
+
+        function submitCustomSheepBid() {
+            const bidderInput = document.getElementById('customBidderName');
+            const amountInput = document.getElementById('customBidAmount');
+            const bidder = (bidderInput.value || 'Custom DSP Desk').trim();
+            const amount = parseFloat(amountInput.value) || currentProfile.cpm;
+
+            startSheepLotAuction('FLOCK LOT #01 (CUSTOM OFFER)', currentProfile.title, amount, bidder);
+        }
+
+        function updateAuctionTimerUI() {
+            const mins = String(Math.floor(auctionSecondsLeft / 60)).padStart(2, '0');
+            const secs = String(auctionSecondsLeft % 60).padStart(2, '0');
+            document.getElementById('auctionTimerDisplay').textContent = `${mins}:${secs}`;
+            const pct = Math.max(0, (auctionSecondsLeft / 60) * 100);
+            document.getElementById('auctionTimerBar').style.width = pct + '%';
+        }
+
+        function finalizeTimedAuctionSale() {
+            if (auctionInterval) {
+                clearInterval(auctionInterval);
+                auctionInterval = null;
+            }
+            if (!activeAuction) return;
+
+            const settled = { ...activeAuction };
+            activeAuction = null;
+            document.getElementById('activeAuctionBanner').classList.add('hidden');
+
+            executeHighestBidderSale(settled.bidder, settled.amount, settled.title, settled.lotInfo);
+        }
+
+        // =========================================================================
+        // 7. UTILITIES & BOOTSTRAP
+        // =========================================================================
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function escapeAttr(str) {
+            return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        // =========================================================================
+        // 8. UNIVERSAL TELEMETRY RECEIVER (SUPPORTS VERSION A & VERSION B)
+        // =========================================================================
+        // 8. STANDALONE PIXEL & EXTERNAL SENSOR RECEIVER (ISOLATED FROM NOBODY)
+        // =========================================================================
+        function setupUniversalTelemetryReceiver() {
+            const ingestExternal = (pkt) => {
+                if (!pkt) return;
+                const queryText = pkt.query || pkt.url;
+                if (queryText) {
+                    appendBeaconRow(
+                        pkt.type || 'SEARCH',
+                        queryText,
+                        pkt.ref || 'web-pixel',
+                        pkt.dwell || '24s',
+                        true
+                    );
+                    adaptProfileFromQuery(queryText);
+                }
+            };
+
+            // External Browser Extension Sensor (reads open web traffic, unaware of Nobody)
+            window.addEventListener('message', (event) => {
+                if (event.data && event.data.source === 'polyphemus_extension') {
+                    ingestExternal(event.data.payload);
+                }
+            });
+        }
+
+
+        // =========================================================================
+        // 9. ODYSSEUS IMPORT — synthetic decoy persona -> Polyphemus profile
+        // =========================================================================
+        const COUNTRY_CODES = { Norway: 'NO', Portugal: 'PT', 'United Kingdom': 'GB', Canada: 'CA' };
+        const BIDDERS = {
+            Recreation: ['HarborLine Outfitters', 'TrailForge Direct', 'Open Air Collective'],
+            Science: ['Meridian Research Supply', 'Helix Lab Direct', 'Atlas Field Gear'],
+            Books: ['Pageturner Media DSP', 'Inkwell Retargeter', 'Folio & Co. Exchange'],
+            Shopping: ['CartPulse Performance', 'Bargain Orbit DSP', 'Nimbus Commerce'],
+            Technology: ['Voltline Audience Cloud', 'Kernel Retargeting', 'Quanta Media DSP'],
+            Gaming: ['LevelUp Audience Network', 'Pixelrush DSP', 'Joystick Exchange'],
+            Music: ['Resonance Media DSP', 'Tempo Audience Labs', 'Backbeat Exchange'],
+            Sports: ['MatchDay Programmatic', 'Fieldside DSP', 'Stadium Reach Network'],
+            'Home & Garden': ['GreenThumb Retargeter', 'Hearth & Yard DSP', 'Cultivate Media'],
+            Education: ['Lectern EdTech DSP', 'Syllabus Exchange', 'Scholar Reach'],
+            'Food & Drink': ['Larder Media DSP', 'TableTop Audience', 'Brewline Exchange'],
+            Automotive: ['Torque Audience Network', 'Axle & Co. DSP', 'RoadReach Programmatic'],
+            Photography: ['Aperture Audience DSP', 'LensCraft Retargeter', 'Exposure Exchange'],
+            Travel: ['Wayfarer Media DSP', 'Itinerary Exchange', 'Passport Performance'],
+            Health: ['Vitalis Audience Cloud', 'Wellspring DSP', 'Stride Health Media'],
+            'AI-generated': ['Apex Audience DSP', 'Nimbus Retargeter', 'Orbit Performance Media']
+        };
+        const HOT_CATEGORIES = /Travel|Shopping|Technology|Photography|Automotive/;
+
+        function hex(n, len) { return (n >>> 0).toString(16).padStart(8, '0').repeat(2).slice(0, len); }
+        function incomeLow(str) { const m = /\$(\d+)/.exec(str || ''); return m ? parseInt(m[1], 10) : 50; }
+
+        function buildOdysseusProfile(d) {
+            const p = d.persona;
+            const K = 4;
+            const rows = p.interests.map(i => {
+                const n = d.topics[i.topic] || 0;
+                return { label: i.topic, category: i.category, n, pct: Math.round((1 - Math.exp(-n / K)) * 100) };
+            }).sort((a, b) => b.pct - a.pct);
+            const top = rows[0] || { label: 'General', category: 'Recreation' };
+            const second = rows[1];
+            const conf = d.total ? Math.min(99, (1 - Math.exp(-d.total / 14)) * 100) : 0;
+            const inc = incomeLow(p.income);
+            const propScore = Math.min(97, Math.round(35 + conf * 0.35 + inc * 0.3));
+            const cpm = +((2.5 + inc / 12) * (HOT_CATEGORIES.test(top.category) ? 1.3 : 1) * (0.7 + conf / 330)).toFixed(2);
+            const pool = BIDDERS[top.category] || BIDDERS['AI-generated'];
+            const bids = [
+                { dsp: pool[0], price: cpm },
+                { dsp: pool[1], price: +(cpm * 0.88).toFixed(2) },
+                { dsp: pool[2], price: +(cpm * 0.71).toFixed(2) }
+            ];
+            const countryName = (p.city.split(',').pop() || '').trim();
+            return {
+                visitorId: 'VIS-' + hex(p.seed, 4).toUpperCase() + '-ODY',
+                fingerprint: 'fp_' + hex(p.noiseSeed, 10),
+                title: `${p.occupation} · ${top.label}`,
+                subtitle: `${p.name}, ${p.age} · decoy persona (${p.source === 'gemini' ? 'AI-generated' : 'built-in'})`,
+                tier: inc >= 70 ? 'TIER-1 HIGH LTV' : inc >= 50 ? 'TIER-2 MID LTV' : 'TIER-3 VALUE',
+                confidence: conf,
+                synthesis: d.total
+                    ? `Subject shows sustained interest in ${top.label}${second && second.n ? ' and ' + second.label : ''}, based on ${d.total} observed signals. All signals originate from a synthetic decoy identity.`
+                    : 'No signals observed yet. Turn the decoy on in Odysseus to start generating activity.',
+                geo: `${p.city.split(',')[0]} (${COUNTRY_CODES[countryName] || countryName})`,
+                income: `${p.income} Est.`,
+                device: `Desktop • ${p.os} / Chrome`,
+                propensity: `${propScore >= 80 ? 'High' : propScore >= 60 ? 'Moderate' : 'Low'} (${propScore}/100)`,
+                cpm, winner: bids[0].dsp, bids,
+                ad: { tag: `SPONSORED • ${String(top.category).toUpperCase()}`, headline: `Top picks for ${top.label}` },
+                taxonomy: rows,
+                beacons: d.recent.map(e => ({
+                    type: e.kind === 'search' ? 'SEARCH' : 'VIEW',
+                    url: e.kind === 'search' ? `query: '${e.query}'` : `https://${e.host}/`,
+                    ref: e.kind === 'search' ? (e.engine || e.host) : 'odysseus-decoy',
+                    time: new Date(e.t).toTimeString().split(' ')[0]
+                })),
+                total: d.total
+            };
+        }
+
+        function renderOdysseusTab() {
+            const p = odysseusProfile;
+            ['odyLeft', 'odyMid', 'odyRight'].forEach(id => document.getElementById(id).classList.toggle('hidden', !p));
+            document.getElementById('odyEmpty').classList.toggle('hidden', !!p);
+            if (!p) return;
+            const set = (id, v) => { document.getElementById(id).textContent = v; };
+            set('odyTitle', p.title); set('odySubtitle', p.subtitle); set('odyVid', p.visitorId); set('odyFp', p.fingerprint);
+            set('odyConf', p.confidence.toFixed(1) + '%'); document.getElementById('odyConfBar').style.width = p.confidence + '%';
+            set('odySynthesis', p.synthesis); set('odyGeo', p.geo); set('odyIncome', p.income); set('odyDevice', p.device); set('odyPropensity', p.propensity);
+            document.getElementById('odyTaxonomy').innerHTML = p.taxonomy.map(t => `
+                <div>
+                    <div class="flex justify-between text-xs mb-1"><span class="text-slate-300 font-medium">${escapeHtml(t.label)}</span><span class="font-mono text-cyan-400 font-semibold">${t.pct}%</span></div>
+                    <div class="w-full h-2 bg-canvas rounded-full overflow-hidden border border-stroke"><div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" style="width:${t.pct}%"></div></div>
+                </div>`).join('');
+            set('odyBeaconCount', `${p.total} EVENTS`);
+            document.getElementById('odyBeacons').innerHTML = p.beacons.length ? p.beacons.map(b => `
+                <div class="p-2.5 rounded-lg bg-panel border border-stroke flex flex-col gap-1">
+                    <div class="flex items-center justify-between text-[10px]">
+                        <div class="flex items-center gap-2"><span class="px-1.5 py-0.5 rounded border font-bold ${b.type === 'SEARCH' ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30' : 'bg-blue-500/15 text-blue-300 border-blue-500/30'}">${b.type}</span><span class="text-slate-400">ref: ${escapeHtml(b.ref)}</span></div>
+                        <span class="text-slate-500">${escapeHtml(b.time)}</span>
+                    </div>
+                    <div class="text-slate-200 truncate">${escapeHtml(b.url)}</div>
+                </div>`).join('') : '<div class="text-slate-500 text-center py-10">No decoy activity yet.</div>';
+            set('odyCpm', '$' + p.cpm.toFixed(2)); set('odyWinner', 'Winner: ' + p.winner);
+            document.getElementById('odyBids').innerHTML = p.bids.map((b, i) => `
+                <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg ${i === 0 ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300' : 'bg-canvas border border-stroke text-slate-400'}">
+                    <span class="truncate pr-2">${i === 0 ? '★ ' : ''}${escapeHtml(b.dsp)}</span><span class="font-bold shrink-0">$${b.price.toFixed(2)}</span>
+                </div>`).join('');
+            set('odyAdTag', p.ad.tag); set('odyAdHeadline', p.ad.headline);
+            renderSheepLotsGrid();
+        }
+
+        function setupOdysseusReceiver() {
+            const nonce = document.documentElement.dataset.odysseusNonce;
+            window.addEventListener('message', (event) => {
+                const m = event.data;
+                // Only accept messages posted by this page's own extension bridge, with the handshake secret.
+                if (event.source !== window || event.origin !== location.origin) return;
+                if (!m || m.source !== 'odysseus' || m.nonce !== nonce || m.type !== 'state' || !m.data) return;
+                const d = m.data;
+                if (!d.persona || !Array.isArray(d.persona.interests) || !Array.isArray(d.recent) || typeof d.topics !== 'object') return;
+                odysseusProfile = buildOdysseusProfile(d);
+                renderOdysseusTab();
+            });
+            // The extension bridge may load after the page; ask a few times.
+            [0, 600, 2000].forEach(ms => setTimeout(() => { if (!odysseusProfile) window.postMessage({ source: 'polyphemus', type: 'hello' }, location.origin); }, ms));
+        }
+
+        window.onload = function () {
+            renderDashboard();
+            renderInitialBeacons();
+            setupUniversalTelemetryReceiver();
+            setupOdysseusReceiver();
+
+            // Support ?q=... URL parameter on page load
+            const params = new URLSearchParams(window.location.search);
+            const initialQuery = params.get('q');
+            if (initialQuery) {
+                appendBeaconRow('SEARCH', `query: '${initialQuery}'`, 'url-param', '15s', true);
+                adaptProfileFromQuery(initialQuery);
+            }
+        };
+    </script>
+</body>
+</html>

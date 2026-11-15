@@ -66,6 +66,7 @@ function render(st) {
 const refresh = () => send({ type: 'state' }).then(render);
 chrome.storage.onChanged.addListener(refresh);
 $('toggle').onclick = () => send({ type: 'toggle' }).then(render);
+$('poly').onclick = () => chrome.tabs.create({ url: 'http://127.0.0.1:5172/' });
 $('reroll').onclick = () => send({ type: 'reroll' }).then(render);
 $('reset').onclick = () => send({ type: 'reset' }).then(render);
 refresh();

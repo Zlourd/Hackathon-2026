@@ -64,7 +64,7 @@ chrome.webNavigation.onCommitted.addListener(async d => {
       target: { tabId: d.tabId, frameIds: [d.frameId] }, world: 'MAIN', injectImmediately: true,
       func: injectedSpoof, args: [persona]
     });
-  } catch (e) { console.debug("Mirage: could not inject", e.message); }
+  } catch (e) { console.debug("Odysseus: could not inject", e.message); }
 });
 
 // ---------- Decoy browsing ----------
@@ -140,7 +140,7 @@ async function handle(msg) {
     case 'reroll': {
       // Try the local Gemini backend first; fall back to the built-in archetypes silently.
       let ai = null;
-      try { ai = personaOverridesFromApi(await cyclopsApi.generatePersona()); } catch (e) { console.debug('Mirage: backend persona unavailable', e.message); }
+      try { ai = personaOverridesFromApi(await cyclopsApi.generatePersona()); } catch (e) { console.debug('Odysseus: backend persona unavailable', e.message); }
       const persona = buildPersona(undefined, st.persona?.id, ai);
       await set({ persona, log: [], sites: {}, burstLeft: st.enabled ? BURST : 0 });
       await syncRules();

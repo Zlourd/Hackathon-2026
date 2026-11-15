@@ -1,0 +1,37 @@
+/* Polyphemus x Odysseus visual identity: black & blue, Greek-key frames, coin logo. */
+:root{--gk:#3b82f6;--gk2:#1d4ed8;--gkdim:#142a55}
+html body{background:radial-gradient(90% 45% at 50% -10%,#0a1a3d 0%,#03060f 55%,#02040a 100%) fixed!important}
+
+/* Greek-key frame on every card */
+html body .bg-panel.rounded-2xl,
+html body .bg-gradient-to-r.rounded-2xl{
+  position:relative;border-radius:0!important;border:1px solid var(--gk2)!important;outline:1px solid var(--gkdim);outline-offset:4px;
+  padding-top:34px!important;box-shadow:none!important}
+html body .bg-panel.rounded-2xl:before,
+html body .bg-gradient-to-r.rounded-2xl:before{
+  content:"";position:absolute;left:0;right:0;top:0;height:14px;border-bottom:1px solid var(--gk2);pointer-events:none;
+  background:
+   repeating-linear-gradient(90deg,transparent 0 4px,var(--gk) 4px 6px,transparent 6px 10px) 0 4px/100% 2px no-repeat,
+   repeating-linear-gradient(90deg,var(--gk) 0 2px,transparent 2px 14px) 0 4px/100% 6px no-repeat,
+   repeating-linear-gradient(90deg,transparent 0 6px,var(--gk) 6px 8px,transparent 8px 14px) 0 8px/100% 2px no-repeat}
+html body main section{padding:5px}
+html body main .space-y-6>*+*{margin-top:30px}
+/* square-ish inner elements to match */
+html body .rounded-xl,html body .rounded-lg{border-radius:4px!important}
+html body .rounded-md{border-radius:3px!important}
+
+/* Header bar */
+html body header{position:sticky;border-bottom:1px solid var(--gk2)!important;padding-top:26px!important;background:rgba(2,4,10,.94)!important}
+html body header:before{content:"";position:absolute;left:0;right:0;top:0;height:14px;border-bottom:1px solid var(--gk2);
+  background:
+   repeating-linear-gradient(90deg,transparent 0 4px,var(--gk) 4px 6px,transparent 6px 10px) 0 4px/100% 2px no-repeat,
+   repeating-linear-gradient(90deg,var(--gk) 0 2px,transparent 2px 14px) 0 4px/100% 6px no-repeat,
+   repeating-linear-gradient(90deg,transparent 0 6px,var(--gk) 6px 8px,transparent 8px 14px) 0 8px/100% 2px no-repeat}
+
+/* Coin logo: front by default, flips to the back on hover */
+.coin{position:relative;flex:none;width:72px;height:72px;perspective:600px;cursor:pointer}
+.coin img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;backface-visibility:hidden;transition:transform .7s cubic-bezier(.4,.2,.2,1);filter:drop-shadow(0 4px 10px rgba(59,130,246,.5))}
+.coin .b{transform:rotateY(180deg)}
+.coin:hover .f{transform:rotateY(180deg)}.coin:hover .b{transform:rotateY(360deg)}
+
+html body ::-webkit-scrollbar-thumb{background:#1e3a8a}
