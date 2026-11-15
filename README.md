@@ -14,7 +14,7 @@ Incognito leaves no trace, and trackers can still piece you together. **Odysseus
 ## What it does
 | Layer | Mechanism |
 |---|---|
-| **Decoy persona** | One of several internally consistent archetypes (name, age, job, city, timezone, language, device, interest cluster). *New persona* re-rolls. |
+| **Decoy persona** | One of ten internally consistent archetypes in ten countries (name, age, job, city, timezone, language, device, interest cluster, plus the economics the Polyphemus price model uses). *New persona* re-rolls. |
 | **Decoy browsing** | Background searches (DuckDuckGo/Bing) and site visits matching the persona's interests, sent with cookies and the decoy's headers, at irregular intervals. |
 | **Header identity** | `declarativeNetRequest` rewrites `User-Agent`, `Accept-Language`, `Sec-CH-UA*`, adds `Sec-GPC`. |
 | **JS fingerprint** | Injected at document start: navigator (UA, platform, languages, cores, memory, userAgentData), screen, timezone, geolocation (decoy city), canvas noise, WebGL vendor/renderer, referrer. |
@@ -32,7 +32,20 @@ If the Cyclops Python backend is running at `http://127.0.0.1:8000`, **New fake 
 `polyphemus/` is a mock data-broker platform that is always dark. Click the coin logo in the Odysseus page (the page fades to black, then Polyphemus fades in; the coin there fades back; Back also works): it opens inside the extension (`polyphemus/viewer.html`) with no server, no internet and no file-access permission needed. The extension feeds it the decoy persona and decoy browsing events (never real browsing).
 
 - **What You Could Have Lost** lists every decoy profile Odysseus has generated (stored in extension storage, newest 100). Pick a lot to see its profile, taxonomy, captured beacons and a 1-minute auction with fictional bidders. **Clear past profiles** keeps only the live one.
-- **Odysseus Profile** shows the live persona.
+- **Live Data Auction** lists the same profiles as a simulated stock-style market. One symbol per profile (`TRIB.PT` = **T**iago **RIB**eiro, Portugal) with a flag next to the name, the country's development tier, annual income, a live price, change, sparkline, a selected-profile panel (chart, bid/ask book, *sell 1 lot at bid*), a **Why this price** breakdown, a time-and-sales tape and a feed of the signals moving the market. Every new decoy search or visit from Odysseus raises that profile's certainty, so its price steps up. The board has exactly as many rows as there are stored profiles; click a column header to sort. Price history lives in the page, so reloading Polyphemus restarts the trading session.
+
+### How a profile's data is priced
+`fair value = $5.00 × income × development × area × interest × activity` (CPM, simulated; the live price wanders around it)
+
+| Factor | Rule |
+|---|---|
+| Annual income | `(income ÷ $50k) ^ 0.40`, capped ×0.30 – ×1.80 |
+| Country development | Tier 1 (highly developed) ×1.00, Tier 2 (emerging) ×0.70, Tier 3 (developing) ×0.50, from the World Bank income group of the persona's country |
+| Area average income | `(city average ÷ $40k) ^ 0.25`, capped ×0.50 – ×1.40. The city averages in `src/data.js` are rough placeholders, not official statistics |
+| Interest demand | ×1.30 for travel, shopping, technology, photography and automotive interests, else ×1.00 |
+| Signal activity | `0.90 + 0.30 × certainty`, so the price creeps up while the decoy is browsing |
+
+The opening bids on **What You Could Have Lost** use the same fair value. Constants live in `PRICE_MODEL` in `polyphemus/index.html`; each archetype's `cc`, `tier`, `areaAvg` and `incomeUSD` live in `src/data.js`.
 
 Light/dark mode is toggled on the Odysseus page (light by default); the extension popup follows it. Polyphemus does not.
 
@@ -41,7 +54,7 @@ Styling is a prebuilt `polyphemus/tailwind.css`. After changing classes in `poly
 cd polyphemus && npx tailwindcss@3 -c tailwind.config.js -i <(echo '@tailwind base;@tailwind components;@tailwind utilities;') -o tailwind.css --minify
 ```
 
-Optional: `polyphemus/index.html` can also be served (`python3 -m http.server 5172 --bind 127.0.0.1 --directory polyphemus`) or opened from disk (turn on *Allow access to file URLs* for the extension); the extension's bridge script feeds it there too.
+Optional: `polyphemus/index.html` can also be served from the repo root (`python3 -m http.server 5172 --bind 127.0.0.1`, then open <http://127.0.0.1:5172/polyphemus/>) or opened from disk (turn on *Allow access to file URLs* for the extension); the extension's bridge script feeds it there too. It loads the shared flag art from `assets/flags.js`, so serve the repo root, not just `polyphemus/`.
 
 ## Intro animation
 The first time the tracker's view is opened in a browser session, and every time it is reloaded, `animations/animation.html` plays full-screen for one 15 s cycle, then fades into the view. It is declared as a manifest *sandbox page* (it uses inline scripts) and embedded from `tracker/intro.js`. Switching from Polyphemus back via its coin logo skips the animation (a fade instead).

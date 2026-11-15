@@ -1,6 +1,6 @@
 import { buildPersona, personaOverridesFromApi } from './persona.js';
 import { cyclopsApi } from './api.js';
-import { SEARCH_ENGINES } from './data.js';
+import { SEARCH_ENGINES, ARCHETYPES } from './data.js';
 import { injectedSpoof } from './inject.js';
 
 const LOG_CAP = 600;
@@ -9,11 +9,24 @@ const DEFAULTS = { enabled: false, mask: true, persona: null, log: [], profiles:
 const SITE_CAP = 150;
 const PROFILE_CAP = 100; // stored decoy profiles (newest kept)
 
+// Country / economics fields for a persona or archived profile (used by the Polyphemus price model).
+// Profiles stored before these fields existed are filled in from their city: every built-in archetype has one.
+function geoFor(x) {
+  if (x.cc && x.tier && x.areaAvg && x.incomeLow) {
+    return { cc: x.cc, country: x.country, tier: x.tier, areaAvg: x.areaAvg, incomeLow: x.incomeLow, incomeHigh: x.incomeHigh || x.incomeLow };
+  }
+  const a = ARCHETYPES.find(a => a.city === x.city);
+  if (a) return { cc: a.cc, country: a.country, tier: a.tier, areaAvg: a.areaAvg, incomeLow: a.incomeUSD[0], incomeHigh: a.incomeUSD[1] };
+  const m = /\$(\d+)\s*[–-]\s*(\d+)k/.exec(x.income || '');
+  return { cc: '', country: String(x.city || '').split(',').pop().trim(), tier: 1, areaAvg: 30000,
+    incomeLow: m ? +m[1] * 1000 : 40000, incomeHigh: m ? +m[2] * 1000 : 60000 };
+}
+
 // Archive of every decoy persona ever generated, with its accumulated decoy activity.
 // Contains fake data only; real browsing never enters it.
 const newArchived = p => ({
   seed: p.seed, noiseSeed: p.noiseSeed, name: p.name, age: p.age, occupation: p.occupation, income: p.income, city: p.city, tz: p.tz,
-  lang: p.lang, os: p.os, source: p.source || 'builtin', description: p.description || '',
+  ...geoFor(p), lang: p.lang, os: p.os, source: p.source || 'builtin', description: p.description || '',
   interests: p.interests.map(i => ({ topic: i.topic, category: i.category })),
   created: Date.now(), updated: Date.now(), topics: {}, total: 0, recent: []
 });
@@ -161,7 +174,7 @@ async function handle(msg) {
     case 'snapshot': {
       const pe = st.persona;
       const shape = x => ({ seed: x.seed, noiseSeed: x.noiseSeed, name: x.name, age: x.age, occupation: x.occupation, income: x.income,
-        city: x.city, tz: x.tz, lang: x.lang, os: x.os, source: x.source || 'builtin', description: x.description || '',
+        ...geoFor(x), city: x.city, tz: x.tz, lang: x.lang, os: x.os, source: x.source || 'builtin', description: x.description || '',
         interests: x.interests.map(i => ({ topic: i.topic, category: i.category })) });
       const profiles = withArchived(st.profiles, pe);
       const cur = pe && profiles.find(x => x.seed === pe.seed);
@@ -198,7 +211,11 @@ async function handle(msg) {
     case 'burst': await set({ burstLeft: BURST }); if (st.enabled) tick(); return get();
   }
 }
-chrome.runtime.onMessage.addListener((msg, _s, send) => { handle(msg).then(send); return true; });
+// Always reply, even when a handler throws, so a page waiting on sendMessage never hangs.
+chrome.runtime.onMessage.addListener((msg, _s, send) => {
+  handle(msg).then(send, e => { console.debug('Odysseus: message failed', msg && msg.type, e); send({ error: String((e && e.message) || e) }); });
+  return true;
+});
 
 async function boot() {
   const st = await get();

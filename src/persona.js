@@ -4,7 +4,13 @@ const NAMES = {
   sailor: ['Margit Halvorsen', 'Ingrid Solberg', 'Torvald Eide', 'Liv Bjørnstad', 'Henrik Moen'],
   'gamer-dev': ['Dario Fontana', 'Tiago Ribeiro', 'Inês Carvalho', 'Rui Machado', 'Beatriz Lopes'],
   gardener: ['Walter Ndlovu', 'Helen Ashworth', 'Colin Pritchard', 'Fatima Okafor', 'Graham Tate'],
-  traveler: ['Priya Venkataraman', 'Maya Tremblay', 'Jordan Okonkwo-Reid', 'Sofia Lindqvist', 'Daniel Park']
+  traveler: ['Priya Venkataraman', 'Maya Tremblay', 'Jordan Okonkwo-Reid', 'Sofia Lindqvist', 'Daniel Park'],
+  'logistics-br': ['Rafael Mendes', 'Camila Duarte', 'Thiago Barbosa', 'Juliana Ribeiro', 'Bruno Cardoso'],
+  'designer-mx': ['Lucía Guzmán', 'Diego Hernández', 'Valeria Ortega', 'Mateo Salazar', 'Ximena Rojas'],
+  'engineer-tr': ['Emre Çelik', 'Elif Yılmaz', 'Mert Aydın', 'Zeynep Kaya', 'Burak Demir'],
+  'tester-in': ['Ananya Sharma', 'Rohan Deshmukh', 'Priyanka Iyer', 'Arjun Nair', 'Kavya Reddy'],
+  'fintech-ng': ['Tunde Adeyemi', 'Chioma Okafor', 'Emeka Nwosu', 'Folake Bello', 'Seun Ogunleye'],
+  'teamlead-ph': ['Maria Santos', 'Jose Reyes', 'Angelica Cruz', 'Miguel Villanueva', 'Carla Mendoza']
 };
 
 export function rng(seed) {
@@ -28,6 +34,9 @@ export function buildPersona(seed = (Math.random() * 2 ** 32) >>> 0, avoidId = n
   return {
     seed, id: base.id, name: NAMES[base.id][Math.floor(r() * NAMES[base.id].length)], age: base.age + Math.round((r() - 0.5) * 12), occupation: base.occupation, income: base.income,
     city: base.city, tz: base.tz,
+    // where they live and what that is worth (used by the Polyphemus price model)
+    cc: base.cc, country: base.country, tier: base.tier, areaAvg: base.areaAvg,
+    incomeLow: base.incomeUSD[0], incomeHigh: base.incomeUSD[1],
     // jitter the coordinates slightly so the "home" is city-level, not a single point
     lat: base.lat + (r() - 0.5) * 0.04, lon: base.lon + (r() - 0.5) * 0.04,
     lang: base.lang, langs: base.langs,
