@@ -136,6 +136,20 @@ async function handle(msg) {
       if (enabled) tick(); else await chrome.alarms.clear('decoy');
       return get();
     }
+    case 'snapshot': {
+      const log = st.log, topics = {};
+      log.forEach(e => { topics[e.topic] = (topics[e.topic] || 0) + 1; });
+      const pe = st.persona;
+      return {
+        enabled: !!st.enabled, total: log.length, topics,
+        persona: pe && { seed: pe.seed, noiseSeed: pe.noiseSeed, name: pe.name, age: pe.age, occupation: pe.occupation, income: pe.income,
+          city: pe.city, tz: pe.tz, lang: pe.lang, os: pe.os, source: pe.source || 'builtin', description: pe.description || '',
+          interests: pe.interests.map(i => ({ topic: i.topic, category: i.category })) },
+        // decoy events only: never the real-browsing site list
+        recent: log.slice(-20).reverse().map(e => ({ t: e.t, kind: e.kind, query: e.query, host: e.host, topic: e.topic,
+          engine: e.host === 'duckduckgo.com' || e.host === 'bing.com' ? e.host : null }))
+      };
+    }
     case 'mask': await set({ mask: !!msg.value }); await syncRules(); return get();
     case 'reroll': {
       // Try the local Gemini backend first; fall back to the built-in archetypes silently.

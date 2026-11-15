@@ -1,0 +1,4 @@
+const BLUE = {50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a',950:'#0b1a44'};
+const SKY  = {50:'#f0f9ff',100:'#e0f2fe',200:'#bae6fd',300:'#7dd3fc',400:'#38bdf8',500:'#0ea5e9',600:'#0284c7',700:'#0369a1',800:'#075985',900:'#0c4a6e',950:'#06223a'};
+const INDIGO = {50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81',950:'#1e1b4b'};
+module.exports={content:['./index.html'],darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{canvas:'#02040a',panel:'#060b17',panelLight:'#0b1426',stroke:'#142544',accent:'#3b82f6',cyanGlow:'#06b6d4',amber:BLUE,orange:INDIGO,emerald:SKY,teal:SKY}}}};

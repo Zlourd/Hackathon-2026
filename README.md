@@ -29,15 +29,14 @@ Incognito leaves no trace, and trackers can still piece you together. **Odysseus
 If the Cyclops Python backend is running at `http://127.0.0.1:8000`, **New fake profile** asks `POST /generate-persona` for a name, age and interests (no data is sent). Location, timezone, device and income still come from a built-in archetype so the spoofed identity stays consistent. If the backend is down or returns something unusable, the built-in personas are used. Override the URL by setting `apiBase` in extension storage. A `analyze` message (`POST /analyze-website`) is also available to the extension backend; no UI uses it yet.
 
 ## Polyphemus (decoy data-broker demo)
-`polyphemus/` is a standalone mock data-management platform. When opened in a browser that has Odysseus installed, the extension's bridge script feeds it the decoy persona and decoy browsing events (never real browsing). Polyphemus builds a profile from them in the **Odysseus Profile** tab and lists the decoy as **Lot #05** in *Buy My Sheep*, where fictional bidders compete for it. No real data is sold.
+`polyphemus/` is a mock data-management platform. Click **Open Polyphemus** in the tracker view: it opens inside the extension (`polyphemus/viewer.html`) with no server, no internet and no file-access permission needed. The extension feeds it the decoy persona and decoy browsing events (never real browsing). Polyphemus builds a profile in the **Odysseus Profile** tab and lists the decoy as **Lot #05** in *Buy My Sheep*, where fictional bidders compete for it. No real data is sold.
 
+Styling is a prebuilt `polyphemus/tailwind.css`. After changing classes in `polyphemus/index.html`, rebuild it:
 ```bash
-python3 -m http.server 5172 --bind 127.0.0.1 --directory polyphemus
+cd polyphemus && npx tailwindcss@3 -c tailwind.config.js -i <(echo '@tailwind base;@tailwind components;@tailwind utilities;') -o tailwind.css --minify
 ```
-Then open <http://127.0.0.1:5172> (or use **Open Polyphemus** in the tracker view). The page loads Tailwind and fonts from CDNs, so it needs internet access.
 
-### Opening Polyphemus without a server
-Open `polyphemus/index.html` directly in Chrome (`file:///…/polyphemus/index.html`). For the extension to reach a `file://` page you must enable **Allow access to file URLs** on Odysseus's card at `chrome://extensions` (Details), then reload the extension and the page.
+Optional: `polyphemus/index.html` can also be served (`python3 -m http.server 5172 --bind 127.0.0.1 --directory polyphemus`) or opened from disk (turn on *Allow access to file URLs* for the extension); the extension's bridge script feeds it there too.
 
 ## Intro animation
 The first time the tracker's view is opened in a browser session, `animations/animation.html` plays full-screen for one 15 s cycle, then fades into the view. It is declared as a manifest *sandbox page* (it uses inline scripts) and embedded from `tracker/intro.js`. It plays again after the browser is restarted.
