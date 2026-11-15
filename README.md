@@ -57,4 +57,4 @@ cd polyphemus && npx tailwindcss@3 -c tailwind.config.js -i <(echo '@tailwind ba
 Optional: `polyphemus/index.html` can also be served from the repo root (`python3 -m http.server 5172 --bind 127.0.0.1`, then open <http://127.0.0.1:5172/polyphemus/>) or opened from disk (turn on *Allow access to file URLs* for the extension); the extension's bridge script feeds it there too. It loads the shared flag art from `assets/flags.js`, so serve the repo root, not just `polyphemus/`.
 
 ## Intro animation
-The first time the tracker's view is opened in a browser session, and every time it is reloaded, `animations/animation.html` plays full-screen for one 15 s cycle, then fades into the view. It is declared as a manifest *sandbox page* (it uses inline scripts) and embedded from `tracker/intro.js`. Switching from Polyphemus back via its coin logo skips the animation (a fade instead).
+The Odyssey animation (`animations/animation.html`) is no longer played when the tracker's view opens. The file stays in the repo.

@@ -49,7 +49,6 @@
   ],
   "sandbox": {
     "pages": [
-      "animations/animation.html",
       "polyphemus/index.html"
     ]
   }

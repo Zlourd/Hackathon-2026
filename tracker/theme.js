@@ -22,6 +22,8 @@ try { chrome.storage.local.set({ theme: read() }); } catch { /* not in an extens
     document.documentElement.classList.add('arriving');
     setTimeout(() => document.documentElement.classList.add('ready'), 2500); // safety net
   }
+  // drop the marker so it does not linger in the address bar
+  if (location.hash === '#from-polyphemus') history.replaceState(null, '', location.pathname);
 }
 document.addEventListener('DOMContentLoaded', () => {
   apply(read());

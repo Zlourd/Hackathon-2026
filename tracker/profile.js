@@ -69,5 +69,4 @@ $('coin').onclick = () => {
   setTimeout(() => { location.href = chrome.runtime.getURL('polyphemus/viewer.html'); }, 700);
 };
 $('reroll').onclick = () => send({ type: 'reroll' }).then(render);
-$('reset').onclick = () => send({ type: 'reset' }).then(render);
 refresh().finally(() => document.documentElement.classList.add('ready'));
