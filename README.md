@@ -38,3 +38,6 @@ Then open <http://127.0.0.1:5172> (or use **Open Polyphemus** in the tracker vie
 
 ### Opening Polyphemus without a server
 Open `polyphemus/index.html` directly in Chrome (`file:///…/polyphemus/index.html`). For the extension to reach a `file://` page you must enable **Allow access to file URLs** on Odysseus's card at `chrome://extensions` (Details), then reload the extension and the page.
+
+## Intro animation
+The first time the tracker's view is opened in a browser session, `animations/animation.html` plays full-screen for one 15 s cycle, then fades into the view. It is declared as a manifest *sandbox page* (it uses inline scripts) and embedded from `tracker/intro.js`. It plays again after the browser is restarted.

@@ -46,5 +46,10 @@
       ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "sandbox": {
+    "pages": [
+      "animations/animation.html"
+    ]
+  }
 }
