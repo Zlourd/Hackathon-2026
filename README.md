@@ -29,7 +29,12 @@ Incognito leaves no trace, and trackers can still piece you together. **Odysseus
 If the Cyclops Python backend is running at `http://127.0.0.1:8000`, **New fake profile** asks `POST /generate-persona` for a name, age and interests (no data is sent). Location, timezone, device and income still come from a built-in archetype so the spoofed identity stays consistent. If the backend is down or returns something unusable, the built-in personas are used. Override the URL by setting `apiBase` in extension storage. A `analyze` message (`POST /analyze-website`) is also available to the extension backend; no UI uses it yet.
 
 ## Polyphemus (decoy data-broker demo)
-`polyphemus/` is a mock data-management platform. Click the coin logo in the tracker view (the page fades to black, then Polyphemus fades in; use the browser's Back button to return): it opens inside the extension (`polyphemus/viewer.html`) with no server, no internet and no file-access permission needed. The extension feeds it the decoy persona and decoy browsing events (never real browsing). Polyphemus builds a profile in the **Odysseus Profile** tab (the live persona). *What You Could Have Lost* lists only Odysseus-generated profiles — every decoy persona ever generated is stored (up to 100, in extension storage) with its accumulated decoy activity, so past profiles stay available as lots. **Clear past profiles** keeps only the live one. Bidders and prices are fictional; no real data is sold.
+`polyphemus/` is a mock data-broker platform that is always dark. Click the coin logo in the Odysseus page (the page fades to black, then Polyphemus fades in; the coin there fades back; Back also works): it opens inside the extension (`polyphemus/viewer.html`) with no server, no internet and no file-access permission needed. The extension feeds it the decoy persona and decoy browsing events (never real browsing).
+
+- **What You Could Have Lost** lists every decoy profile Odysseus has generated (stored in extension storage, newest 100). Pick a lot to see its profile, taxonomy, captured beacons and a 1-minute auction with fictional bidders. **Clear past profiles** keeps only the live one.
+- **Odysseus Profile** shows the live persona.
+
+Light/dark mode is toggled on the Odysseus page (light by default); the extension popup follows it. Polyphemus does not.
 
 Styling is a prebuilt `polyphemus/tailwind.css`. After changing classes in `polyphemus/index.html`, rebuild it:
 ```bash

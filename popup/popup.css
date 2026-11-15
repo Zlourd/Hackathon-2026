@@ -43,3 +43,15 @@ button.primary{color:#1a0f06}
   repeating-linear-gradient(90deg,transparent 0 6px,#c8793a 6px 8px,transparent 8px 14px) 0 8px/100% 2px no-repeat}
 .big{border-radius:0;border-color:#7a4a22}
 button{border-radius:3px}.tag{border-radius:3px}
+
+/* ===== Light mode (follows the Odysseus page toggle) ===== */
+html[data-theme="light"]{--bg:#f4ede0;--card:#fffdf7;--card2:#f6ecd9;--bd:#cfb487;--fg:#2a1a0d;--mut:#7a6650;--acc:#a8672e;--acc2:#8a4f1c}
+html[data-theme="light"] body{background:radial-gradient(120% 70% at 50% -10%,#fff8ea 0%,#f4ede0 55%,#eadcc2 100%)}
+html[data-theme="light"] .card{background:linear-gradient(160deg,#fffdf7,#f6ecd9);border-color:#a8672e;outline-color:#dcc59c}
+html[data-theme="light"] .big{background:#fffdf7;border-color:#a8672e}
+html[data-theme="light"] .tag{background:#f6ecd9;color:#6b3f1c}
+html[data-theme="light"] .sw{background:#e6d3b8}
+html[data-theme="light"] input:checked~.sw{background:#a8672e}
+html[data-theme="light"] button{background:#f6ecd9;color:#2a1a0d}
+html[data-theme="light"] button.primary{background:linear-gradient(135deg,#b9772f,#8a4f1c);color:#fff;box-shadow:0 6px 16px rgba(138,79,28,.3)}
+html[data-theme="light"] .coin img{filter:drop-shadow(0 4px 8px rgba(90,50,16,.4))}
