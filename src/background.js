@@ -5,8 +5,23 @@ import { injectedSpoof } from './inject.js';
 
 const LOG_CAP = 600;
 const BURST = 24; // fast "demo" visits when the decoy is first switched on
-const DEFAULTS = { enabled: false, mask: true, persona: null, log: [], sites: {}, burstLeft: 0, since: null };
+const DEFAULTS = { enabled: false, mask: true, persona: null, log: [], profiles: [], sites: {}, burstLeft: 0, since: null };
 const SITE_CAP = 150;
+const PROFILE_CAP = 100; // stored decoy profiles (newest kept)
+
+// Archive of every decoy persona ever generated, with its accumulated decoy activity.
+// Contains fake data only; real browsing never enters it.
+const newArchived = p => ({
+  seed: p.seed, noiseSeed: p.noiseSeed, name: p.name, age: p.age, occupation: p.occupation, income: p.income, city: p.city, tz: p.tz,
+  lang: p.lang, os: p.os, source: p.source || 'builtin', description: p.description || '',
+  interests: p.interests.map(i => ({ topic: i.topic, category: i.category })),
+  created: Date.now(), updated: Date.now(), topics: {}, total: 0, recent: []
+});
+function withArchived(profiles, persona) {
+  const list = [...(profiles || [])];
+  if (persona && !list.some(x => x.seed === persona.seed)) list.push(newArchived(persona));
+  return list.slice(-PROFILE_CAP);
+}
 
 const get = async () => ({ ...DEFAULTS, ...(await chrome.storage.local.get(null)) });
 const set = patch => chrome.storage.local.set(patch);
@@ -105,7 +120,14 @@ async function decoyVisit() {
     seen: { id: p.id, ua: p.ua, city: p.city, tz: p.tz, lang: p.lang }
   };
   const log = [...cur.log, entry].slice(-LOG_CAP);
-  await set({ log, sites: noteSite({ ...cur.sites }, entry.host, 'decoy', p, interest.topic), burstLeft: Math.max(0, cur.burstLeft - 1) });
+  const profiles = withArchived(cur.profiles, p);
+  const arch = profiles.find(x => x.seed === p.seed);
+  if (arch) {
+    arch.topics[entry.topic] = (arch.topics[entry.topic] || 0) + 1; arch.total++; arch.updated = entry.t;
+    arch.recent = [{ t: entry.t, kind, query, host: entry.host, topic: entry.topic,
+      engine: entry.host === 'duckduckgo.com' || entry.host === 'bing.com' ? entry.host : null }, ...arch.recent].slice(0, 20);
+  }
+  await set({ log, profiles, sites: noteSite({ ...cur.sites }, entry.host, 'decoy', p, interest.topic), burstLeft: Math.max(0, cur.burstLeft - 1) });
 }
 
 async function scheduleNext() {
@@ -131,23 +153,25 @@ async function handle(msg) {
     case 'toggle': {
       const enabled = msg.value ?? !st.enabled;
       const persona = st.persona || buildPersona();
-      await set({ enabled, persona, since: enabled ? Date.now() : null, burstLeft: enabled ? BURST : 0 });
+      await set({ enabled, persona, profiles: withArchived(st.profiles, persona), since: enabled ? Date.now() : null, burstLeft: enabled ? BURST : 0 });
       await syncRules();
       if (enabled) tick(); else await chrome.alarms.clear('decoy');
       return get();
     }
     case 'snapshot': {
-      const log = st.log, topics = {};
-      log.forEach(e => { topics[e.topic] = (topics[e.topic] || 0) + 1; });
       const pe = st.persona;
+      const shape = x => ({ seed: x.seed, noiseSeed: x.noiseSeed, name: x.name, age: x.age, occupation: x.occupation, income: x.income,
+        city: x.city, tz: x.tz, lang: x.lang, os: x.os, source: x.source || 'builtin', description: x.description || '',
+        interests: x.interests.map(i => ({ topic: i.topic, category: i.category })) });
+      const profiles = withArchived(st.profiles, pe);
+      const cur = pe && profiles.find(x => x.seed === pe.seed);
       return {
-        enabled: !!st.enabled, total: log.length, topics,
-        persona: pe && { seed: pe.seed, noiseSeed: pe.noiseSeed, name: pe.name, age: pe.age, occupation: pe.occupation, income: pe.income,
-          city: pe.city, tz: pe.tz, lang: pe.lang, os: pe.os, source: pe.source || 'builtin', description: pe.description || '',
-          interests: pe.interests.map(i => ({ topic: i.topic, category: i.category })) },
-        // decoy events only: never the real-browsing site list
-        recent: log.slice(-20).reverse().map(e => ({ t: e.t, kind: e.kind, query: e.query, host: e.host, topic: e.topic,
-          engine: e.host === 'duckduckgo.com' || e.host === 'bing.com' ? e.host : null }))
+        enabled: !!st.enabled,
+        // the live persona (decoy events only: never the real-browsing site list)
+        persona: pe && shape(pe), total: cur ? cur.total : 0, topics: cur ? cur.topics : {}, recent: cur ? cur.recent : [],
+        // every decoy profile ever generated, newest first
+        profiles: [...profiles].reverse().map(x => ({ persona: shape(x), topics: x.topics, total: x.total, recent: x.recent.slice(0, 10),
+          created: x.created, updated: x.updated, live: x.seed === pe?.seed }))
       };
     }
     case 'mask': await set({ mask: !!msg.value }); await syncRules(); return get();
@@ -156,12 +180,17 @@ async function handle(msg) {
       let ai = null;
       try { ai = personaOverridesFromApi(await cyclopsApi.generatePersona()); } catch (e) { console.debug('Odysseus: backend persona unavailable', e.message); }
       const persona = buildPersona(undefined, st.persona?.id, ai);
-      await set({ persona, log: [], sites: {}, burstLeft: st.enabled ? BURST : 0 });
+      await set({ persona, profiles: withArchived(st.profiles, persona), log: [], sites: {}, burstLeft: st.enabled ? BURST : 0 });
       await syncRules();
       if (st.enabled) tick();
       return get();
     }
-    case 'reset': await set({ log: [], sites: {}, burstLeft: st.enabled ? BURST : 0 }); if (st.enabled) tick(); return get();
+    case 'reset': {
+      const profiles = (st.profiles || []).map(x => x.seed === st.persona?.seed ? { ...x, topics: {}, total: 0, recent: [], updated: Date.now() } : x);
+      await set({ log: [], profiles, sites: {}, burstLeft: st.enabled ? BURST : 0 }); if (st.enabled) tick(); return get();
+    }
+    case 'clearProfiles': // keep only the live persona
+      await set({ profiles: withArchived((st.profiles || []).filter(x => x.seed === st.persona?.seed), st.persona) }); return get();
     case 'analyze': {
       try { return { ok: true, result: await cyclopsApi.analyzeWebsite(String(msg.url || '')) }; }
       catch (e) { return { ok: false, error: e.message }; }
@@ -173,7 +202,8 @@ chrome.runtime.onMessage.addListener((msg, _s, send) => { handle(msg).then(send)
 
 async function boot() {
   const st = await get();
-  if (!st.persona) await set({ persona: buildPersona() });
+  const persona = st.persona || buildPersona();
+  await set({ persona, profiles: withArchived(st.profiles, persona) });
   await syncRules();
   if (st.enabled) scheduleNext();
 }

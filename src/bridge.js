@@ -19,7 +19,9 @@
   chrome.storage.onChanged.addListener(push);
   // The page can ask for the current state (covers load-order races).
   window.addEventListener('message', ev => {
-    if (ev.source === window && ev.data && ev.data.source === 'polyphemus' && ev.data.type === 'hello') push();
+    if (ev.source !== window || !ev.data || ev.data.source !== 'polyphemus') return;
+    if (ev.data.type === 'hello') push();
+    if (ev.data.type === 'clearProfiles') chrome.runtime.sendMessage({ type: 'clearProfiles' }).then(push);
   });
   push();
 })();

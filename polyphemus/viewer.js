@@ -14,5 +14,7 @@ function push() {
 chrome.storage.onChanged.addListener(push);
 frame.addEventListener('load', push);
 window.addEventListener('message', ev => {
-  if (ev.source === frame.contentWindow && ev.data && ev.data.source === 'polyphemus' && ev.data.type === 'hello') push();
+  if (ev.source !== frame.contentWindow || !ev.data || ev.data.source !== 'polyphemus') return;
+  if (ev.data.type === 'hello') push();
+  if (ev.data.type === 'clearProfiles') chrome.runtime.sendMessage({ type: 'clearProfiles' }).then(push);
 });
