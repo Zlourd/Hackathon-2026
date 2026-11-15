@@ -20,9 +20,12 @@ html body main .space-y-6>*+*{margin-top:30px}
 html body .rounded-xl,html body .rounded-lg{border-radius:4px!important}
 html body .rounded-md{border-radius:3px!important}
 
-/* Header bar */
-html body header{position:sticky;border-bottom:1px solid var(--gk2)!important;padding-top:26px!important;background:rgba(2,4,10,.94)!important}
-html body header:before{content:"";position:absolute;left:0;right:0;top:0;height:14px;border-bottom:1px solid var(--gk2);
+/* Header: floating Greek-key card, same construction as the Odysseus header */
+html body header{position:relative!important;top:auto!important;margin:22px 33px 0!important;border:1px solid var(--gk2)!important;outline:1px solid var(--gkdim);outline-offset:4px;
+  border-radius:0!important;background:linear-gradient(160deg,#0a1426,#050a14)!important;box-shadow:none!important;backdrop-filter:none!important;
+  padding:28px 22px 12px!important}
+html body header>div{max-width:none!important;margin:0!important}
+html body header:before{content:"";position:absolute;left:0;right:0;top:0;height:14px;border-bottom:1px solid var(--gk2);pointer-events:none;
   background:
    repeating-linear-gradient(90deg,transparent 0 4px,var(--gk) 4px 6px,transparent 6px 10px) 0 4px/100% 2px no-repeat,
    repeating-linear-gradient(90deg,var(--gk) 0 2px,transparent 2px 14px) 0 4px/100% 6px no-repeat,
@@ -38,6 +41,7 @@ html body ::-webkit-scrollbar-thumb{background:#1e3a8a}
 
 /* Coin: same fixed spot (and size) as on the Odysseus page, so switching pages feels seamless */
 html{scrollbar-gutter:stable}
-.coin{position:fixed;top:30px;right:46px;width:84px;height:84px;z-index:60}
-html body header{padding-right:150px!important}
+.coin{position:fixed;top:40px;right:56px;width:60px;height:60px;z-index:60}
+html body header{padding-right:136px!important}
 ::-webkit-scrollbar{width:8px;height:8px} /* match the Odysseus page so the coin lines up to the pixel */
+html body header h1{white-space:nowrap}

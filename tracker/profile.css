@@ -148,3 +148,7 @@ body::before{content:"";position:fixed;inset:0;background:#000;opacity:0;pointer
 html.arriving body::before{opacity:1}
 html.arriving.ready body::before{opacity:0}
 html.arriving #intro{display:none}
+
+/* Coin sized and placed to sit inside the header; identical on the Polyphemus page */
+.coin{top:40px;right:56px;width:60px;height:60px}
+.ctl{margin-right:80px}
