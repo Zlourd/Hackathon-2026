@@ -2,6 +2,8 @@
 // It forwards the decoy persona and decoy-browsing events to the page via postMessage.
 // Never sent: real browsing history, the per-site list, or anything about the real user.
 (() => {
+  // file:// pages have the opaque origin "null", which is not a valid postMessage target.
+  const target = location.origin === 'null' ? '*' : location.origin;
   const nonceOf = () => document.documentElement.dataset.odysseusNonce || '';
   const SEARCH_HOSTS = { 'duckduckgo.com': 1, 'bing.com': 1 };
 
@@ -29,7 +31,7 @@
     clearTimeout(pending);
     pending = setTimeout(async () => {
       const data = await snapshot();
-      if (data) window.postMessage({ source: 'odysseus', nonce: nonceOf(), type: 'state', data }, location.origin);
+      if (data) window.postMessage({ source: 'odysseus', nonce: nonceOf(), type: 'state', data }, target);
     }, 150);
   }
 

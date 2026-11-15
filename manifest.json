@@ -38,7 +38,8 @@
     {
       "matches": [
         "http://localhost:5172/*",
-        "http://127.0.0.1:5172/*"
+        "http://127.0.0.1:5172/*",
+        "file:///*/polyphemus/index.html"
       ],
       "js": [
         "src/bridge.js"

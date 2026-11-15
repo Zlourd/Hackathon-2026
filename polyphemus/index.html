@@ -1350,7 +1350,7 @@
             window.addEventListener('message', (event) => {
                 const m = event.data;
                 // Only accept messages posted by this page's own extension bridge, with the handshake secret.
-                if (event.source !== window || event.origin !== location.origin) return;
+                if (event.source !== window || (event.origin !== location.origin && location.protocol !== 'file:')) return;
                 if (!m || m.source !== 'odysseus' || m.nonce !== nonce || m.type !== 'state' || !m.data) return;
                 const d = m.data;
                 if (!d.persona || !Array.isArray(d.persona.interests) || !Array.isArray(d.recent) || typeof d.topics !== 'object') return;
@@ -1358,7 +1358,7 @@
                 renderOdysseusTab();
             });
             // The extension bridge may load after the page; ask a few times.
-            [0, 600, 2000].forEach(ms => setTimeout(() => { if (!odysseusProfile) window.postMessage({ source: 'polyphemus', type: 'hello' }, location.origin); }, ms));
+            [0, 600, 2000].forEach(ms => setTimeout(() => { if (!odysseusProfile) window.postMessage({ source: 'polyphemus', type: 'hello' }, location.origin === 'null' ? '*' : location.origin); }, ms));
         }
 
         window.onload = function () {

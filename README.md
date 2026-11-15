@@ -35,3 +35,6 @@ If the Cyclops Python backend is running at `http://127.0.0.1:8000`, **New fake 
 python3 -m http.server 5172 --bind 127.0.0.1 --directory polyphemus
 ```
 Then open <http://127.0.0.1:5172> (or use **Open Polyphemus** in the tracker view). The page loads Tailwind and fonts from CDNs, so it needs internet access.
+
+### Opening Polyphemus without a server
+Open `polyphemus/index.html` directly in Chrome (`file:///…/polyphemus/index.html`). For the extension to reach a `file://` page you must enable **Allow access to file URLs** on Odysseus's card at `chrome://extensions` (Details), then reload the extension and the page.
