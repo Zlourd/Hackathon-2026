@@ -137,3 +137,14 @@ html[data-theme="light"] .coin img{filter:drop-shadow(0 4px 8px rgba(90,50,16,.4
 html[data-theme="light"] .flag{background:#fff;box-shadow:0 3px 10px rgba(90,50,16,.3)}
 html[data-theme="light"] .real{background:#f6ecd9;border-color:#cfb487}
 html[data-theme="light"] .real .empty{border-color:#cfb487}
+
+/* Coin: same fixed spot (and size) as on the Polyphemus page */
+html{scrollbar-gutter:stable}
+.coin{position:fixed;top:30px;right:46px;width:84px;height:84px;margin:0;z-index:60}
+.ctl{margin-right:96px}
+
+/* Arriving from Polyphemus: stay black from the very first paint, fade in once the page has rendered */
+body::before{content:"";position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:10000;transition:opacity .9s ease}
+html.arriving body::before{opacity:1}
+html.arriving.ready body::before{opacity:0}
+html.arriving #intro{display:none}

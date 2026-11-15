@@ -17,23 +17,13 @@ function hide() {
   intro.classList.add('done');
   setTimeout(() => intro.remove(), 900);
 }
-function fadeInFromBlack() {
-  const f = document.createElement('div');
-  f.id = 'fade';
-  f.classList.add('on');
-  document.body.appendChild(f);
-  requestAnimationFrame(() => requestAnimationFrame(() => f.classList.remove('on')));
-  setTimeout(() => f.remove(), 900);
-}
-
 const navType = performance.getEntriesByType('navigation')[0]?.type;
 const reloaded = navType === 'reload';
 const fromPolyphemus = location.hash === '#from-polyphemus' && !reloaded;
 history.replaceState(null, '', location.pathname); // drop the marker so a later reload plays the intro
 
 if (fromPolyphemus) {
-  intro.remove();
-  fadeInFromBlack();
+  intro.remove(); // the fade-in from black is pure CSS (html.arriving), so there is no flash
 } else if (reloaded || !(await alreadyPlayed())) {
   await markPlayed();
   setTimeout(hide, DURATION_MS);

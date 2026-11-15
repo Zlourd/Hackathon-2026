@@ -10,6 +10,14 @@ function apply(theme) {
 }
 
 apply(read());
+// Coming from Polyphemus via the coin (not a reload): start black, fade in when ready (see profile.css / profile.js).
+{
+  const reloaded = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+  if (location.hash === '#from-polyphemus' && !reloaded) {
+    document.documentElement.classList.add('arriving');
+    setTimeout(() => document.documentElement.classList.add('ready'), 2500); // safety net
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   apply(read());
   document.getElementById('theme').addEventListener('click', () => {

@@ -77,4 +77,4 @@ $('coin').onclick = () => {
 };
 $('reroll').onclick = () => send({ type: 'reroll' }).then(render);
 $('reset').onclick = () => send({ type: 'reset' }).then(render);
-refresh();
+refresh().finally(() => document.documentElement.classList.add('ready'));

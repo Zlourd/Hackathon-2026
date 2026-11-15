@@ -12,7 +12,10 @@ function push() {
 }
 
 chrome.storage.onChanged.addListener(push);
-frame.addEventListener('load', push);
+const fade = document.getElementById('fade');
+const reveal = () => fade.classList.add('gone');
+frame.addEventListener('load', () => { push(); setTimeout(reveal, 250); });
+setTimeout(reveal, 3000); // safety net if the load event is slow (e.g. offline fonts)
 window.addEventListener('message', ev => {
   if (ev.source !== frame.contentWindow || !ev.data || ev.data.source !== 'polyphemus') return;
   if (ev.data.type === 'hello') push();
