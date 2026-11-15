@@ -49,6 +49,7 @@
   ],
   "sandbox": {
     "pages": [
+      "animations/loadingbar.html",
       "polyphemus/index.html"
     ]
   }

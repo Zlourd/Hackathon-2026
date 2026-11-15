@@ -432,6 +432,9 @@
 
         if (progress < 1) {
           rafId = requestAnimationFrame(tick);
+        } else if (window.parent !== window) {
+          // Lets a host page (the extension's tracker view) fade this out the moment the bar completes.
+          window.parent.postMessage({ source: "loadingbar", type: "done" }, "*");
         }
       }
 
